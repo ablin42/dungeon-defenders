@@ -1,0 +1,2 @@
+export const NFT_CONTRACT_ADDRESS = '0xCD483b031b1F3765B8261116c83d021E11138e87';
+export const API_ADDRESS = 'http://localhost:3001';
