@@ -3,8 +3,8 @@ import { Outlet } from 'react-router-dom';
 import { useEthers } from '@usedapp/core';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import ConnectWallet from './components/ConnectWallet';
-import Actions from './components/Actions';
+import ConnectWallet from './components/Actions/ConnectWallet';
+import Actions from './components/Actions/Actions';
 
 const App = () => {
   const { account } = useEthers();
@@ -23,9 +23,7 @@ const App = () => {
                   {account}
                   <br />
                   <br />
-                  <Actions />
-                  {/* <MintNFT userAddress={account} />
-                  <TransferNFT userAddress={account} /> */}
+                  <Actions userAddress={account} />
                 </>
               ) : (
                 <ConnectWallet />

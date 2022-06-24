@@ -1,4 +1,8 @@
 import React from 'react';
+import Mint from './Mint';
+import Stake from './Stake';
+import ApproveNFT from './ApproveNFT';
+import Unstake from './Unstake';
 
 const ButtonsList = [
   {
@@ -38,9 +42,17 @@ const ButtonsList = [
   },
 ];
 
-const Actions = () => {
+type ActionProps = {
+  userAddress: string;
+};
+
+const Actions: React.FC<ActionProps> = ({ userAddress }) => {
   return (
     <>
+      <Mint userAddress={userAddress} />
+      <Stake userAddress={userAddress} />
+      <ApproveNFT userAddress={userAddress} />
+      <Unstake userAddress={userAddress} />
       {ButtonsList.map((button) => (
         <button key={button.name} type="button" className={`btn btn-${button.variant} m-2`} onClick={button.action}>
           {button.name}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import ConnectWallet from './ConnectWallet';
+import ConnectWallet from './Actions/ConnectWallet';
 
 const Header = () => {
   return (
