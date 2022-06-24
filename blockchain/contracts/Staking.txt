@@ -1,0 +1,75 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/interfaces/IERC721.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
+
+contract Staking {
+    using IERC721 for IERC721;
+    using IERC20 for IERC20;
+    
+    IERC721 public nft;
+    IERC20 public gems;
+    uint256 private totalSupply;
+    mapping(address => uint256) private balances;
+    // mapping(address => uint256) private staked;
+    
+    constructor(IERC721 _nft, IERC20 _gems) public {
+        this.nft = _nft;
+        this.gems = _gems;
+    }
+
+    function _totalSupply() public view returns (uint256) {
+        return totalSupply;
+    }
+
+    function balanceOf(address account) public view returns (uint256) {
+        return balances[account];
+    }
+
+    //  function stakedOf(address account) public view returns (uint256) {
+    //     return staked[account];
+    // }
+
+    function stake(uint256 nftId, uint256 gemsAmount) public {
+        // ? use require if we assume you have to stake atleast 1 gem to play
+        if (gemsAmount > 0) {
+            require(gems.balanceOf(msg.sender) >= gemsAmount);
+            totalSupply = _totalSupply.add(gemsAmount);
+            balances[msg.sender] = balances[msg.sender].add(gemsAmount);
+            gems.transfer(msg.sender, gemsAmount);
+        }
+        // TODO 
+        // handle nft staking
+        // nft.safeTransferFrom(msg.sender, address(this), nftId);
+        // gems.safeTransferFrom(msg.sender, address(this), gemsAmount);
+    }
+
+    // TODO unstake NFT, rewards gems back to sender
+    //     function unstake(nftId, gemsAmount) public {
+    // }
+    
+    
+    // function safeMint(address to) public {
+    //     uint256 nftId = nft.current();
+    //     nft.increment();
+    //     nft.mint(to, nftId);
+    // }
+    
+    // function safeBurn(uint256 nftId) public {
+    //     nft.burn(nftId);
+    // }
+    
+    // function safeTransferFrom(address from, address to, uint256 nftId) public {
+    //     nft.transferFrom(from, to, nftId);
+    // }
+    
+    // function safeTransferFrom(address from, address to, uint256 nftId, uint256 amount) public {
+    //     nft.transferFrom(from, to, nftId, amount);
+    // }
+    
+    // function safeTransferFrom(address from, address to, uint256 nftId, uint256 amount, bytes memory data) public {
+    //     nft.transferFrom(from, to, nftId, amount, data);
+    // }
+
+}
