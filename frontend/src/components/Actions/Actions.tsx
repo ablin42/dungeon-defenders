@@ -3,6 +3,8 @@ import Mint from './Mint';
 import Stake from './Stake';
 import ApproveNFT from './ApproveNFT';
 import Unstake from './Unstake';
+import ApproveGEMS from './ApproveGEMS';
+import BurnGEMS from './BurnGEMS';
 
 const ButtonsList = [
   {
@@ -51,8 +53,10 @@ const Actions: React.FC<ActionProps> = ({ userAddress }) => {
     <>
       <Mint userAddress={userAddress} />
       <Stake userAddress={userAddress} />
-      <ApproveNFT userAddress={userAddress} />
       <Unstake userAddress={userAddress} />
+      <ApproveNFT userAddress={userAddress} />
+      <ApproveGEMS userAddress={userAddress} />
+      <BurnGEMS userAddress={userAddress} />
       {ButtonsList.map((button) => (
         <button key={button.name} type="button" className={`btn btn-${button.variant} m-2`} onClick={button.action}>
           {button.name}
