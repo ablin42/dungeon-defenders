@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
-import { useContractFunction } from '@usedapp/core';
+import { useContractFunction, useCall } from '@usedapp/core';
+import { Contract } from '@ethersproject/contracts';
 import { NFT_ABI } from '../ABI/NFT';
 import { STAKE_ABI } from '../ABI/STAKE';
 import { GEMS_ABI } from '../ABI/GEMS';
@@ -16,8 +17,7 @@ const STAKEContractInterface = new ethers.utils.Interface(STAKE_ABI);
 const GEMSContractInterface = new ethers.utils.Interface(GEMS_ABI);
 const LOOTContractInterface = new ethers.utils.Interface(LOOT_ABI);
 
-// ? Forced to use any here due to a weird issue
-const NFTContract = new ethers.Contract(NFT_CONTRACT_ADDRESS, NFTContractInterface);
+const NFTContract = new Contract(NFT_CONTRACT_ADDRESS, NFTContractInterface);
 const STAKEContract = new ethers.Contract(STAKE_CONTRACT_ADDRESS, STAKEContractInterface);
 const GEMSContract = new ethers.Contract(GEMS_CONTRACT_ADDRESS, GEMSContractInterface);
 const LOOTContract = new ethers.Contract(LOOT_CONTRACT_ADDRESS, LOOTContractInterface);
@@ -30,8 +30,27 @@ export function useMint() {
 
 // Approve the NFT to be used by our STAKING contract
 export function useApprove() {
-  const { state, send } = useContractFunction(NFTContract, 'approve', {});
+  const { state, send } = useContractFunction(NFTContract, 'setApprovalForAll', {});
   return { state, send };
+}
+
+export function useAllowance() {
+  const { value, error } =
+    useCall(
+      NFT_CONTRACT_ADDRESS && {
+        contract: NFTContract,
+        method: 'isApprovedForAll',
+        args: [STAKE_CONTRACT_ADDRESS, '0x68897d3c09c5019bfa59fc863f9d86d4583861ef'],
+      },
+      { chainId: 5 },
+    ) ?? {};
+  console.log(value, error, '!!!!');
+
+  if (error) {
+    console.error(error.message);
+    return undefined;
+  }
+  return value?.[0];
 }
 
 // ? NFT contract should handle items that *could* be needed to level up
