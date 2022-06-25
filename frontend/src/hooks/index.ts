@@ -34,17 +34,16 @@ export function useApprove() {
   return { state, send };
 }
 
-export function useAllowance() {
+// Check if user has approved STAKING contract for all NFTs
+export function useAllowance(userAddress: string) {
   const { value, error } =
     useCall(
       NFT_CONTRACT_ADDRESS && {
         contract: NFTContract,
         method: 'isApprovedForAll',
-        args: [STAKE_CONTRACT_ADDRESS, '0x68897d3c09c5019bfa59fc863f9d86d4583861ef'],
+        args: [userAddress, STAKE_CONTRACT_ADDRESS],
       },
-      { chainId: 5 },
     ) ?? {};
-  console.log(value, error, '!!!!');
 
   if (error) {
     console.error(error.message);
