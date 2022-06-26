@@ -6,11 +6,13 @@ import "hardhat-gas-reporter";
 import "solidity-coverage";
 dotenv.config();
 
-const API_KEY = process.env.API_KEY;
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
+const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
 const config: any = {
   etherscan: {
-    apiKey: API_KEY,
+    apiKey: ETHERSCAN_API_KEY,
   },
   solidity: {
     compilers: [
@@ -32,23 +34,14 @@ const config: any = {
           },
         },
       },
-      {
-        version: "0.8.0",
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 200,
-          },
-        },
-      },
     ],
   },
   networks: {
     hardhat: {},
-    // ropsten: {
-    //   url: `https://eth-ropsten.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
-    //   accounts: [`${ROPSTEN_PRIVATE_KEY}`],
-    // },
+    goerli: {
+      url: `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
+      accounts: [`${PRIVATE_KEY}`],
+    },
   },
 };
 

@@ -11,11 +11,18 @@ import { DAppProvider } from '@usedapp/core';
 // import SingleNFT from "./routes/SingleNFT";
 import NotFound from './components/NotFound';
 
+const config = {
+  readOnlyChainId: 5,
+  readOnlyUrls: {
+    [5]: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+  },
+};
+
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <DAppProvider config={{}}>
+      <DAppProvider config={config}>
         <Routes>
           <Route path="/" element={<App />}>
             {/* <Route path="/" element={<AllNFT />} /> */}

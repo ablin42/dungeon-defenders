@@ -1,0 +1,75 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/interfaces/IERC721.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
+
+contract Staking {
+    using IERC721 for IERC721;
+    using IERC20 for IERC20;
+    
+    IERC721 public characterToken;
+    IERC20 public gemsToken;
+    uint256 private totalSupply;
+    mapping(address => uint256) private balances;
+    // mapping(address => uint256) private staked;
+    
+    constructor(IERC721 _characterToken, IERC20 _gemsToken) public {
+        this.characterToken = _characterToken;
+        this.gemsToken = _gemsToken;
+    }
+
+    function _totalSupply() public view returns (uint256) {
+        return totalSupply;
+    }
+
+    function balanceOf(address account) public view returns (uint256) {
+        return balances[account];
+    }
+
+    //  function stakedOf(address account) public view returns (uint256) {
+    //     return staked[account];
+    // }
+
+    function stake(uint256 characterTokenId, uint256 gemsAmount) public {
+        // ? use require if we assume you have to stake atleast 1 gem to play
+        if (gemsAmount > 0) {
+            require(gemsToken.balanceOf(msg.sender) >= gemsAmount);
+            totalSupply = _totalSupply.add(gemsAmount);
+            balances[msg.sender] = balances[msg.sender].add(gemsAmount);
+            gemsToken.transfer(msg.sender, gemsAmount);
+        }
+        // TODO 
+        // handle nft staking
+        // characterToken.safeTransferFrom(msg.sender, address(this), characterTokenId);
+        // gemsToken.safeTransferFrom(msg.sender, address(this), gemsAmount);
+    }
+
+    // TODO unstake NFT, rewards gems back to sender
+    //     function unstake(characterTokenId, gemsAmount) public {
+    // }
+    
+    
+    // function safeMint(address to) public {
+    //     uint256 characterTokenId = characterToken.current();
+    //     characterToken.increment();
+    //     characterToken.mint(to, characterTokenId);
+    // }
+    
+    // function safeBurn(uint256 characterTokenId) public {
+    //     characterToken.burn(characterTokenId);
+    // }
+    
+    // function safeTransferFrom(address from, address to, uint256 characterTokenId) public {
+    //     characterToken.transferFrom(from, to, characterTokenId);
+    // }
+    
+    // function safeTransferFrom(address from, address to, uint256 characterTokenId, uint256 amount) public {
+    //     characterToken.transferFrom(from, to, characterTokenId, amount);
+    // }
+    
+    // function safeTransferFrom(address from, address to, uint256 characterTokenId, uint256 amount, bytes memory data) public {
+    //     characterToken.transferFrom(from, to, characterTokenId, amount, data);
+    // }
+
+}

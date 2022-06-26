@@ -1,59 +1,132 @@
 import { ethers } from 'ethers';
-import { useContractFunction } from '@usedapp/core';
+import { useContractFunction, useCall } from '@usedapp/core';
+import { Contract } from '@ethersproject/contracts';
 import { NFT_ABI } from '../ABI/NFT';
-// import { STAKING_ABI } from '../ABI/STAKING';
-import { NFT_CONTRACT_ADDRESS /* STAKING_CONTRACT_ADDRESS */ } from '../constants';
+import { STAKE_ABI } from '../ABI/STAKE';
+import { GEMS_ABI } from '../ABI/GEMS';
+import { LOOT_ABI } from '../ABI/LOOT';
+import {
+  NFT_CONTRACT_ADDRESS,
+  STAKE_CONTRACT_ADDRESS,
+  GEMS_CONTRACT_ADDRESS,
+  LOOT_CONTRACT_ADDRESS,
+} from '../constants';
 
 const NFTContractInterface = new ethers.utils.Interface(NFT_ABI);
-// const STAKINGContractInterface = new ethers.utils.Interface(NFT_ABI);
+const STAKEContractInterface = new ethers.utils.Interface(STAKE_ABI);
+const GEMSContractInterface = new ethers.utils.Interface(GEMS_ABI);
+const LOOTContractInterface = new ethers.utils.Interface(LOOT_ABI);
 
-// ? Forced to use any here due to a weird issue
-const NFTContract: any = new ethers.Contract(NFT_CONTRACT_ADDRESS, NFTContractInterface);
-// const STAKINGContract: any = new ethers.Contract(STAKING_CONTRACT_ADDRESS, STAKINGContractInterface);
+const NFTContract = new Contract(NFT_CONTRACT_ADDRESS, NFTContractInterface);
+const STAKEContract = new ethers.Contract(STAKE_CONTRACT_ADDRESS, STAKEContractInterface);
+const GEMSContract = new ethers.Contract(GEMS_CONTRACT_ADDRESS, GEMSContractInterface);
+const LOOTContract = new ethers.Contract(LOOT_CONTRACT_ADDRESS, LOOTContractInterface);
 
+// NFT HOOKS
 export function useMint() {
   const { state, send } = useContractFunction(NFTContract, 'safeMint', {});
   return { state, send };
 }
 
-export function useBurn() {
-  const { state, send } = useContractFunction(NFTContract, 'safeBurn', {});
-  return { state, send };
-}
-
-export function useTransfer() {
-  const { state, send } = useContractFunction(NFTContract, 'transferFrom', {});
-  return { state, send };
-}
-
-// Approve the NFT to be used by our contract handling staking
+// Approve the NFT to be used by our STAKING contract
 export function useApprove() {
-  const { state, send } = useContractFunction(NFTContract, 'approve', {});
+  const { state, send } = useContractFunction(NFTContract, 'setApprovalForAll', {});
   return { state, send };
 }
 
-// Level up NFT
+// Check if user has approved STAKING contract for all NFTs
+export function useAllowance(userAddress: string) {
+  const { value, error } =
+    useCall(
+      userAddress && {
+        contract: NFTContract,
+        method: 'isApprovedForAll',
+        args: [userAddress, STAKE_CONTRACT_ADDRESS],
+      },
+    ) ?? {};
+
+  if (error) {
+    console.error(`Error fetching NFT allowance for ${userAddress}`, error.message);
+    return undefined;
+  }
+  return value?.[0];
+}
+
 // ? NFT contract should handle items that *could* be needed to level up
-export function useLevelUp() {
-  const { state, send } = useContractFunction(NFTContract, 'levelUp', {});
+// TODO Level up NFT
+// export function useLevelUp() {
+//   const { state, send } = useContractFunction(NFTContract, 'levelUp', {});
+//   return { state, send };
+// }
+
+// TODO Evolve the NFT
+// // ? NFT contract should handle items that *could* be needed to evolve
+// export function useEvolve() {
+//   const { state, send } = useContractFunction(NFTContract, 'evolve', {});
+//   return { state, send };
+// }
+
+// GEMS HOOKS
+// Approve GEMS to be used by our STAKING contract
+export function useApproveGEMS() {
+  const { state, send } = useContractFunction(GEMSContract, 'approve', {});
   return { state, send };
 }
 
-// Evolve the NFT
-// ? NFT contract should handle items that *could* be needed to evolve
-export function useEvolve() {
-  const { state, send } = useContractFunction(NFTContract, 'evolve', {});
+export function useBurnGEMS() {
+  const { state, send } = useContractFunction(GEMSContract, 'burn', {});
   return { state, send };
 }
 
-// TODO stake/unstake has to be implemented for the contract that will hold the NFT, not the nft contract itself like here
+// Check if user has approved STAKING contract for all NFTs
+export function useAllowanceGEMS(userAddress: string) {
+  const { value, error } =
+    useCall(
+      userAddress && {
+        contract: GEMSContract,
+        method: 'allowance',
+        args: [userAddress, STAKE_CONTRACT_ADDRESS],
+      },
+    ) ?? {};
+  const allowance = value ? parseInt(ethers.utils.formatEther(value[0])) : undefined;
+
+  if (error) {
+    console.error(`Error fetching gems allowance for ${userAddress}`, error.message);
+    return undefined;
+  }
+  return allowance;
+}
+
+// STAKING HOOKS
+
 // ? Stake should handle items sent aswell (eg burn 100 gems & stake your nft to play with bonus)
 export function useStake() {
-  const { state, send } = useContractFunction(NFTContract, 'stake', {}); //STAKINGContract
+  const { state, send } = useContractFunction(STAKEContract, 'stake', {});
   return { state, send };
 }
 
 export function useUnstake() {
-  const { state, send } = useContractFunction(NFTContract, 'unstake', {}); //STAKINGContract
+  const { state, send } = useContractFunction(STAKEContract, 'unstake', {});
   return { state, send };
 }
+
+// Check if user has an NFT staked
+export function useIsStaked(userAddress: string) {
+  const { value, error } =
+    useCall(
+      userAddress && {
+        contract: STAKEContract,
+        method: 'isStaking',
+        args: [userAddress],
+      },
+    ) ?? {};
+
+  if (error) {
+    console.error(`Error fetching staking status for ${userAddress}`, error.message);
+    return undefined;
+  }
+
+  return value?.[0];
+}
+
+// TODO LOOT HOOKS
