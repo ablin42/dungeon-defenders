@@ -48,8 +48,8 @@ contract DefenderFactory {
         return tokenId;
     }
 
-    function _generateRandomValueInBounds(bytes32 _name, uint _tokenId, string memory _key, uint8 _minValue, uint8 _maxValue) private view returns (uint8) {
-        uint rand = uint(keccak256(abi.encodePacked(_name, _key, toString(_tokenId), toString(block.timestamp))));
+    function _generateRandomValueInBounds(bytes32 _name, uint _tokenId, string memory _key, uint8 _minValue, uint8 _maxValue) private pure returns (uint8) {
+        uint rand = uint(keccak256(abi.encodePacked(_name, _key, toString(_tokenId))));
         return uint8(_minValue + rand % (_maxValue - _minValue));
     }
 
