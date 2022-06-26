@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 import "dotenv/config";
-import * as nftJson from "../artifacts/contracts/DungeonDefenders.sol/DungeonDefenders.json";
+import * as nftJson from "../artifacts/contracts/DungeonDefenders/DungeonDefenders.sol/DungeonDefenders.json";
 import * as gemJson from "../artifacts/contracts/Gems.sol/Gems.json";
 import * as stakingJson from "../artifacts/contracts/StakingNFT.sol/StakingContract.json";
 // import { connectToWallet } from "./utils";

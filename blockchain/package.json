@@ -1,5 +1,12 @@
 {
-  "name": "hardhat-project",
+  "name": "DungeonDefendersContracts",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:factory": "ts-node --files ./scripts/DungeonDefenders/deploy.ts",
+    "createDefender": "ts-node --files ./scripts/DungeonDefenders/createDefender.ts",
+    "getDefender": "ts-node --files ./scripts/DungeonDefenders/getDefender.ts"
+  },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.6",
     "@nomiclabs/hardhat-etherscan": "^3.1.0",
