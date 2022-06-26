@@ -1,6 +1,5 @@
 import React from 'react';
 import Mint from './Mint';
-import ApproveGEMS from './ApproveGEMS';
 import BurnGEMS from './BurnGEMS';
 import Play from './Play';
 
@@ -50,9 +49,13 @@ const Actions: React.FC<ActionProps> = ({ userAddress }) => {
   return (
     <>
       <Play userAddress={userAddress} />
+      <hr />
       <Mint userAddress={userAddress} />
-      <ApproveGEMS userAddress={userAddress} />
+      <hr />
       <BurnGEMS userAddress={userAddress} />
+
+      <hr />
+      <h3>Demo actions</h3>
       {ButtonsList.map((button) => (
         <button key={button.name} type="button" className={`btn btn-${button.variant} m-2`} onClick={button.action}>
           {button.name}
