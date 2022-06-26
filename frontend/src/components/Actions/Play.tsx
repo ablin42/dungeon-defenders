@@ -42,8 +42,7 @@ const ApproveNFT: React.FC<ActionProps> = ({ userAddress }) => {
   };
 
   const stake = async () => {
-    const amount = ethers.utils.parseEther('1');
-    sendStake(tokenId, amount);
+    sendStake(tokenId);
   };
 
   const unstake = async () => {

@@ -3,7 +3,7 @@ export const STAKE_ABI = [
     inputs: [
       {
         internalType: 'contract IERC721',
-        name: '_nft',
+        name: '_characterToken',
         type: 'address',
       },
     ],
@@ -18,12 +18,6 @@ export const STAKE_ABI = [
         internalType: 'address',
         name: 'owner',
         type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
       },
     ],
     name: 'Claimed',
@@ -42,12 +36,6 @@ export const STAKE_ABI = [
         indexed: false,
         internalType: 'uint256',
         name: 'tokenId',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'value',
         type: 'uint256',
       },
     ],
@@ -69,24 +57,37 @@ export const STAKE_ABI = [
         name: 'tokenId',
         type: 'uint256',
       },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'value',
-        type: 'uint256',
-      },
     ],
     name: 'NFTUnstaked',
     type: 'event',
   },
   {
     inputs: [],
-    name: 'nft',
+    name: 'characterToken',
     outputs: [
       {
         internalType: 'contract IERC721',
         name: '',
         type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_staker',
+        type: 'address',
+      },
+    ],
+    name: 'isStaking',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
       },
     ],
     stateMutability: 'view',
@@ -133,11 +134,6 @@ export const STAKE_ABI = [
         name: '_tokenId',
         type: 'uint256',
       },
-      {
-        internalType: 'uint256',
-        name: '_amount',
-        type: 'uint256',
-      },
     ],
     name: 'stake',
     outputs: [],
@@ -161,31 +157,7 @@ export const STAKE_ABI = [
       },
       {
         internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
         name: 'timestamp',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    name: 'stakingTime',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
         type: 'uint256',
       },
     ],

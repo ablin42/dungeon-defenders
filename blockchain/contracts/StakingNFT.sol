@@ -7,50 +7,52 @@ import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract StakingContract is IERC721Receiver {
-    IERC721 public nft;
+    IERC721 public characterToken;
 
     struct Stake {
         uint256 tokenId;
-        uint256 amount;
         uint256 timestamp;
     }
 
-    event NFTStaked(address owner, uint256 tokenId, uint256 value);
-    event NFTUnstaked(address owner, uint256 tokenId, uint256 value);
-    event Claimed(address owner, uint256 amount);
+    event NFTStaked(address owner, uint256 tokenId);
+    event NFTUnstaked(address owner, uint256 tokenId);
+    event Claimed(address owner);
 
     // map staker address to stake details
     mapping(address => Stake) public stakes;
 
     // map staker total staking time
-    mapping(address => uint256) public stakingTime;
 
-    constructor(IERC721 _nft) {
-        nft = _nft;
+    modifier onlyOneStake(address _staker) {
+        require(this.isStaking(_staker), "Only one stake is allowed at once");
+        _;
     }
 
-    function stake(uint256 _tokenId, uint256 _amount) external {
-        stakes[msg.sender] = Stake(_tokenId, _amount, block.timestamp);
-        nft.safeTransferFrom(msg.sender, address(this), _tokenId);
-        emit NFTStaked(msg.sender, _tokenId, _amount);
+    constructor(IERC721 _characterToken) {
+        characterToken = _characterToken;
+    }
+
+    function isStaking(address _staker) public view returns (bool) {
+        return stakes[_staker].timestamp == 0;
+    }
+
+    function stake(uint256 _tokenId) external onlyOneStake(msg.sender) {
+        stakes[msg.sender] = Stake(_tokenId, block.timestamp);
+        characterToken.safeTransferFrom(msg.sender, address(this), _tokenId);
+        emit NFTStaked(msg.sender, _tokenId);
     }
 
     function unstake() external {
-        nft.safeTransferFrom(
+        characterToken.safeTransferFrom(
             address(this),
             msg.sender,
             stakes[msg.sender].tokenId
         );
-        stakingTime[msg.sender] += (block.timestamp -
-            stakes[msg.sender].timestamp);
-        emit NFTUnstaked(
-            msg.sender,
-            stakes[msg.sender].tokenId,
-            stakes[msg.sender].amount
-        );
+        emit NFTUnstaked(msg.sender, stakes[msg.sender].tokenId);
         delete stakes[msg.sender];
     }
 
+    // https://docs.openzeppelin.com/contracts/3.x/api/token/erc721#IERC721Receiver
     function onERC721Received(
         address,
         address,

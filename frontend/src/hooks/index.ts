@@ -116,18 +116,17 @@ export function useIsStaked(userAddress: string) {
     useCall(
       userAddress && {
         contract: STAKEContract,
-        method: 'stakes',
+        method: 'isStaking',
         args: [userAddress],
       },
     ) ?? {};
-
-  const isStaked = value?.[1] != 0 ? true : false;
 
   if (error) {
     console.error(`Error fetching staking status for ${userAddress}`, error.message);
     return undefined;
   }
-  return isStaked;
+
+  return value?.[0];
 }
 
 // TODO LOOT HOOKS

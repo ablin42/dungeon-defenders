@@ -8,15 +8,15 @@ contract Staking {
     using IERC721 for IERC721;
     using IERC20 for IERC20;
     
-    IERC721 public nft;
-    IERC20 public gems;
+    IERC721 public characterToken;
+    IERC20 public gemsToken;
     uint256 private totalSupply;
     mapping(address => uint256) private balances;
     // mapping(address => uint256) private staked;
     
-    constructor(IERC721 _nft, IERC20 _gems) public {
-        this.nft = _nft;
-        this.gems = _gems;
+    constructor(IERC721 _characterToken, IERC20 _gemsToken) public {
+        this.characterToken = _characterToken;
+        this.gemsToken = _gemsToken;
     }
 
     function _totalSupply() public view returns (uint256) {
@@ -31,45 +31,45 @@ contract Staking {
     //     return staked[account];
     // }
 
-    function stake(uint256 nftId, uint256 gemsAmount) public {
+    function stake(uint256 characterTokenId, uint256 gemsAmount) public {
         // ? use require if we assume you have to stake atleast 1 gem to play
         if (gemsAmount > 0) {
-            require(gems.balanceOf(msg.sender) >= gemsAmount);
+            require(gemsToken.balanceOf(msg.sender) >= gemsAmount);
             totalSupply = _totalSupply.add(gemsAmount);
             balances[msg.sender] = balances[msg.sender].add(gemsAmount);
-            gems.transfer(msg.sender, gemsAmount);
+            gemsToken.transfer(msg.sender, gemsAmount);
         }
         // TODO 
         // handle nft staking
-        // nft.safeTransferFrom(msg.sender, address(this), nftId);
-        // gems.safeTransferFrom(msg.sender, address(this), gemsAmount);
+        // characterToken.safeTransferFrom(msg.sender, address(this), characterTokenId);
+        // gemsToken.safeTransferFrom(msg.sender, address(this), gemsAmount);
     }
 
     // TODO unstake NFT, rewards gems back to sender
-    //     function unstake(nftId, gemsAmount) public {
+    //     function unstake(characterTokenId, gemsAmount) public {
     // }
     
     
     // function safeMint(address to) public {
-    //     uint256 nftId = nft.current();
-    //     nft.increment();
-    //     nft.mint(to, nftId);
+    //     uint256 characterTokenId = characterToken.current();
+    //     characterToken.increment();
+    //     characterToken.mint(to, characterTokenId);
     // }
     
-    // function safeBurn(uint256 nftId) public {
-    //     nft.burn(nftId);
+    // function safeBurn(uint256 characterTokenId) public {
+    //     characterToken.burn(characterTokenId);
     // }
     
-    // function safeTransferFrom(address from, address to, uint256 nftId) public {
-    //     nft.transferFrom(from, to, nftId);
+    // function safeTransferFrom(address from, address to, uint256 characterTokenId) public {
+    //     characterToken.transferFrom(from, to, characterTokenId);
     // }
     
-    // function safeTransferFrom(address from, address to, uint256 nftId, uint256 amount) public {
-    //     nft.transferFrom(from, to, nftId, amount);
+    // function safeTransferFrom(address from, address to, uint256 characterTokenId, uint256 amount) public {
+    //     characterToken.transferFrom(from, to, characterTokenId, amount);
     // }
     
-    // function safeTransferFrom(address from, address to, uint256 nftId, uint256 amount, bytes memory data) public {
-    //     nft.transferFrom(from, to, nftId, amount, data);
+    // function safeTransferFrom(address from, address to, uint256 characterTokenId, uint256 amount, bytes memory data) public {
+    //     characterToken.transferFrom(from, to, characterTokenId, amount, data);
     // }
 
 }
