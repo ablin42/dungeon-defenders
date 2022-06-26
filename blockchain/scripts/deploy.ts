@@ -16,7 +16,8 @@ async function main() {
     gemJson.bytecode,
     signer
   );
-  const tokenContract = await TokenFactory.deploy();
+  const totalSupply = ethers.utils.parseEther("100000000");
+  const tokenContract = await TokenFactory.deploy(signer.address, totalSupply);
   console.log("Awaiting confirmations");
   await tokenContract.deployed();
   console.log("Completed");

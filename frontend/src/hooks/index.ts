@@ -38,7 +38,7 @@ export function useApprove() {
 export function useAllowance(userAddress: string) {
   const { value, error } =
     useCall(
-      NFT_CONTRACT_ADDRESS && {
+      userAddress && {
         contract: NFTContract,
         method: 'isApprovedForAll',
         args: [userAddress, STAKE_CONTRACT_ADDRESS],
@@ -46,7 +46,7 @@ export function useAllowance(userAddress: string) {
     ) ?? {};
 
   if (error) {
-    console.error(error.message);
+    console.error(`Error fetching NFT allowance for ${userAddress}`, error.message);
     return undefined;
   }
   return value?.[0];
@@ -78,6 +78,25 @@ export function useBurnGEMS() {
   return { state, send };
 }
 
+// Check if user has approved STAKING contract for all NFTs
+export function useAllowanceGEMS(userAddress: string) {
+  const { value, error } =
+    useCall(
+      userAddress && {
+        contract: GEMSContract,
+        method: 'allowance',
+        args: [userAddress, STAKE_CONTRACT_ADDRESS],
+      },
+    ) ?? {};
+  const allowance = value ? parseInt(ethers.utils.formatEther(value[0])) : undefined;
+
+  if (error) {
+    console.error(`Error fetching gems allowance for ${userAddress}`, error.message);
+    return undefined;
+  }
+  return allowance;
+}
+
 // STAKING HOOKS
 
 // ? Stake should handle items sent aswell (eg burn 100 gems & stake your nft to play with bonus)
@@ -89,6 +108,26 @@ export function useStake() {
 export function useUnstake() {
   const { state, send } = useContractFunction(STAKEContract, 'unstake', {});
   return { state, send };
+}
+
+// Check if user has an NFT staked
+export function useIsStaked(userAddress: string) {
+  const { value, error } =
+    useCall(
+      userAddress && {
+        contract: STAKEContract,
+        method: 'stakes',
+        args: [userAddress],
+      },
+    ) ?? {};
+
+  const isStaked = value?.[1] != 0 ? true : false;
+
+  if (error) {
+    console.error(`Error fetching staking status for ${userAddress}`, error.message);
+    return undefined;
+  }
+  return isStaked;
 }
 
 // TODO LOOT HOOKS

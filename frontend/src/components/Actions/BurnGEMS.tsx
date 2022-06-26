@@ -1,24 +1,40 @@
-import { ethers } from 'ethers';
+import { ethers, BigNumberish } from 'ethers';
 import React, { useEffect, useState } from 'react';
-import { useBurnGEMS } from '../../hooks/index';
+import { useBurnGEMS, useAllowanceGEMS } from '../../hooks/index';
 
 type ActionProps = {
   userAddress: string;
 };
 
-const ApproveGEMS: React.FC<ActionProps> = ({ userAddress }) => {
+const BurnGems: React.FC<ActionProps> = ({ userAddress }) => {
+  const [amount, setAmount] = useState<BigNumberish>('0');
   const { state, send: sendBurn } = useBurnGEMS();
+  const allowance = useAllowanceGEMS(userAddress);
 
   const burn = async () => {
-    const amount = ethers.utils.parseEther('1');
     sendBurn(amount);
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setAmount(ethers.utils.parseEther(value));
+  };
+
   return (
-    <button onClick={() => burn()} className="btn btn-lg btn-primary">
-      Burn GEMS
-    </button>
+    <>
+      <input
+        type="number"
+        className="form-control"
+        placeholder="10000"
+        aria-label="amount to burn"
+        onChange={(e) => handleChange(e)}
+        value={parseInt(ethers.utils.formatEther(amount))}
+      />
+      <button onClick={() => burn()} className="btn btn-lg btn-primary">
+        Burn GEMS (Allowance: {allowance})
+      </button>
+    </>
   );
 };
 
-export default ApproveGEMS;
+export default BurnGems;

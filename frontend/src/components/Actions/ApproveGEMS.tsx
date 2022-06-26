@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import { useApproveGEMS } from '../../hooks/index';
-import { STAKE_CONTRACT_ADDRESS } from '../../constants';
+import { STAKE_CONTRACT_ADDRESS, GEMS_TOTAL_SUPPLY } from '../../constants';
 
 type ActionProps = {
   userAddress: string;
@@ -11,8 +11,7 @@ const ApproveGEMS: React.FC<ActionProps> = ({ userAddress }) => {
   const { state, send: sendApprove } = useApproveGEMS();
 
   const approve = async () => {
-    const amount = ethers.utils.parseEther('1');
-    sendApprove(STAKE_CONTRACT_ADDRESS, amount);
+    sendApprove(STAKE_CONTRACT_ADDRESS, GEMS_TOTAL_SUPPLY);
   };
 
   return (
