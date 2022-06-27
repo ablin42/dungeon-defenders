@@ -6,9 +6,8 @@ import "@openzeppelin/contracts/interfaces/IERC721.sol";
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Staking is IERC721Receiver {
+contract Staking is IERC721Receiver, Ownable {
     // TODO natspec
-    // TODO emergencyWithdrawal, allocateRewards
     IERC721 public characterToken;
     IERC20 public gemsToken;
     uint256 public STAKING_FEE = 100 * 10**18;
@@ -16,7 +15,9 @@ contract Staking is IERC721Receiver {
     struct Stake {
         uint256 tokenId;
         uint256 gemsAmount;
+        uint256 rewardedGemsAmount;
         uint256 timestamp;
+        bool isClaimable;
         bool isInitialized;
     }
 
@@ -30,7 +31,7 @@ contract Staking is IERC721Receiver {
     // Allows only one NFT staked at a time per user
     modifier onlyOneStake() {
         require(
-            this.isStaking(msg.sender),
+            !isStaking(msg.sender),
             "Already staking: Only one character per address can be staked at a time"
         );
         _;
@@ -64,7 +65,14 @@ contract Staking is IERC721Receiver {
         onlyOneStake
         minimumAmount(gemsAmount)
     {
-        stakes[msg.sender] = Stake(_tokenId, gemsAmount, block.timestamp, true);
+        stakes[msg.sender] = Stake(
+            _tokenId,
+            gemsAmount,
+            0,
+            block.timestamp,
+            false,
+            true
+        );
         gemsToken.transferFrom(msg.sender, address(this), gemsAmount);
         characterToken.safeTransferFrom(msg.sender, address(this), _tokenId);
         emit NFTStaked(msg.sender, _tokenId, gemsAmount);
@@ -72,9 +80,11 @@ contract Staking is IERC721Receiver {
 
     // Might need reentrancy guard here too
     function unstake() external {
-        // TODO: here we would need to wait for the game to close the game +
-        // TODO: call the contract & call allocateRewards
-        uint256 rewardedAmount = STAKING_FEE;
+        require(
+            stakes[msg.sender].isClaimable,
+            "Not claimable: You need to wait for the game to end"
+        );
+        uint256 rewardedAmount = stakes[msg.sender].rewardedGemsAmount;
         uint256 tokenId = stakes[msg.sender].tokenId;
         delete stakes[msg.sender];
 
@@ -82,6 +92,38 @@ contract Staking is IERC721Receiver {
         characterToken.safeTransferFrom(address(this), msg.sender, tokenId);
 
         emit NFTUnstaked(msg.sender, tokenId, rewardedAmount);
+    }
+
+    // TODO later, set NFT loot rewards here
+    // Close the game and allocate rewards
+    function allocateRewards(uint256 gemsAmount, address player)
+        external
+        onlyOwner
+    {
+        require(
+            isStaking(player),
+            "Not staking: player needs to stake before allocating rewards"
+        );
+        stakes[player].isClaimable = true;
+        stakes[player].rewardedGemsAmount = gemsAmount;
+    }
+
+    // Withdraw your funds after 30mn if the game didn't close due to an unexpected issue
+    function emergencyWithdraw() external {
+        require(
+            stakes[msg.sender].isInitialized,
+            "Not Initialized: You need to start a new game"
+        );
+        require(
+            block.timestamp > stakes[msg.sender].timestamp + 30 minutes,
+            "Too early: You can only withdraw after 30 minutes"
+        );
+        uint256 rewardedAmount = STAKING_FEE;
+        uint256 tokenId = stakes[msg.sender].tokenId;
+        delete stakes[msg.sender];
+
+        gemsToken.transfer(msg.sender, rewardedAmount);
+        characterToken.safeTransferFrom(address(this), msg.sender, tokenId);
     }
 
     // https://docs.openzeppelin.com/contracts/3.x/api/token/erc721#IERC721Receiver
