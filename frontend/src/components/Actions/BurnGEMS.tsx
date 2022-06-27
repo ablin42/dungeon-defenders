@@ -22,17 +22,20 @@ const BurnGems: React.FC<ActionProps> = ({ userAddress }) => {
 
   return (
     <>
-      <input
-        type="number"
-        className="form-control"
-        placeholder="10000"
-        aria-label="amount to burn"
-        onChange={(e) => handleChange(e)}
-        value={parseInt(ethers.utils.formatEther(amount))}
-      />
-      <button onClick={() => burn()} className="btn btn-lg btn-primary">
-        Burn GEMS (Allowance: {allowance})
-      </button>
+      <div className="input-group mb-3">
+        <input
+          type="number"
+          className="form-control"
+          placeholder="10000"
+          min={0}
+          aria-label="amount to burn"
+          onChange={(e) => handleChange(e)}
+          value={parseInt(ethers.utils.formatEther(amount))}
+        />
+        <button onClick={() => burn()} className="btn btn-lg btn-danger">
+          Burn GEMS
+        </button>
+      </div>
     </>
   );
 };
