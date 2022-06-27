@@ -7,8 +7,10 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { DAppProvider } from '@usedapp/core';
-// import AllNFT from "./routes/AllNFT";
-// import SingleNFT from "./routes/SingleNFT";
+import AllNFT from './routes/AllNFT';
+import Home from './routes/Home';
+import UserNFT from './routes/UserNFT';
+import SingleNFT from './routes/SingleNFT';
 import NotFound from './components/NotFound';
 
 const config = {
@@ -25,9 +27,11 @@ root.render(
       <DAppProvider config={config}>
         <Routes>
           <Route path="/" element={<App />}>
-            {/* <Route path="/" element={<AllNFT />} /> */}
-            {/* <Route path="/NFT" element={<AllNFT />} /> */}
-            {/* <Route path="/NFT/:nftId" element={<SingleNFT />} /> */}
+            <Route path="/" element={<Home />} />
+            <Route path="/NFT" element={<AllNFT />} />
+            <Route path="/NFT/user/:userId" element={<UserNFT />} />
+            <Route path="/NFT/:nftId" element={<SingleNFT />} />
+
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

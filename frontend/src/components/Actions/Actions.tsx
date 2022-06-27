@@ -1,5 +1,4 @@
 import React from 'react';
-import Mint from './Mint';
 import BurnGEMS from './BurnGEMS';
 import Play from './Play';
 
@@ -24,9 +23,8 @@ type ActionProps = {
 const Actions: React.FC<ActionProps> = ({ userAddress }) => {
   return (
     <>
-      <div className="col-8 offset-2">
-        <Mint userAddress={userAddress} />
-        <h1 className="fw-light mt-5">Start Playing</h1>
+      <div className="col-8 offset-2 pt-5 pb-5 mt-5">
+        <h1 className="fw-light">Start Playing</h1>
         <Play userAddress={userAddress} />
         <h1 className="fw-light mt-5">Burn some Gems</h1>
         <BurnGEMS userAddress={userAddress} />
