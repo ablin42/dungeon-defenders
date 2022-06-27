@@ -3,9 +3,11 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
-    "deploy:factory": "ts-node --files ./scripts/DungeonDefenders/deploy.ts",
+    "deploy:dds": "ts-node --files ./scripts/DungeonDefenders/deploy.ts",
     "createDefender": "ts-node --files ./scripts/DungeonDefenders/createDefender.ts",
-    "getDefender": "ts-node --files ./scripts/DungeonDefenders/getDefender.ts"
+    "getDefender": "ts-node --files ./scripts/DungeonDefenders/getDefender.ts",
+    "gainExperience": "ts-node --files ./scripts/DungeonDefenders/gainExperience.ts",
+    "getTokenUri": "ts-node --files ./scripts/DungeonDefenders/getTokenUri.ts"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.6",
