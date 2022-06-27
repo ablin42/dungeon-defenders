@@ -20,9 +20,6 @@ const App = () => {
             <div>
               {account ? (
                 <>
-                  {account}
-                  <br />
-                  <br />
                   <Actions userAddress={account} />
                 </>
               ) : (

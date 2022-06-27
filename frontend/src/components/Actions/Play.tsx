@@ -18,7 +18,7 @@ type ActionProps = {
 const Play: React.FC<ActionProps> = ({ userAddress }) => {
   const [isPending, setIsPending] = useState(false);
   const [tokenId, setTokenid] = useState(0);
-  const [gemsAmount, setGemsAmount] = useState('0');
+  const [gemsAmount, setGemsAmount] = useState('100');
   const { state: approveNFTState, send: sendApproveNFT } = useApprove();
   const { state: approveGEMSState, send: sendApproveGEMS } = useApproveGEMS();
   const { state: stakeState, send: sendStake } = useStake();
@@ -72,7 +72,7 @@ const Play: React.FC<ActionProps> = ({ userAddress }) => {
 
   if (isPending) {
     return (
-      <button className="btn btn-lg btn-warning">
+      <button className="btn btn-lg btn-success">
         <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         <span className="sr-only">Tx Pending...</span>
       </button>
@@ -82,46 +82,51 @@ const Play: React.FC<ActionProps> = ({ userAddress }) => {
   return (
     <>
       {!NFTallowance && (
-        <button onClick={() => approveNFT()} className="btn btn-lg btn-warning">
+        <button onClick={() => approveNFT()} className="btn btn-lg btn-success">
           Approve NFTs
         </button>
       )}
       {!GEMSallowance && NFTallowance && (
-        <button onClick={() => approveGEMS()} className="btn btn-lg btn-warning">
+        <button onClick={() => approveGEMS()} className="btn btn-lg btn-success">
           Approve GEMS
         </button>
       )}
       {NFTallowance && GEMSallowance && !staked ? (
         <>
-          <div className="form-group">
-            <label htmlFor="tokenId">Token ID</label>
-            <input
-              type="number"
-              className="form-control"
-              placeholder="1337"
-              aria-label="Token #ID"
-              onChange={(e) => setTokenid(parseInt(e.target.value))}
-              value={tokenId}
-            />
-            <label htmlFor="tokenId">Gems Amount (min 100)</label>
+          <div className="form-group text-start">
+            <label htmlFor="gemsAmount">Gems Amount (min. 100)</label>
             <input
               type="number"
               className="form-control"
               placeholder="100"
-              min="100"
+              min={100}
               aria-label="Gems Amount"
               onChange={(e) => setGemsAmount(e.target.value)}
               value={gemsAmount}
             />
+
+            {/* Later on, you'll see your NFT & select them instead of inputing their ID*/}
+            <label htmlFor="tokenId">Token ID</label>
+            <div className="input-group">
+              <input
+                type="number"
+                className="form-control"
+                placeholder="1337"
+                aria-label="Token #ID"
+                onChange={(e) => setTokenid(parseInt(e.target.value))}
+                value={tokenId}
+              />
+
+              <button onClick={() => stake()} className="btn btn-lg btn-success">
+                Stake & Play
+              </button>
+            </div>
           </div>
-          <button onClick={() => stake()} className="btn btn-lg btn-warning">
-            Stake
-          </button>
         </>
       ) : null}
       {NFTallowance && GEMSallowance && staked ? (
-        <button onClick={() => unstake()} className="btn btn-lg btn-warning">
-          Unstake
+        <button onClick={() => unstake()} className="btn btn-lg btn-success">
+          Claim
         </button>
       ) : null}
     </>
