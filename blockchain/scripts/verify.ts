@@ -1,9 +1,9 @@
 const hre = require("hardhat");
 
 async function main() {
-  const GEMS = "0xc172ff167a33de36bccfFC817c65c073f13c4ff5";
-  const NFT = "0xE4973222EcC5d57c1Ac099c212fCB32d279B35C6";
-  const STAKING = "0x3D5D40bD1Fb1FEAec28488741E1a25dA13DD1227";
+  const GEMS = "0x514D1Dc5eD43312dc1E558384cFa34D26D56263d";
+  const NFT = "0xaE2E510fA01ceD5B5ec868AD35Dd670eD0Fcc4cE";
+  const STAKING = "0x5FD57A1188471660e9fF52169ba447525BaE5fDb";
 
   // VERIFY GEMS
   const verifyGems = hre.run("verify:verify", {
@@ -20,7 +20,7 @@ async function main() {
   // VERIFY STAKING
   const verifyStaking = hre.run("verify:verify", {
     address: STAKING,
-    constructorArguments: [NFT],
+    constructorArguments: [NFT, GEMS],
   });
 
   await Promise.all([verifyGems, verifyNFT, verifyStaking]);

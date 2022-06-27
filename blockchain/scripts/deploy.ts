@@ -2,7 +2,7 @@ import { ethers } from "hardhat";
 import "dotenv/config";
 import * as nftJson from "../artifacts/contracts/DungeonDefenders/DungeonDefenders.sol/DungeonDefenders.json";
 import * as gemJson from "../artifacts/contracts/Gems.sol/Gems.json";
-import * as stakingJson from "../artifacts/contracts/StakingNFT.sol/StakingContract.json";
+import * as stakingJson from "../artifacts/contracts/Staking.sol/Staking.json";
 // import { connectToWallet } from "./utils";
 
 async function main() {
@@ -16,8 +16,7 @@ async function main() {
     gemJson.bytecode,
     signer
   );
-  const totalSupply = ethers.utils.parseEther("100000000");
-  const tokenContract = await TokenFactory.deploy(signer.address, totalSupply);
+  const tokenContract = await TokenFactory.deploy();
   console.log("Awaiting confirmations");
   await tokenContract.deployed();
   console.log("Completed");
@@ -43,7 +42,10 @@ async function main() {
     stakingJson.bytecode,
     signer
   );
-  const stakingContract = await stakingFactory.deploy(nftContract.address);
+  const stakingContract = await stakingFactory.deploy(
+    nftContract.address,
+    tokenContract.address
+  );
   console.log("Awaiting confirmations");
   await stakingContract.deployed();
   console.log("Completed");

@@ -1,26 +1,42 @@
 import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
-import { useStake, useUnstake, useApprove, useAllowance, useIsStaked } from '../../hooks/index';
-import { STAKE_CONTRACT_ADDRESS, STATUS_TYPES } from '../../constants';
+import {
+  useStake,
+  useUnstake,
+  useApprove,
+  useAllowance,
+  useAllowanceGEMS,
+  useIsStaked,
+  useApproveGEMS,
+} from '../../hooks/index';
+import { STAKE_CONTRACT_ADDRESS, STATUS_TYPES, GEMS_TOTAL_SUPPLY } from '../../constants';
 
 type ActionProps = {
   userAddress: string;
 };
 
-const ApproveNFT: React.FC<ActionProps> = ({ userAddress }) => {
+const Play: React.FC<ActionProps> = ({ userAddress }) => {
   const [isPending, setIsPending] = useState(false);
   const [tokenId, setTokenid] = useState(0);
-  const { state: approveState, send: sendApprove } = useApprove();
+  const [gemsAmount, setGemsAmount] = useState('0');
+  const { state: approveNFTState, send: sendApproveNFT } = useApprove();
+  const { state: approveGEMSState, send: sendApproveGEMS } = useApproveGEMS();
   const { state: stakeState, send: sendStake } = useStake();
   const { state: unstakeState, send: sendUnstake } = useUnstake();
-  const [STATUS, setSTATUS] = useState<Array<string>>([approveState.status, stakeState.status, unstakeState.status]);
-  const allowance = useAllowance(userAddress);
+  const [STATUS, setSTATUS] = useState<Array<string>>([
+    approveNFTState.status,
+    approveGEMSState.status,
+    stakeState.status,
+    unstakeState.status,
+  ]);
+  const NFTallowance = useAllowance(userAddress);
+  const GEMSallowance = useAllowanceGEMS(userAddress);
   const staked = useIsStaked(userAddress);
 
   useEffect(() => {
-    const newSTATUS = [approveState.status, stakeState.status, unstakeState.status];
+    const newSTATUS = [approveNFTState.status, approveGEMSState.status, stakeState.status, unstakeState.status];
     setSTATUS(newSTATUS);
-  }, [approveState, stakeState, unstakeState]);
+  }, [approveNFTState, approveGEMSState, stakeState, unstakeState]);
 
   useEffect(() => {
     setIsPending(STATUS.includes(STATUS_TYPES.PENDING) || STATUS.includes(STATUS_TYPES.MINING));
@@ -37,53 +53,79 @@ const ApproveNFT: React.FC<ActionProps> = ({ userAddress }) => {
     }
   }, [STATUS]);
 
-  const approve = async () => {
-    sendApprove(STAKE_CONTRACT_ADDRESS, true);
+  const approveNFT = async () => {
+    sendApproveNFT(STAKE_CONTRACT_ADDRESS, true);
+  };
+
+  const approveGEMS = async () => {
+    sendApproveGEMS(STAKE_CONTRACT_ADDRESS, GEMS_TOTAL_SUPPLY);
   };
 
   const stake = async () => {
-    sendStake(tokenId);
+    const formattedGemsAmount = ethers.utils.parseEther(gemsAmount);
+    sendStake(tokenId, formattedGemsAmount);
   };
 
   const unstake = async () => {
     sendUnstake();
   };
 
+  if (isPending) {
+    return (
+      <button className="btn btn-lg btn-warning">
+        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <span className="sr-only">Tx Pending...</span>
+      </button>
+    );
+  }
+
   return (
     <>
-      {isPending && (
-        <button onClick={() => approve()} className="btn btn-lg btn-warning">
-          <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          <span className="sr-only">Tx Pending...</span>
+      {!NFTallowance && (
+        <button onClick={() => approveNFT()} className="btn btn-lg btn-warning">
+          Approve NFTs
         </button>
       )}
-      {!allowance && !isPending && (
-        <button onClick={() => approve()} className="btn btn-lg btn-warning">
-          Approve
+      {!GEMSallowance && NFTallowance && (
+        <button onClick={() => approveGEMS()} className="btn btn-lg btn-warning">
+          Approve GEMS
         </button>
       )}
-      {allowance && !staked && !isPending && (
+      {NFTallowance && GEMSallowance && !staked ? (
         <>
-          <input
-            type="number"
-            className="form-control"
-            placeholder="1337"
-            aria-label="Token #ID"
-            onChange={(e) => setTokenid(parseInt(e.target.value))}
-            value={tokenId}
-          />
+          <div className="form-group">
+            <label htmlFor="tokenId">Token ID</label>
+            <input
+              type="number"
+              className="form-control"
+              placeholder="1337"
+              aria-label="Token #ID"
+              onChange={(e) => setTokenid(parseInt(e.target.value))}
+              value={tokenId}
+            />
+            <label htmlFor="tokenId">Gems Amount (min 100)</label>
+            <input
+              type="number"
+              className="form-control"
+              placeholder="100"
+              min="100"
+              aria-label="Gems Amount"
+              onChange={(e) => setGemsAmount(e.target.value)}
+              value={gemsAmount}
+            />
+          </div>
           <button onClick={() => stake()} className="btn btn-lg btn-warning">
             Stake
           </button>
         </>
-      )}
-      {allowance && staked && !isPending && (
+      ) : null}
+      {NFTallowance && GEMSallowance && staked ? (
         <button onClick={() => unstake()} className="btn btn-lg btn-warning">
           Unstake
         </button>
-      )}
+      ) : null}
     </>
   );
 };
 
-export default ApproveNFT;
+export default Play;

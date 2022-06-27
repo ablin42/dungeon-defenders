@@ -6,9 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Gems is ERC20, ERC20Burnable, Ownable {
-    constructor() ERC20("Gems", "GEMS") {}
-
-    function mint(address to, uint256 amount) public onlyOwner {
-        _mint(to, amount);
+    constructor() ERC20("Dungeon Gems", "GEMS") {
+        _mint(msg.sender, 100000000 * 10**18);
     }
 }

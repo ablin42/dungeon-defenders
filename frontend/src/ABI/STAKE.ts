@@ -6,6 +6,11 @@ export const STAKE_ABI = [
         name: '_characterToken',
         type: 'address',
       },
+      {
+        internalType: 'contract IERC20',
+        name: '_gemsToken',
+        type: 'address',
+      },
     ],
     stateMutability: 'nonpayable',
     type: 'constructor',
@@ -38,6 +43,12 @@ export const STAKE_ABI = [
         name: 'tokenId',
         type: 'uint256',
       },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'gemsAmount',
+        type: 'uint256',
+      },
     ],
     name: 'NFTStaked',
     type: 'event',
@@ -57,9 +68,28 @@ export const STAKE_ABI = [
         name: 'tokenId',
         type: 'uint256',
       },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'rewardedAmount',
+        type: 'uint256',
+      },
     ],
     name: 'NFTUnstaked',
     type: 'event',
+  },
+  {
+    inputs: [],
+    name: 'STAKING_FEE',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [],
@@ -67,6 +97,38 @@ export const STAKE_ABI = [
     outputs: [
       {
         internalType: 'contract IERC721',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_staker',
+        type: 'address',
+      },
+    ],
+    name: 'gemsBalance',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'gemsToken',
+    outputs: [
+      {
+        internalType: 'contract IERC20',
         name: '',
         type: 'address',
       },
@@ -134,6 +196,11 @@ export const STAKE_ABI = [
         name: '_tokenId',
         type: 'uint256',
       },
+      {
+        internalType: 'uint256',
+        name: 'gemsAmount',
+        type: 'uint256',
+      },
     ],
     name: 'stake',
     outputs: [],
@@ -153,6 +220,11 @@ export const STAKE_ABI = [
       {
         internalType: 'uint256',
         name: 'tokenId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'gemsAmount',
         type: 'uint256',
       },
       {
