@@ -1,9 +1,8 @@
-import { ethers } from "hardhat";
 import "dotenv/config";
 import * as factoryJson from "../../artifacts/contracts/DungeonDefenders/DefenderFactory.sol/DefenderFactory.json";
 import { DefenderFactory } from "../../typechain";
 import { connectToWallet } from "../utils";
-import { Contract } from "ethers";
+import { Contract, ethers } from "ethers";
 
 /**
  * Retrieve a defender by index
