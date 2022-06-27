@@ -17,6 +17,7 @@ contract Staking is IERC721Receiver {
         uint256 tokenId;
         uint256 gemsAmount;
         uint256 timestamp;
+        bool isInitialized;
     }
 
     event NFTStaked(address owner, uint256 tokenId, uint256 gemsAmount);
@@ -25,19 +26,20 @@ contract Staking is IERC721Receiver {
 
     // Map staker address to stake details
     mapping(address => Stake) public stakes;
-    // Easier to manage than verifying the content of the Stake Struct which can be tricky due to deletion
-    mapping(address => bool) public isStaking;
 
     // Allows only one NFT staked at a time per user
     modifier onlyOneStake() {
-        require(!isStaking[msg.sender], "Only one stake is allowed at once");
+        require(
+            this.isStaking(msg.sender),
+            "Already staking: Only one character per address can be staked at a time"
+        );
         _;
     }
 
     modifier minimumAmount(uint256 gemsAmount) {
         require(
             gemsAmount >= STAKING_FEE && gemsBalance(msg.sender) >= gemsAmount,
-            "You need to have at least 100 gems to stake"
+            "Insufficient amount: You need to have at least 100 gems to stake"
         );
         _;
     }
@@ -45,6 +47,10 @@ contract Staking is IERC721Receiver {
     constructor(IERC721 _characterToken, IERC20 _gemsToken) {
         characterToken = _characterToken;
         gemsToken = _gemsToken;
+    }
+
+    function isStaking(address _staker) public view returns (bool) {
+        return stakes[_staker].isInitialized;
     }
 
     // Useful for the contract to self check its gems balance
@@ -58,8 +64,7 @@ contract Staking is IERC721Receiver {
         onlyOneStake
         minimumAmount(gemsAmount)
     {
-        isStaking[msg.sender] = true;
-        stakes[msg.sender] = Stake(_tokenId, gemsAmount, block.timestamp);
+        stakes[msg.sender] = Stake(_tokenId, gemsAmount, block.timestamp, true);
         gemsToken.transferFrom(msg.sender, address(this), gemsAmount);
         characterToken.safeTransferFrom(msg.sender, address(this), _tokenId);
         emit NFTStaked(msg.sender, _tokenId, gemsAmount);
@@ -72,7 +77,6 @@ contract Staking is IERC721Receiver {
         uint256 rewardedAmount = STAKING_FEE;
         uint256 tokenId = stakes[msg.sender].tokenId;
         delete stakes[msg.sender];
-        isStaking[msg.sender] = false;
 
         gemsToken.transfer(msg.sender, rewardedAmount);
         characterToken.safeTransferFrom(address(this), msg.sender, tokenId);
