@@ -12,6 +12,7 @@ import Home from './routes/Home';
 import UserNFT from './routes/UserNFT';
 import SingleNFT from './routes/SingleNFT';
 import NotFound from './components/NotFound';
+import Play from './routes/Play';
 
 const config = {
   readOnlyChainId: 5,
@@ -22,22 +23,21 @@ const config = {
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <DAppProvider config={config}>
-        <Routes>
-          <Route path="/" element={<App />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/NFT" element={<AllNFT />} />
-            <Route path="/NFT/user/:userId" element={<UserNFT />} />
-            <Route path="/NFT/:nftId" element={<SingleNFT />} />
+  <BrowserRouter>
+    <DAppProvider config={config}>
+      <Routes>
+        <Route path="/" element={<App />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/Play" element={<Play />} />
+          <Route path="/NFT" element={<AllNFT />} />
+          <Route path="/NFT/user/:userId" element={<UserNFT />} />
+          <Route path="/NFT/:nftId" element={<SingleNFT />} />
 
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </DAppProvider>
-    </BrowserRouter>
-  </React.StrictMode>,
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
+    </DAppProvider>
+  </BrowserRouter>,
 );
 
 // If you want to start measuring performance in your app, pass a function
