@@ -1,8 +1,9 @@
 import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { STATUS_TYPES } from '../../constants';
+import { NETWORK_EXPLORER, STATUS_TYPES } from '../../constants';
 import { useMint } from '../../hooks/index';
+import toast from 'react-hot-toast';
 
 type ActionProps = {
   userAddress: string;
@@ -17,6 +18,18 @@ const Mint: React.FC<ActionProps> = ({ userAddress }) => {
   useEffect(() => {
     setIsMinting(state.status !== STATUS_TYPES.NONE);
     if (state.status === STATUS_TYPES.SUCCESS) {
+      toast.success(
+        <>
+          Tx Success:
+          <a target="_blank" rel="noreferrer" href={`${NETWORK_EXPLORER}/tx/${state.receipt?.transactionHash}`}>
+            {state.receipt?.transactionHash.substring(0, 12)}...
+          </a>
+        </>,
+        {
+          icon: '✅',
+          position: 'top-right',
+        },
+      );
       // Ignore 0x & take first 64 characters representing tokenID
       const tokenIdHex = state.receipt?.logs[0].data.substring(2, 66);
 
@@ -33,6 +46,10 @@ const Mint: React.FC<ActionProps> = ({ userAddress }) => {
       }, 5000);
     }
     if (state.status === STATUS_TYPES.EXCEPTION || state.status === STATUS_TYPES.FAIL) {
+      toast.error(`Tx Error`, {
+        icon: '❌',
+        position: 'top-right',
+      });
       setIsMinting(false);
     }
   }, [state]);
@@ -41,7 +58,10 @@ const Mint: React.FC<ActionProps> = ({ userAddress }) => {
     if (isMinting) {
       return;
     }
-
+    toast(`Tx Pending...`, {
+      icon: '⏳',
+      position: 'top-right',
+    });
     sendMint(userAddress, ethers.utils.formatBytes32String(name));
   };
 

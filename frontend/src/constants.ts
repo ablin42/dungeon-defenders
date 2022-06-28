@@ -6,6 +6,7 @@ export const GEMS_CONTRACT_ADDRESS = '0x820162941958dF6541Cf36A99e70970A8d4AF504
 export const LOOT_CONTRACT_ADDRESS = '0x38225033888A93095456C7aDc17439AC78590992'; // doesn't exist yet
 export const API_ADDRESS = 'http://localhost:3001';
 export const GEMS_TOTAL_SUPPLY = ethers.utils.parseEther('100000000');
+export const NETWORK_EXPLORER = 'https://goerli.etherscan.io';
 export const STATUS_TYPES = {
   NONE: 'None',
   PENDING: 'PendingSignature',
