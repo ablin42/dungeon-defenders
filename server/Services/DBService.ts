@@ -15,7 +15,9 @@ export function updateNFTOwner(tokenId: string, owner: string) {
     }
 
     db.push(`/${NFT_TO_ADDRESS_TABLE}/${tokenId}`, owner, true);
-    db.push(`/${ADDRESS_TO_COLLECTION_TABLE}/${owner}`, tokenId, false);
+    const collection = getNFTCollection(owner);
+    const newCollection = [...(collection ?? []), tokenId];
+    db.push(`/${ADDRESS_TO_COLLECTION_TABLE}/${owner}`, newCollection, true);
 }
 export function deleteNFTFromCollection(tokenId: string, address: string) {
     try {
@@ -39,7 +41,7 @@ export function getNFTOwner(tokenId: string) : string | undefined {
 
 export function getNFTCollection(address: string) : string[] | undefined {
     try {
-        return db.getData(`/${ADDRESS_TO_COLLECTION_TABLE}/${address}`);
+        return db.getData(`/${ADDRESS_TO_COLLECTION_TABLE}/${address}`) as string[];
     } catch (e) {
         logError(JSON.stringify(e), 'getNFTCollection');
         return undefined;
