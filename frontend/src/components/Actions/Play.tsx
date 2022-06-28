@@ -8,6 +8,7 @@ import {
   useAllowanceGEMS,
   useIsStaked,
   useApproveGEMS,
+  useStakes,
 } from '../../hooks/index';
 import { STAKE_CONTRACT_ADDRESS, STATUS_TYPES, GEMS_TOTAL_SUPPLY, NETWORK_EXPLORER } from '../../constants';
 import toast from 'react-hot-toast';
@@ -15,11 +16,13 @@ import { TransactionStatus } from '@usedapp/core';
 
 type ActionProps = {
   userAddress: string;
+  tokenId: number | string;
 };
 
-const Play: React.FC<ActionProps> = ({ userAddress }) => {
+const Play: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
   const [isPending, setIsPending] = useState(false);
-  const [tokenId, setTokenid] = useState(0);
+  const stakes = userAddress && useStakes(userAddress);
+  const stakedId = stakes && +stakes.tokenId;
   const [gemsAmount, setGemsAmount] = useState('100');
   const { state: approveNFTState, send: sendApproveNFT } = useApprove();
   const { state: approveGEMSState, send: sendApproveGEMS } = useApproveGEMS();
@@ -129,6 +132,9 @@ const Play: React.FC<ActionProps> = ({ userAddress }) => {
     );
   }
 
+  if (NFTallowance === undefined && GEMSallowance === undefined && staked === undefined)
+    return <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>;
+
   return (
     <>
       {!NFTallowance && (
@@ -145,31 +151,16 @@ const Play: React.FC<ActionProps> = ({ userAddress }) => {
         <>
           <div className="form-group text-start">
             <label htmlFor="gemsAmount">Gems Amount (min. 100)</label>
-            <input
-              type="number"
-              className="form-control"
-              placeholder="100"
-              min={100}
-              aria-label="Gems Amount"
-              onChange={(e) => setGemsAmount(e.target.value)}
-              value={gemsAmount}
-            />
-
-            {/* 
-              Later on, you'll see your NFT & select them instead of inputing their ID
-              This is currently the case in NFTCardAlternative, remove the tokenId input later
-            */}
-            <label htmlFor="tokenId">Token ID</label>
             <div className="input-group">
               <input
                 type="number"
                 className="form-control"
-                placeholder="1337"
-                aria-label="Token #ID"
-                onChange={(e) => setTokenid(parseInt(e.target.value))}
-                value={tokenId}
+                placeholder="100"
+                min={100}
+                aria-label="Gems Amount"
+                onChange={(e) => setGemsAmount(e.target.value)}
+                value={gemsAmount}
               />
-
               <button onClick={() => stake()} className="btn btn-lg btn-success">
                 Stake & Play
               </button>
@@ -177,7 +168,7 @@ const Play: React.FC<ActionProps> = ({ userAddress }) => {
           </div>
         </>
       ) : null}
-      {NFTallowance && GEMSallowance && staked ? (
+      {NFTallowance && GEMSallowance && staked && tokenId == stakedId ? (
         <button onClick={() => unstake()} className="btn btn-lg btn-success">
           Claim
         </button>

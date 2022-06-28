@@ -167,4 +167,23 @@ export function useIsStaked(userAddress: string) {
   return value?.[0];
 }
 
+// Get user stakes info
+export function useStakes(userAddress: string) {
+  const { value, error } =
+    useCall(
+      userAddress && {
+        contract: STAKEContract,
+        method: 'stakes',
+        args: [userAddress],
+      },
+    ) ?? {};
+
+  if (error) {
+    console.error(`Error fetching staking status for ${userAddress}`, error.message);
+    return undefined;
+  }
+
+  return value;
+}
+
 // TODO LOOT HOOKS

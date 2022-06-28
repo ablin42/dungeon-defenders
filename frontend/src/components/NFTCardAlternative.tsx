@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { NFTAttribute, NFTALT } from '../types';
 import { useEthers } from '@usedapp/core';
 import Play from './Actions/Play';
-import { useOwnerOf } from '../hooks';
+import { useOwnerOf, useStakes } from '../hooks';
 
 interface Props {
   NFT: NFTALT;
@@ -16,6 +16,9 @@ const NFTCard = ({ NFT }: Props) => {
   const { account } = useEthers();
   const { name, description, tokenId, image, external_url, attributes } = NFT;
   const owner = useOwnerOf(tokenId);
+  const stakes = account && useStakes(account);
+  const userStaking = stakes && +stakes.timestamp > 0;
+  const stakedId = stakes && +stakes.tokenId;
 
   const getMetadataDisplay = () => {
     return (
@@ -41,7 +44,12 @@ const NFTCard = ({ NFT }: Props) => {
             })}
           </small>
         </div>
-        <div>{account && account === owner && <Play userAddress={account} />}</div>
+        <div>
+          {/* Ugly condition */}
+          {((account && account === owner) || (account && userStaking && tokenId == stakedId)) && (
+            <Play userAddress={account} tokenId={tokenId} />
+          )}
+        </div>
       </div>
     );
   };

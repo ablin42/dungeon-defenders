@@ -25,7 +25,7 @@ const Actions: React.FC<ActionProps> = ({ userAddress }) => {
     <>
       <div className="col-8 offset-2 pt-5 pb-5 mt-5">
         <h1 className="fw-light">Start Playing</h1>
-        <Play userAddress={userAddress} />
+        {/* <Play userAddress={userAddress} /> */}
         <h1 className="fw-light mt-5">Burn some Gems</h1>
         <BurnGEMS userAddress={userAddress} />
 

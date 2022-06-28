@@ -79,6 +79,25 @@ export const STAKE_ABI = [
     type: 'event',
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'previousOwner',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'newOwner',
+        type: 'address',
+      },
+    ],
+    name: 'OwnershipTransferred',
+    type: 'event',
+  },
+  {
     inputs: [],
     name: 'STAKING_FEE',
     outputs: [
@@ -92,6 +111,24 @@ export const STAKE_ABI = [
     type: 'function',
   },
   {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'gemsAmount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'address',
+        name: 'player',
+        type: 'address',
+      },
+    ],
+    name: 'allocateRewards',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'characterToken',
     outputs: [
@@ -102,6 +139,13 @@ export const STAKE_ABI = [
       },
     ],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'emergencyWithdraw',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -190,6 +234,26 @@ export const STAKE_ABI = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'owner',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'renounceOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [
       {
         internalType: 'uint256',
@@ -229,11 +293,39 @@ export const STAKE_ABI = [
       },
       {
         internalType: 'uint256',
+        name: 'rewardedGemsAmount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
         name: 'timestamp',
         type: 'uint256',
       },
+      {
+        internalType: 'bool',
+        name: 'isClaimable',
+        type: 'bool',
+      },
+      {
+        internalType: 'bool',
+        name: 'isInitialized',
+        type: 'bool',
+      },
     ],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'newOwner',
+        type: 'address',
+      },
+    ],
+    name: 'transferOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
