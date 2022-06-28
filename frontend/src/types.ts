@@ -10,7 +10,7 @@ export interface NFTAttribute {
 }
 
 // NFT Metadata
-// Deprecated, keeping this here just in case
+// TODO Deprecated, keeping this here just in case
 export interface NFT {
   name: string;
   description: string;

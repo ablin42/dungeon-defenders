@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { NFT, NFTAttribute } from '../types';
+import { NFT } from '../types';
 
 interface Props {
   NFT: NFT;
 }
+
+// TODO keeping it here for now, can be removed later once NFTCardAlternative fully implemented
 
 const BADGE_TYPE = ['primary', 'info', 'success', 'danger', 'warning', 'secondary'];
 

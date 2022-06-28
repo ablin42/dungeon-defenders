@@ -9,8 +9,7 @@ interface Props {
   NFT: NFTALT;
 }
 
-// Just for temporary demo purposes
-const BADGE_TYPE = ['primary', 'info', 'success', 'danger', 'warning', 'secondary', 'primary', 'info'];
+const BADGE_TYPE = ['primary', 'primary', 'success', 'success', 'success', 'success', 'info', 'info'];
 
 const NFTCard = ({ NFT }: Props) => {
   const { account } = useEthers();
@@ -19,6 +18,8 @@ const NFTCard = ({ NFT }: Props) => {
   const stakes = account && useStakes(account);
   const userStaking = stakes && +stakes.timestamp > 0;
   const stakedId = stakes && +stakes.tokenId;
+  const isOwner = account === owner;
+  const isUserStakedToken = userStaking && tokenId == stakedId;
 
   const getMetadataDisplay = () => {
     return (
@@ -44,12 +45,7 @@ const NFTCard = ({ NFT }: Props) => {
             })}
           </small>
         </div>
-        <div>
-          {/* Ugly condition */}
-          {((account && account === owner) || (account && userStaking && tokenId == stakedId)) && (
-            <Play userAddress={account} tokenId={tokenId} />
-          )}
-        </div>
+        <div>{account && (isOwner || isUserStakedToken) && <Play userAddress={account} tokenId={tokenId} />}</div>
       </div>
     );
   };

@@ -10,9 +10,7 @@ const App = () => {
       <h1 className="fw-light">Welcome to Dungeon Defenders</h1>
       <p className="lead text-muted">Join our community by minting your first NFT</p>
       <div className="container">
-        <div className="col-lg-6 col-md-8 mx-auto">
-          <Mint userAddress={account as string} />
-        </div>
+        <div className="col-lg-6 col-md-8 mx-auto">{account && <Mint userAddress={account} />}</div>
       </div>
       <div className="album bg-dark">
         <div className="container ">

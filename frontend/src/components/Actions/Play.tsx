@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import {
@@ -13,21 +14,55 @@ import {
 import { STAKE_CONTRACT_ADDRESS, STATUS_TYPES, GEMS_TOTAL_SUPPLY, NETWORK_EXPLORER } from '../../constants';
 import toast from 'react-hot-toast';
 import { TransactionStatus } from '@usedapp/core';
+import LoadingBtn from '../LoadingBtn';
 
 type ActionProps = {
   userAddress: string;
   tokenId: number | string;
 };
 
+type FormProps = {
+  value: string;
+  onChange: Function;
+  children: React.ReactNode;
+};
+
+const FormUtil = ({ value, onChange, children }: FormProps) => {
+  return (
+    <div className="form-group text-start">
+      <label htmlFor="gemsAmount">Gems Amount (min. 100)</label>
+      <div className="input-group">
+        <input
+          type="number"
+          className="form-control"
+          placeholder="100"
+          min={100}
+          aria-label="Gems Amount"
+          onChange={(e) => onChange(e.target.value)}
+          value={value}
+        />
+        {children}
+      </div>
+    </div>
+  );
+};
+
 const Play: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
-  const [isPending, setIsPending] = useState(false);
-  const stakes = userAddress && useStakes(userAddress);
-  const stakedId = stakes && +stakes.tokenId;
-  const [gemsAmount, setGemsAmount] = useState('100');
+  // *HOOKS*
   const { state: approveNFTState, send: sendApproveNFT } = useApprove();
   const { state: approveGEMSState, send: sendApproveGEMS } = useApproveGEMS();
   const { state: stakeState, send: sendStake } = useStake();
   const { state: unstakeState, send: sendUnstake } = useUnstake();
+  const stakes = userAddress && useStakes(userAddress);
+  const NFTallowance = useAllowance(userAddress);
+  const GEMSallowance = useAllowanceGEMS(userAddress);
+  const staked = useIsStaked(userAddress);
+  const stakedId = stakes && +stakes.tokenId;
+  const claimable = staked && +stakes.isClaimable;
+  console.log(claimable);
+  // *STATE*
+  const [isPending, setIsPending] = useState(false);
+  const [gemsAmount, setGemsAmount] = useState('100');
   const [STATUS, setSTATUS] = useState<Array<string>>([
     approveNFTState.status,
     approveGEMSState.status,
@@ -40,9 +75,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
     stakeState,
     unstakeState,
   ]);
-  const NFTallowance = useAllowance(userAddress);
-  const GEMSallowance = useAllowanceGEMS(userAddress);
-  const staked = useIsStaked(userAddress);
+  // TODO can be refactored to avoid having STATES & STATUS
 
   useEffect(() => {
     const newSTATES = [approveNFTState, approveGEMSState, stakeState, unstakeState];
@@ -89,90 +122,76 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
     }
   }, [STATUS]);
 
-  // Could create an handler function to avoid repetitiveness, but there are other priorities
   const approveNFT = async () => {
-    toast(`Tx Pending...`, {
-      icon: '⏳',
-      position: 'top-right',
-    });
     sendApproveNFT(STAKE_CONTRACT_ADDRESS, true);
   };
 
   const approveGEMS = async () => {
-    toast(`Tx Pending...`, {
-      icon: '⏳',
-      position: 'top-right',
-    });
     sendApproveGEMS(STAKE_CONTRACT_ADDRESS, GEMS_TOTAL_SUPPLY);
   };
 
   const stake = async () => {
-    toast(`Tx Pending...`, {
-      icon: '⏳',
-      position: 'top-right',
-    });
     const formattedGemsAmount = ethers.utils.parseEther(gemsAmount);
     sendStake(tokenId, formattedGemsAmount);
   };
 
   const unstake = async () => {
+    sendUnstake();
+  };
+
+  const sendTx = async (tx: Function) => {
     toast(`Tx Pending...`, {
       icon: '⏳',
       position: 'top-right',
     });
-    sendUnstake();
+    tx();
   };
 
-  if (isPending) {
+  // To handle loading state when sending stake action
+  if (isPending && NFTallowance && GEMSallowance && !staked)
     return (
-      <button className="btn btn-lg btn-success">
-        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        <span className="sr-only">Tx Pending...</span>
-      </button>
+      <FormUtil value={gemsAmount} onChange={setGemsAmount}>
+        <LoadingBtn type="success" />
+      </FormUtil>
     );
-  }
-
+  // To handle loading state when sending any other action
+  if (isPending) return <LoadingBtn type="success" />;
+  // To handle loading state with no button (loading up the page for the 1st time)
   if (NFTallowance === undefined && GEMSallowance === undefined && staked === undefined)
     return <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>;
 
   return (
     <>
       {!NFTallowance && (
-        <button onClick={() => approveNFT()} className="btn btn-lg btn-success">
+        <button onClick={() => sendTx(approveNFT)} className="btn btn-lg btn-success">
           Approve NFTs
         </button>
       )}
       {!GEMSallowance && NFTallowance && (
-        <button onClick={() => approveGEMS()} className="btn btn-lg btn-success">
+        <button onClick={() => sendTx(approveGEMS)} className="btn btn-lg btn-success">
           Approve GEMS
         </button>
       )}
-      {NFTallowance && GEMSallowance && !staked ? (
+      {NFTallowance && GEMSallowance && !staked && (
+        <FormUtil value={gemsAmount} onChange={setGemsAmount}>
+          <button onClick={() => sendTx(stake)} className="btn btn-lg btn-success">
+            Stake & Play
+          </button>
+        </FormUtil>
+      )}
+      {NFTallowance && GEMSallowance && staked && tokenId == stakedId && (
         <>
-          <div className="form-group text-start">
-            <label htmlFor="gemsAmount">Gems Amount (min. 100)</label>
-            <div className="input-group">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="100"
-                min={100}
-                aria-label="Gems Amount"
-                onChange={(e) => setGemsAmount(e.target.value)}
-                value={gemsAmount}
-              />
-              <button onClick={() => stake()} className="btn btn-lg btn-success">
-                Stake & Play
-              </button>
-            </div>
-          </div>
+          {!claimable ? (
+            <>
+              <span className="muted-text">Game not finished yet</span>
+              <br />
+            </>
+          ) : null}
+          <button onClick={() => sendTx(unstake)} className="btn btn-lg btn-success" disabled={!claimable}>
+            Claim
+          </button>
         </>
-      ) : null}
-      {NFTallowance && GEMSallowance && staked && tokenId == stakedId ? (
-        <button onClick={() => unstake()} className="btn btn-lg btn-success">
-          Claim
-        </button>
-      ) : null}
+      )}
     </>
   );
 };

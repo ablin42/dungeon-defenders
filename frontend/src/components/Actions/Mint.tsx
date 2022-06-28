@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { NETWORK_EXPLORER, STATUS_TYPES } from '../../constants';
 import { useMint } from '../../hooks/index';
 import toast from 'react-hot-toast';
+import LoadingBtn from '../LoadingBtn';
 
 type ActionProps = {
   userAddress: string;
@@ -77,20 +78,17 @@ const Mint: React.FC<ActionProps> = ({ userAddress }) => {
           type="text"
           className="form-control"
           placeholder="Lord Helmet"
-          aria-label="amount to burn"
+          aria-label="defender name"
           onChange={(e) => handleChange(e)}
           value={name}
         />
-        <button onClick={() => mint()} className="btn btn-lg btn-primary">
-          {isMinting ? (
-            <>
-              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-              <span className="sr-only">Minting...</span>
-            </>
-          ) : (
-            'Mint'
-          )}
-        </button>
+        {isMinting ? (
+          <LoadingBtn text={'Minting...'} />
+        ) : (
+          <button onClick={() => mint()} className="btn btn-lg btn-primary">
+            Mint
+          </button>
+        )}
       </div>
     </div>
   );
