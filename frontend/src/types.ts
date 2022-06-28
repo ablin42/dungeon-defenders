@@ -5,19 +5,23 @@ export interface GenericInterface {
 
 // Trait associated with an NFT
 export interface NFTAttribute {
-  level: number;
-  characterType: number;
-  health: number;
-  speed: number;
-  strength: number;
-  defense: number;
-
-  dungeonWins: number;
-  dungeonLosses: number;
+  trait_type: string;
+  value: string;
 }
 
 // NFT Metadata
+// Deprecated, keeping this here just in case
 export interface NFT {
+  name: string;
+  description: string;
+  tokenId: number;
+  image: string;
+  external_url: string;
+  attributes: NFTAttribute[];
+}
+
+// Alternative NFT Metadata
+export interface NFTALT {
   name: string;
   description: string;
   tokenId: number;

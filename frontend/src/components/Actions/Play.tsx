@@ -105,7 +105,10 @@ const Play: React.FC<ActionProps> = ({ userAddress }) => {
               value={gemsAmount}
             />
 
-            {/* Later on, you'll see your NFT & select them instead of inputing their ID*/}
+            {/* 
+              Later on, you'll see your NFT & select them instead of inputing their ID
+              This is currently the case in NFTCardAlternative, remove the tokenId input later
+            */}
             <label htmlFor="tokenId">Token ID</label>
             <div className="input-group">
               <input

@@ -15,7 +15,7 @@ const Footer = () => {
           <StyledLink href="#">Back to top</StyledLink>
         </p>
         <p className="mb-1">
-          Made with love by
+          Made with ❤️ by
           <StyledLink target="_blank" rel="noreferrer" href="https://github.com/rkhadder">
             {' rkhadder '}
             <FontAwesomeIcon icon={faGithub} fontSize={25} color="#456cd1" />

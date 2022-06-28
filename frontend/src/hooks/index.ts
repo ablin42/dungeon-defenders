@@ -51,6 +51,44 @@ export function useAllowance(userAddress: string) {
   }
   return value?.[0];
 }
+// Get Token URI
+export function useTokenURI(tokenId: string | number) {
+  const { value, error } =
+    useCall(
+      tokenId && {
+        contract: NFTContract,
+        method: 'tokenURI',
+        args: [tokenId],
+      },
+    ) ?? {};
+
+  if (error) {
+    console.error(`Error fetching Token ${tokenId} URI`, error.message);
+    return undefined;
+  }
+
+  const uri = value?.[0].substr(29);
+  return uri;
+}
+
+// Get Owner of tokenId
+export function useOwnerOf(tokenId: string | number) {
+  const { value, error } =
+    useCall(
+      tokenId && {
+        contract: NFTContract,
+        method: 'ownerOf',
+        args: [tokenId],
+      },
+    ) ?? {};
+
+  if (error) {
+    console.error(`Error fetching Token ${tokenId} URI`, error.message);
+    return undefined;
+  }
+
+  return value?.[0];
+}
 
 // ? NFT contract should handle items that *could* be needed to level up
 // TODO Level up NFT
