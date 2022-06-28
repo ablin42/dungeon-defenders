@@ -58,6 +58,44 @@ export const NFT_ABI = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'defenderId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint8',
+        name: 'level',
+        type: 'uint8',
+      },
+    ],
+    name: 'DefenderLeveledUp',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'defenderId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'bytes32',
+        name: 'name',
+        type: 'bytes32',
+      },
+    ],
+    name: 'NewDefenderGenerated',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: 'address',
         name: 'from',
@@ -114,6 +152,121 @@ export const NFT_ABI = [
       },
     ],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'bytes32',
+        name: '_name',
+        type: 'bytes32',
+      },
+    ],
+    name: 'createRandomDefender',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '_tokenId',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    name: 'defenderExperience',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    name: 'defenders',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: 'name',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'uint8',
+        name: 'level',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint8',
+        name: 'characterType',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint8',
+        name: 'health',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint8',
+        name: 'speed',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint8',
+        name: 'strength',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint8',
+        name: 'defense',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint8',
+        name: 'dungeonWins',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint8',
+        name: 'dungeonLosses',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_tokenId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_expToGain',
+        type: 'uint256',
+      },
+    ],
+    name: 'gainExperience',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -197,6 +350,11 @@ export const NFT_ABI = [
         internalType: 'address',
         name: 'to',
         type: 'address',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'name',
+        type: 'bytes32',
       },
     ],
     name: 'safeMint',

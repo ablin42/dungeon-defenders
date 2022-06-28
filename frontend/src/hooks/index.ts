@@ -51,6 +51,44 @@ export function useAllowance(userAddress: string) {
   }
   return value?.[0];
 }
+// Get Token URI
+export function useTokenURI(tokenId: string | number) {
+  const { value, error } =
+    useCall(
+      tokenId && {
+        contract: NFTContract,
+        method: 'tokenURI',
+        args: [tokenId],
+      },
+    ) ?? {};
+
+  if (error) {
+    console.error(`Error fetching Token ${tokenId} URI`, error.message);
+    return undefined;
+  }
+
+  const uri = value?.[0].substr(29);
+  return uri;
+}
+
+// Get Owner of tokenId
+export function useOwnerOf(tokenId: string | number) {
+  const { value, error } =
+    useCall(
+      tokenId && {
+        contract: NFTContract,
+        method: 'ownerOf',
+        args: [tokenId],
+      },
+    ) ?? {};
+
+  if (error) {
+    console.error(`Error fetching Token ${tokenId} URI`, error.message);
+    return undefined;
+  }
+
+  return value?.[0];
+}
 
 // ? NFT contract should handle items that *could* be needed to level up
 // TODO Level up NFT
@@ -127,6 +165,25 @@ export function useIsStaked(userAddress: string) {
   }
 
   return value?.[0];
+}
+
+// Get user stakes info
+export function useStakes(userAddress: string) {
+  const { value, error } =
+    useCall(
+      userAddress && {
+        contract: STAKEContract,
+        method: 'stakes',
+        args: [userAddress],
+      },
+    ) ?? {};
+
+  if (error) {
+    console.error(`Error fetching staking status for ${userAddress}`, error.message);
+    return undefined;
+  }
+
+  return value;
 }
 
 // TODO LOOT HOOKS

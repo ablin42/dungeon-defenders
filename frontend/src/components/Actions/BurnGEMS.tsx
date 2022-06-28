@@ -6,6 +6,8 @@ type ActionProps = {
   userAddress: string;
 };
 
+// TODO not used, can be removed later
+
 const BurnGems: React.FC<ActionProps> = ({ userAddress }) => {
   const [amount, setAmount] = useState<BigNumberish>('0');
   const { state, send: sendBurn } = useBurnGEMS();
