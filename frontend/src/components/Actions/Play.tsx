@@ -59,7 +59,6 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
   const staked = useIsStaked(userAddress);
   const stakedId = stakes && +stakes.tokenId;
   const claimable = staked && +stakes.isClaimable;
-  console.log(claimable);
   // *STATE*
   const [isPending, setIsPending] = useState(false);
   const [gemsAmount, setGemsAmount] = useState('100');
@@ -115,7 +114,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
       setSTATUS(newSTATUS);
       setIsPending(false);
 
-      toast.error(`Tx Error`, {
+      toast.error(`Tx Error: ${STATES[statusIndex].errorMessage}`, {
         icon: '❌',
         position: 'top-right',
       });

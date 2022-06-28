@@ -47,10 +47,11 @@ const Mint: React.FC<ActionProps> = ({ userAddress }) => {
       }, 5000);
     }
     if (state.status === STATUS_TYPES.EXCEPTION || state.status === STATUS_TYPES.FAIL) {
-      toast.error(`Tx Error`, {
+      toast.error(`Tx Error: ${state.errorMessage}`, {
         icon: '❌',
         position: 'top-right',
       });
+
       setIsMinting(false);
     }
   }, [state]);
