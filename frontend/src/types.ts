@@ -9,19 +9,8 @@ export interface NFTAttribute {
   value: string;
 }
 
-// NFT Metadata
-// TODO Deprecated, keeping this here just in case
-export interface NFT {
-  name: string;
-  description: string;
-  tokenId: number;
-  image: string;
-  external_url: string;
-  attributes: NFTAttribute[];
-}
-
 // Alternative NFT Metadata
-export interface NFTALT {
+export interface NFT {
   name: string;
   description: string;
   tokenId: number;

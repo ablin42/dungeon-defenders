@@ -7,7 +7,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { DAppProvider } from '@usedapp/core';
-import AllNFT from './routes/AllNFT';
+// import LastMintedNFTs from './routes/LastMintedNFTs';
 import Home from './routes/Home';
 import UserNFT from './routes/UserNFT';
 import SingleNFT from './routes/SingleNFT';
@@ -29,8 +29,8 @@ root.render(
         <Route path="/" element={<App />}>
           <Route path="/" element={<Home />} />
           <Route path="/Play" element={<Play />} />
-          <Route path="/NFT" element={<AllNFT />} />
-          <Route path="/NFT/user/:userId" element={<UserNFT />} />
+          {/* <Route path="/NFT" element={<LastMintedNFTs />} /> */}
+          <Route path="/NFT/user/:userAddress" element={<UserNFT />} />
           <Route path="/NFT/:nftId" element={<SingleNFT />} />
 
           <Route path="*" element={<NotFound />} />

@@ -1,8 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useEthers } from '@usedapp/core';
+
 import ConnectWallet from './Actions/ConnectWallet';
 
 const Header = () => {
+  const { account } = useEthers();
+
   return (
     <header>
       <div className="navbar navbar-dark bg-dark shadow-sm">
@@ -10,6 +14,11 @@ const Header = () => {
           <div>
             <Link to="/" className="navbar-brand d-flex align-items-center">
               <strong>Dungeon Defenders</strong>
+            </Link>
+          </div>
+          <div>
+            <Link to={`/NFT/user/${account}`} className="d-flex align-items-center">
+              <strong>My Defenders</strong>
             </Link>
           </div>
           <ConnectWallet />
