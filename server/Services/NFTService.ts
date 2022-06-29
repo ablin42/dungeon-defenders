@@ -1,5 +1,6 @@
 import { NFT } from "../Models/NFT";
 import { connectToWallet, getRandomNumber } from "../Utils";
+import { Interface } from 'ethers/lib/utils';
 import mergeImages from 'merge-images';
 import { Canvas, Image } from 'canvas';
 import { logError, logInfo, logWarn } from "../Config/Logger";
@@ -146,15 +147,20 @@ export function registerEventListeners() {
     }
 
     const {provider, contract: tokenContract} = connectResult;
+    const iface = new Interface(compiledContract.abi);
 
     logInfo('Connecting to transfer events', 'registerEventListeners');
     const transferFilter = tokenContract.filters.Transfer();
     provider.on(transferFilter, async (log) => {
-        const fromStr = log.topics[1];
-        const toStr = log.topics[2];
-        const tokenIdStr = log.topics[3];
-        logInfo(`Transfered tokenId=${tokenIdStr} from=${fromStr} to=${toStr}`, 'registerEventListeners');
-        const tokenId = parseInt(tokenIdStr.replace('0x', ''), 16); // converts the log's tokenId from base 16 to base 10
+        const parsedLog = iface.parseLog(log);
+        const fromStr = parsedLog.args.from;
+        const toStr = parsedLog.args.to;
+        const tokenId = parsedLog.args.tokenId.toString();
+        logInfo(
+          `Transfered tokenId=${tokenId} from=${fromStr} to=${toStr}`,
+          "registerEventListeners"
+        );
+    
         await handleTransferEvent(tokenId, toStr);
     });
 }
