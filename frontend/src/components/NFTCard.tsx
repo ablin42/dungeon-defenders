@@ -54,6 +54,8 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
           {account && !isLoot && (isOwner || isUserStakedToken) && (
             <>
               <Equipment userAddress={account} tokenId={actualTokenId} />
+              <br />
+              <br />
               <Play userAddress={account} tokenId={actualTokenId} equipedLoot={slots} />
             </>
           )}
