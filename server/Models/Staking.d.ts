@@ -22,7 +22,7 @@ import {
   interface StakingInterface extends ethers.utils.Interface {
     functions: {
       "STAKING_FEE()": FunctionFragment;
-      "allocateRewards(uint256,address)": FunctionFragment;
+      "allocateRewards(uint256,address,bool)": FunctionFragment;
       "characterToken()": FunctionFragment;
       "emergencyWithdraw()": FunctionFragment;
       "gemsBalance(address)": FunctionFragment;
@@ -44,7 +44,7 @@ import {
     ): string;
     encodeFunctionData(
       functionFragment: "allocateRewards",
-      values: [BigNumberish, string]
+      values: [BigNumberish, string, boolean]
     ): string;
     encodeFunctionData(
       functionFragment: "characterToken",
@@ -127,7 +127,7 @@ import {
     events: {
       "Claimed(address)": EventFragment;
       "NFTStaked(address,uint256,uint256,uint256,uint256,uint256)": EventFragment;
-      "NFTUnstaked(address,uint256,uint256,uint256,uint256,uint256)": EventFragment;
+      "NFTUnstaked(address,uint256,uint256,uint256,uint256,uint256,bool)": EventFragment;
       "OwnershipTransferred(address,address)": EventFragment;
     };
   
@@ -151,13 +151,14 @@ import {
   >;
   
   export type NFTUnstakedEvent = TypedEvent<
-    [string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+    [string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, boolean] & {
       owner: string;
       defenderId: BigNumber;
       weaponId: BigNumber;
       armorId: BigNumber;
       bootsId: BigNumber;
       rewardedAmount: BigNumber;
+      wasRewardLoot: boolean;
     }
   >;
   
@@ -214,6 +215,7 @@ import {
       allocateRewards(
         gemsAmount: BigNumberish,
         player: string,
+        shouldRewardLoot: boolean,
         overrides?: Overrides & { from?: string | Promise<string> }
       ): Promise<ContractTransaction>;
   
@@ -270,6 +272,7 @@ import {
           BigNumber,
           BigNumber,
           boolean,
+          boolean,
           boolean
         ] & {
           tokenId: BigNumber;
@@ -279,6 +282,7 @@ import {
           gemsAmount: BigNumber;
           rewardedGemsAmount: BigNumber;
           timestamp: BigNumber;
+          wasRewardLoot: boolean;
           isClaimable: boolean;
           isInitialized: boolean;
         }
@@ -299,6 +303,7 @@ import {
     allocateRewards(
       gemsAmount: BigNumberish,
       player: string,
+      shouldRewardLoot: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   
@@ -352,6 +357,7 @@ import {
         BigNumber,
         BigNumber,
         boolean,
+        boolean,
         boolean
       ] & {
         tokenId: BigNumber;
@@ -361,6 +367,7 @@ import {
         gemsAmount: BigNumber;
         rewardedGemsAmount: BigNumber;
         timestamp: BigNumber;
+        wasRewardLoot: boolean;
         isClaimable: boolean;
         isInitialized: boolean;
       }
@@ -381,6 +388,7 @@ import {
       allocateRewards(
         gemsAmount: BigNumberish,
         player: string,
+        shouldRewardLoot: boolean,
         overrides?: CallOverrides
       ): Promise<void>;
   
@@ -430,6 +438,7 @@ import {
           BigNumber,
           BigNumber,
           boolean,
+          boolean,
           boolean
         ] & {
           tokenId: BigNumber;
@@ -439,6 +448,7 @@ import {
           gemsAmount: BigNumber;
           rewardedGemsAmount: BigNumber;
           timestamp: BigNumber;
+          wasRewardLoot: boolean;
           isClaimable: boolean;
           isInitialized: boolean;
         }
@@ -497,15 +507,16 @@ import {
         }
       >;
   
-      "NFTUnstaked(address,uint256,uint256,uint256,uint256,uint256)"(
+      "NFTUnstaked(address,uint256,uint256,uint256,uint256,uint256,bool)"(
         owner?: null,
         defenderId?: null,
         weaponId?: null,
         armorId?: null,
         bootsId?: null,
-        rewardedAmount?: null
+        rewardedAmount?: null,
+        wasRewardLoot?: null
       ): TypedEventFilter<
-        [string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber],
+        [string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, boolean],
         {
           owner: string;
           defenderId: BigNumber;
@@ -513,6 +524,7 @@ import {
           armorId: BigNumber;
           bootsId: BigNumber;
           rewardedAmount: BigNumber;
+          wasRewardLoot: boolean;
         }
       >;
   
@@ -522,9 +534,10 @@ import {
         weaponId?: null,
         armorId?: null,
         bootsId?: null,
-        rewardedAmount?: null
+        rewardedAmount?: null,
+        wasRewardLoot?: null
       ): TypedEventFilter<
-        [string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber],
+        [string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, boolean],
         {
           owner: string;
           defenderId: BigNumber;
@@ -532,6 +545,7 @@ import {
           armorId: BigNumber;
           bootsId: BigNumber;
           rewardedAmount: BigNumber;
+          wasRewardLoot: boolean;
         }
       >;
   
@@ -558,6 +572,7 @@ import {
       allocateRewards(
         gemsAmount: BigNumberish,
         player: string,
+        shouldRewardLoot: boolean,
         overrides?: Overrides & { from?: string | Promise<string> }
       ): Promise<BigNumber>;
   
@@ -616,6 +631,7 @@ import {
       allocateRewards(
         gemsAmount: BigNumberish,
         player: string,
+        shouldRewardLoot: boolean,
         overrides?: Overrides & { from?: string | Promise<string> }
       ): Promise<PopulatedTransaction>;
   
