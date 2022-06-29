@@ -212,9 +212,9 @@ const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
 
   return (
     <>
-      {getLootList()}
+      {LOOTAllowance && getLootList()}
       {!LOOTAllowance && (
-        <button onClick={() => sendTx(approve)} className="btn btn-lg btn-primary">
+        <button onClick={() => sendTx(approve)} className="btn btn-lg btn-primary mt-3">
           Approve LOOT
         </button>
       )}
