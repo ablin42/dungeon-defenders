@@ -13,6 +13,7 @@ import UserNFT from './routes/UserNFT';
 import SingleNFT from './routes/SingleNFT';
 import NotFound from './components/NotFound';
 import Play from './routes/Play';
+import SingleLOOT from './routes/SingleLOOT';
 
 const config = {
   readOnlyChainId: 5,
@@ -32,6 +33,7 @@ root.render(
           {/* <Route path="/NFT" element={<LastMintedNFTs />} /> */}
           <Route path="/NFT/user/:userAddress" element={<UserNFT />} />
           <Route path="/NFT/:nftId" element={<SingleNFT />} />
+          <Route path="/LOOT/:lootId" element={<SingleLOOT />} />
 
           <Route path="*" element={<NotFound />} />
         </Route>

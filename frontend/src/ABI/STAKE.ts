@@ -7,6 +7,11 @@ export const STAKE_ABI = [
         type: 'address',
       },
       {
+        internalType: 'contract IERC721',
+        name: '_lootToken',
+        type: 'address',
+      },
+      {
         internalType: 'contract IERC20',
         name: '_gemsToken',
         type: 'address',
@@ -40,7 +45,25 @@ export const STAKE_ABI = [
       {
         indexed: false,
         internalType: 'uint256',
-        name: 'tokenId',
+        name: 'defenderId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'weaponId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'armorId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'bootsId',
         type: 'uint256',
       },
       {
@@ -65,7 +88,25 @@ export const STAKE_ABI = [
       {
         indexed: false,
         internalType: 'uint256',
-        name: 'tokenId',
+        name: 'defenderId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'weaponId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'armorId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'bootsId',
         type: 'uint256',
       },
       {
@@ -200,6 +241,19 @@ export const STAKE_ABI = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'lootToken',
+    outputs: [
+      {
+        internalType: 'contract IERC721',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [
       {
         internalType: 'address',
@@ -257,7 +311,22 @@ export const STAKE_ABI = [
     inputs: [
       {
         internalType: 'uint256',
-        name: '_tokenId',
+        name: '_defenderId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_weaponId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_armorId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_bootsId',
         type: 'uint256',
       },
       {
@@ -284,6 +353,21 @@ export const STAKE_ABI = [
       {
         internalType: 'uint256',
         name: 'tokenId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'weaponId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'armorId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'bootsId',
         type: 'uint256',
       },
       {

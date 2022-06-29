@@ -3,13 +3,15 @@ import "dotenv/config";
 import * as nftJson from "../artifacts/contracts/DungeonDefenders/DungeonDefenders.sol/DungeonDefenders.json";
 import * as gemJson from "../artifacts/contracts/Gems.sol/Gems.json";
 import * as stakingJson from "../artifacts/contracts/Staking.sol/Staking.json";
+import * as lootJson from "../artifacts/contracts/Loot/Loot.sol/DungeonLoot.json";
+
 // import { connectToWallet } from "./utils";
 
 async function main() {
   // const { signer } = await connectToWallet();
   const [signer] = await ethers.getSigners();
 
-  // Deploy Gems
+  // *Deploy Gems*
   console.log("Deploying GEMS contract");
   const TokenFactory = new ethers.ContractFactory(
     gemJson.abi,
@@ -22,20 +24,33 @@ async function main() {
   console.log("Completed");
   console.log(`GEMS Contract deployed at ${tokenContract.address}`);
 
-  // Deploy NFT
+  // *Deploy LOOT*
+  console.log("Deploying DungeonLoot contract");
+  const LootFactory = new ethers.ContractFactory(
+    lootJson.abi,
+    lootJson.bytecode,
+    signer
+  );
+  const lootContract = await LootFactory.deploy();
+  console.log("Awaiting confirmations");
+  await lootContract.deployed();
+  console.log("Completed");
+  console.log(`DungeonLoot Contract deployed at ${lootContract.address}`);
+
+  // *Deploy NFT*
   console.log("Deploying NFT contract");
   const nftFactory = new ethers.ContractFactory(
     nftJson.abi,
     nftJson.bytecode,
     signer
   );
-  const nftContract = await nftFactory.deploy();
+  const nftContract = await nftFactory.deploy(lootContract.address);
   console.log("Awaiting confirmations");
   await nftContract.deployed();
   console.log("Completed");
   console.log(`NFT Contract deployed at ${nftContract.address}`);
 
-  // Deploy Staking
+  // *Deploy Staking*
   console.log("Deploying Staking contract");
   const stakingFactory = new ethers.ContractFactory(
     stakingJson.abi,
@@ -44,6 +59,7 @@ async function main() {
   );
   const stakingContract = await stakingFactory.deploy(
     nftContract.address,
+    lootContract.address,
     tokenContract.address
   );
   console.log("Awaiting confirmations");

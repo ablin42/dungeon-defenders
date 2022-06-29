@@ -19,6 +19,7 @@ import LoadingBtn from '../LoadingBtn';
 type ActionProps = {
   userAddress: string;
   tokenId: number | string;
+  equipedLoot: Array<number>;
 };
 
 type FormProps = {
@@ -47,7 +48,7 @@ const FormUtil = ({ value, onChange, children }: FormProps) => {
   );
 };
 
-const Play: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
+const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
   // *HOOKS*
   const { state: approveNFTState, send: sendApproveNFT } = useApprove();
   const { state: approveGEMSState, send: sendApproveGEMS } = useApproveGEMS();
@@ -131,7 +132,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
 
   const stake = async () => {
     const formattedGemsAmount = ethers.utils.parseEther(gemsAmount);
-    sendStake(tokenId, formattedGemsAmount);
+    sendStake(tokenId, equipedLoot[0], equipedLoot[1], equipedLoot[2], formattedGemsAmount);
   };
 
   const unstake = async () => {
@@ -171,14 +172,14 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
           Approve GEMS
         </button>
       )}
-      {NFTallowance && GEMSallowance && !staked && (
+      {NFTallowance && GEMSallowance && !staked ? (
         <FormUtil value={gemsAmount} onChange={setGemsAmount}>
           <button onClick={() => sendTx(stake)} className="btn btn-lg btn-success">
             Stake & Play
           </button>
         </FormUtil>
-      )}
-      {NFTallowance && GEMSallowance && staked && tokenId == stakedId && (
+      ) : null}
+      {NFTallowance && GEMSallowance && staked && tokenId == stakedId ? (
         <>
           {!claimable ? (
             <>
@@ -190,7 +191,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
             Claim
           </button>
         </>
-      )}
+      ) : null}
     </>
   );
 };

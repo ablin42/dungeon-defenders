@@ -34,6 +34,37 @@ export function useApprove() {
   return { state, send };
 }
 
+// Equip the loot attached to an NFT
+export function useEquip() {
+  const { state, send } = useContractFunction(NFTContract, 'equipLoot', {});
+  return { state, send };
+}
+
+// Unequip the loot attached to an NFT
+export function useUnequip() {
+  const { state, send } = useContractFunction(NFTContract, 'unequipLoot', {});
+  return { state, send };
+}
+
+// Check aesthetics
+export function useSlots(tokenId: string | number) {
+  const { value, error } =
+    useCall(
+      tokenId && {
+        contract: NFTContract,
+        method: 'getSlots',
+        args: [tokenId],
+      },
+    ) ?? {};
+
+  if (error) {
+    console.error(`Error fetching slots for Defender #${tokenId}`, error.message);
+    return [0, 0, 0];
+  }
+  const slots = [+value?.slots[1], +value?.slots[2], +value?.slots[3]];
+  return slots;
+}
+
 // Check if user has approved STAKING contract for all NFTs
 export function useAllowance(userAddress: string) {
   const { value, error } =
@@ -51,6 +82,7 @@ export function useAllowance(userAddress: string) {
   }
   return value?.[0];
 }
+
 // Get Token URI
 export function useTokenURI(tokenId: string | number) {
   const { value, error } =
@@ -187,3 +219,71 @@ export function useStakes(userAddress: string) {
 }
 
 // TODO LOOT HOOKS
+
+// Mint loot
+export function useMintLoot() {
+  const { state, send } = useContractFunction(LOOTContract, 'safeMint', {});
+  return { state, send };
+}
+
+// Approve the LOOT NFTs
+export function useApproveLoot() {
+  const { state, send } = useContractFunction(LOOTContract, 'setApprovalForAll', {});
+  return { state, send };
+}
+
+// Check if user has approved STAKING contract for all LOOT NFTs
+export function useAllowanceLoot(userAddress: string) {
+  const { value, error } =
+    useCall(
+      userAddress && {
+        contract: LOOTContract,
+        method: 'isApprovedForAll',
+        args: [userAddress, STAKE_CONTRACT_ADDRESS],
+      },
+    ) ?? {};
+
+  if (error) {
+    console.error(`Error fetching NFT allowance for ${userAddress}`, error.message);
+    return undefined;
+  }
+  return value?.[0];
+}
+// Get Token URI for LOOT
+export function useTokenURILoot(tokenId: string | number) {
+  const { value, error } =
+    useCall(
+      tokenId && {
+        contract: LOOTContract,
+        method: 'tokenURI',
+        args: [tokenId],
+      },
+    ) ?? {};
+
+  if (error) {
+    console.error(`Error fetching Token ${tokenId} URI`, error.message);
+    return undefined;
+  }
+
+  const uri = value?.[0].substr(29);
+  return uri;
+}
+
+// Get Owner of tokenId for LOOT
+export function useOwnerOfLoot(tokenId: string | number) {
+  const { value, error } =
+    useCall(
+      tokenId && {
+        contract: LOOTContract,
+        method: 'ownerOf',
+        args: [tokenId],
+      },
+    ) ?? {};
+
+  if (error) {
+    console.error(`Error fetching Token ${tokenId} URI`, error.message);
+    return undefined;
+  }
+
+  return value?.[0];
+}

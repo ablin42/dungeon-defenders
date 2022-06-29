@@ -9,16 +9,14 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 
 interface ILoot {
     struct Loot {
-        bytes32 name; 
-
+        bytes32 name;
         // Attributes
         uint256 minLevelRequired;
         int8 health;
         int8 speed;
         int8 strength;
         int8 defense;
-
-        // Aesthetics 
+        // Aesthetics
         uint8 background;
         uint8 weapon;
         uint8 armor;
@@ -31,32 +29,42 @@ interface ILoot {
 }
 
 contract DungeonDefenders is ERC721, ERC721URIStorage, DefenderUtils {
-
     ILoot public lootToken;
-    constructor(ILoot _lootToken)
-        ERC721("DungeonDefenders", "DDS") {
+
+    constructor(ILoot _lootToken) ERC721("DungeonDefenders", "DDS") {
         lootToken = _lootToken;
     }
+
     // when we have a final app
     // function _baseURI() internal pure override returns (string memory) {
     //     return "https://ourapp.vercel.app/api";
     // }
 
     function safeMint(address to, bytes32 name) public {
-        uint tokenId = createRandomDefender(name);
+        uint256 tokenId = createRandomDefender(name);
         _safeMint(to, tokenId);
     }
 
     // The following functions are overrides required by Solidity.
 
-    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
+    function _burn(uint256 tokenId)
+        internal
+        override(ERC721, ERC721URIStorage)
+    {
         super._burn(tokenId);
     }
 
-    function tokenURI(uint256 tokenId) override(ERC721, ERC721URIStorage) public view returns (string memory) {
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
         string[17] memory parts;
 
-        parts[0] = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" /><text x="10" y="20" class="base">';
+        parts[
+            0
+        ] = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" /><text x="10" y="20" class="base">';
 
         parts[1] = bytes32ToString(defenders[tokenId].name);
 
@@ -80,47 +88,106 @@ contract DungeonDefenders is ERC721, ERC721URIStorage, DefenderUtils {
 
         parts[11] = toString(defenders[tokenId].defense);
 
-        parts[12] = '</text><text x="10" y="140" class="base">Dungeon Defended: ';
+        parts[
+            12
+        ] = '</text><text x="10" y="140" class="base">Dungeon Defended: ';
 
         parts[13] = toString(defenders[tokenId].dungeonWins);
 
-        parts[14] = '</text><text x="10" y="160" class="base">Dungeons Attempted: ';
+        parts[
+            14
+        ] = '</text><text x="10" y="160" class="base">Dungeons Attempted: ';
 
-        parts[15] = toString(defenders[tokenId].dungeonWins + defenders[tokenId].dungeonLosses);
+        parts[15] = toString(
+            defenders[tokenId].dungeonWins + defenders[tokenId].dungeonLosses
+        );
 
-        parts[16] = '</text></svg>';
+        parts[16] = "</text></svg>";
 
-        string memory output = string(abi.encodePacked(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], parts[6], parts[7], parts[8]));
-        output = string(abi.encodePacked(output, parts[9], parts[10], parts[11], parts[12], parts[13], parts[14], parts[15], parts[16]));
-        
-        string memory json = string(abi.encodePacked(
-            '{'
-            '"name": "Defender #', toString(tokenId), '", '
-            '"description": "Dungeon Defenders is an NFT web game where you collect defenders and loot and rid dungeons of their monsters for riches!", '
-            '"external_url":"http://dungeondefenders.xyz", '
-            '"image": "data:image/svg+xml;base64,', Base64.encode(bytes(output)), '", '
-            '"attributes": ['
-            '{"trait_type":"Name", "value":"', parts[1], '"},'
-            '{"trait_type":"Level", "value":"', parts[3], '"},'
-            '{"trait_type":"Health", "value":"', parts[5], '"},'
-        ));
-        json = string(abi.encodePacked(
-            json,
-            '{"trait_type":"Speed", "value":"', parts[7], '"},'
-            '{"trait_type":"Strength", "value":"', parts[9], '"},'
-            '{"trait_type":"Defense", "value":"', parts[11], '"},'
-            '{"trait_type":"Dungeons Defended", "value":"', parts[13], '"},'
-            '{"trait_type":"Dungeons Attempted", "value":"', parts[15], '"}'
-            ']}'));
-        json= Base64.encode(bytes(json));
-        output = string(abi.encodePacked('data:application/json;base64,', json));
+        string memory output = string(
+            abi.encodePacked(
+                parts[0],
+                parts[1],
+                parts[2],
+                parts[3],
+                parts[4],
+                parts[5],
+                parts[6],
+                parts[7],
+                parts[8]
+            )
+        );
+        output = string(
+            abi.encodePacked(
+                output,
+                parts[9],
+                parts[10],
+                parts[11],
+                parts[12],
+                parts[13],
+                parts[14],
+                parts[15],
+                parts[16]
+            )
+        );
+
+        string memory json = string(
+            abi.encodePacked(
+                "{"
+                '"name": "Defender #',
+                toString(tokenId),
+                '", '
+                '"description": "Dungeon Defenders is an NFT web game where you collect defenders and loot and rid dungeons of their monsters for riches!", '
+                '"external_url":"http://dungeondefenders.xyz", '
+                '"image": "data:image/svg+xml;base64,',
+                Base64.encode(bytes(output)),
+                '", '
+                '"attributes": ['
+                '{"trait_type":"Name", "value":"',
+                parts[1],
+                '"},'
+                '{"trait_type":"Level", "value":"',
+                parts[3],
+                '"},'
+                '{"trait_type":"Health", "value":"',
+                parts[5],
+                '"},'
+            )
+        );
+        json = string(
+            abi.encodePacked(
+                json,
+                '{"trait_type":"Speed", "value":"',
+                parts[7],
+                '"},'
+                '{"trait_type":"Strength", "value":"',
+                parts[9],
+                '"},'
+                '{"trait_type":"Defense", "value":"',
+                parts[11],
+                '"},'
+                '{"trait_type":"Dungeons Defended", "value":"',
+                parts[13],
+                '"},'
+                '{"trait_type":"Dungeons Attempted", "value":"',
+                parts[15],
+                '"}'
+                "]}"
+            )
+        );
+        json = Base64.encode(bytes(json));
+        output = string(
+            abi.encodePacked("data:application/json;base64,", json)
+        );
 
         return output;
     }
 
-    
     function equipLoot(uint256 _defenderId, uint256 _lootId) public onlyOwner {
-        require(lootToken.ownerOf(_lootId) == ownerOf(_defenderId), "Must own defender and loot");
+        require(
+            lootToken.ownerOf(_lootId) == ownerOf(_defenderId),
+            "Must own defender and loot"
+        );
         ILoot.Loot memory loot = lootToken.loot(_lootId);
 
         if (loot.background > 0) {
@@ -136,13 +203,19 @@ contract DungeonDefenders is ERC721, ERC721URIStorage, DefenderUtils {
             aesthetics[_defenderId].slots[AES_ARMOR_IDX] = _lootId;
         }
         if (loot.boots > 0) {
-            aesthetics[_defenderId].boots = loot.weapon;
+            aesthetics[_defenderId].boots = loot.boots;
             aesthetics[_defenderId].slots[AES_BOOTS_IDX] = _lootId;
         }
     }
-    
-    function unequipLoot(uint256 _defenderId, uint256 _lootId) public onlyOwner {
-        require(lootToken.ownerOf(_lootId) == ownerOf(_defenderId), "Must own defender and loot");
+
+    function unequipLoot(uint256 _defenderId, uint256 _lootId)
+        public
+        onlyOwner
+    {
+        require(
+            lootToken.ownerOf(_lootId) == ownerOf(_defenderId),
+            "Must own defender and loot"
+        );
         ILoot.Loot memory loot = lootToken.loot(_lootId);
 
         if (loot.background > 0) {

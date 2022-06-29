@@ -1,6 +1,12 @@
 export const NFT_ABI = [
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: 'contract ILoot',
+        name: '_lootToken',
+        type: 'address',
+      },
+    ],
     stateMutability: 'nonpayable',
     type: 'constructor',
   },
@@ -98,6 +104,25 @@ export const NFT_ABI = [
       {
         indexed: true,
         internalType: 'address',
+        name: 'previousOwner',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'newOwner',
+        type: 'address',
+      },
+    ],
+    name: 'OwnershipTransferred',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
         name: 'from',
         type: 'address',
       },
@@ -116,6 +141,40 @@ export const NFT_ABI = [
     ],
     name: 'Transfer',
     type: 'event',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    name: 'aesthetics',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: 'background',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint8',
+        name: 'weapon',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint8',
+        name: 'armor',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint8',
+        name: 'boots',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [
@@ -255,6 +314,24 @@ export const NFT_ABI = [
     inputs: [
       {
         internalType: 'uint256',
+        name: '_defenderId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_lootId',
+        type: 'uint256',
+      },
+    ],
+    name: 'equipLoot',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
         name: '_tokenId',
         type: 'uint256',
       },
@@ -291,6 +368,25 @@ export const NFT_ABI = [
   {
     inputs: [
       {
+        internalType: 'uint8',
+        name: 'defenderId',
+        type: 'uint8',
+      },
+    ],
+    name: 'getSlots',
+    outputs: [
+      {
+        internalType: 'uint256[]',
+        name: 'slots',
+        type: 'uint256[]',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
         internalType: 'address',
         name: 'owner',
         type: 'address',
@@ -314,12 +410,38 @@ export const NFT_ABI = [
   },
   {
     inputs: [],
+    name: 'lootToken',
+    outputs: [
+      {
+        internalType: 'contract ILoot',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'name',
     outputs: [
       {
         internalType: 'string',
         name: '',
         type: 'string',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'owner',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
       },
     ],
     stateMutability: 'view',
@@ -342,6 +464,13 @@ export const NFT_ABI = [
       },
     ],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'renounceOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -501,6 +630,37 @@ export const NFT_ABI = [
       },
     ],
     name: 'transferFrom',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'newOwner',
+        type: 'address',
+      },
+    ],
+    name: 'transferOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_defenderId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_lootId',
+        type: 'uint256',
+      },
+    ],
+    name: 'unequipLoot',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',

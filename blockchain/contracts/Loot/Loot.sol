@@ -76,8 +76,8 @@ contract DungeonLoot is ERC721, ERC721URIStorage, LootFactory {
         
         string memory json = string(abi.encodePacked(
             '{'
-            '"name": "Defender #', toString(tokenId), '", '
-            '"description": "Dungeon Defenders is an NFT web game where you collect defenders and loot and rid dungeons of their monsters for riches!", '
+            '"name": "Loot #', toString(tokenId), '", '
+            '"description": "Some well earned loot!", '
             '"external_url":"http://dungeondefenders.xyz", '
             '"image": "data:image/svg+xml;base64,', Base64.encode(bytes(output)), '", '
             '"attributes": ['

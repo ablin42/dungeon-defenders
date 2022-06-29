@@ -1,29 +1,36 @@
 const hre = require("hardhat");
 
 async function main() {
-  const GEMS = "0x820162941958dF6541Cf36A99e70970A8d4AF504";
-  const NFT = "0xc08543dEE25ACAf995A0e57202Da11353308061A";
-  const STAKING = "0x6b1CB5e5be7B4c4164459F8aBD5bdb0809E0a7BD";
+  const GEMS = "0x5CF7EBA340cb884ED87f48778f5473eF47bbE981";
+  const LOOT = "0x3b4CFc8861ec9657c647A3064070c558ED4E3892";
+  const NFT = "0xf27f5F0B206fD3AA4418bBf3ba46A39a353109aC";
+  const STAKING = "0xb53a5c6E5d0435D90De49e6FE1E9eD7e8166522A";
 
-  // VERIFY GEMS
+  // *VERIFY GEMS*
   const verifyGems = hre.run("verify:verify", {
     address: GEMS,
     constructorArguments: [],
   });
 
-  // VERIFY NFT
-  const verifyNFT = hre.run("verify:verify", {
-    address: NFT,
+  // *VERIFY LOOT*
+  const verifyLoot = hre.run("verify:verify", {
+    address: LOOT,
     constructorArguments: [],
   });
 
-  // VERIFY STAKING
-  const verifyStaking = hre.run("verify:verify", {
-    address: STAKING,
-    constructorArguments: [NFT, GEMS],
+  // *VERIFY NFT*
+  const verifyNFT = hre.run("verify:verify", {
+    address: NFT,
+    constructorArguments: [LOOT],
   });
 
-  await Promise.all([verifyGems, verifyNFT, verifyStaking]);
+  // *VERIFY STAKING*
+  const verifyStaking = hre.run("verify:verify", {
+    address: STAKING,
+    constructorArguments: [NFT, LOOT, GEMS],
+  });
+
+  await Promise.all([verifyGems, verifyLoot, verifyNFT, verifyStaking]);
   console.log("Verified contracts");
 }
 

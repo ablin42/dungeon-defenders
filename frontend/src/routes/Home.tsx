@@ -2,6 +2,7 @@ import React from 'react';
 import { useEthers } from '@usedapp/core';
 import Actions from '../components/Actions/Actions';
 import Mint from '../components/Actions/Mint';
+import Loot from '../components/Actions/MintLoot';
 
 const App = () => {
   const { account } = useEthers();
@@ -11,6 +12,7 @@ const App = () => {
       <p className="lead text-muted">Join our community by minting your first NFT</p>
       <div className="container">
         <div className="col-lg-6 col-md-8 mx-auto">{account && <Mint userAddress={account} />}</div>
+        <div className="col-lg-6 col-md-8 mx-auto">{account && <Loot userAddress={account} />}</div>
       </div>
       <div className="album bg-dark">
         <div className="container ">

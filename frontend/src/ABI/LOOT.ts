@@ -58,6 +58,25 @@ export const LOOT_ABI = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'lootId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'bytes32',
+        name: 'name',
+        type: 'bytes32',
+      },
+    ],
+    name: 'NewLootGenerated',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: 'address',
         name: 'from',
@@ -119,6 +138,25 @@ export const LOOT_ABI = [
   {
     inputs: [
       {
+        internalType: 'bytes32',
+        name: '_name',
+        type: 'bytes32',
+      },
+    ],
+    name: 'createRandomLoot',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '_tokenId',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
         internalType: 'uint256',
         name: 'tokenId',
         type: 'uint256',
@@ -154,6 +192,70 @@ export const LOOT_ABI = [
         internalType: 'bool',
         name: '',
         type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    name: 'loot',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: 'name',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'uint256',
+        name: 'minLevelRequired',
+        type: 'uint256',
+      },
+      {
+        internalType: 'int8',
+        name: 'health',
+        type: 'int8',
+      },
+      {
+        internalType: 'int8',
+        name: 'speed',
+        type: 'int8',
+      },
+      {
+        internalType: 'int8',
+        name: 'strength',
+        type: 'int8',
+      },
+      {
+        internalType: 'int8',
+        name: 'defense',
+        type: 'int8',
+      },
+      {
+        internalType: 'uint8',
+        name: 'background',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint8',
+        name: 'weapon',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint8',
+        name: 'armor',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint8',
+        name: 'boots',
+        type: 'uint8',
       },
     ],
     stateMutability: 'view',
@@ -197,6 +299,11 @@ export const LOOT_ABI = [
         internalType: 'address',
         name: 'to',
         type: 'address',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'name',
+        type: 'bytes32',
       },
     ],
     name: 'safeMint',
