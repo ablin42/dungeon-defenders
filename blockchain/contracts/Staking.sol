@@ -21,6 +21,7 @@ contract Staking is IERC721Receiver, Ownable {
         uint256 gemsAmount;
         uint256 rewardedGemsAmount;
         uint256 timestamp;
+        bool wasRewardLoot;
         bool isClaimable;
         bool isInitialized;
     }
@@ -84,6 +85,7 @@ contract Staking is IERC721Receiver, Ownable {
             STAKING_FEE,
             block.timestamp,
             false,
+            false,
             true
         );
         gemsToken.transferFrom(msg.sender, address(this), gemsAmount);
@@ -145,9 +147,8 @@ contract Staking is IERC721Receiver, Ownable {
         _unstake();
     }
 
-    // TODO later, set NFT loot rewards here
     // Close the game and allocate rewards
-    function allocateRewards(uint256 gemsAmount, address player)
+    function allocateRewards(uint256 gemsAmount, address player, bool shouldRewardLoot)
         external
         onlyOwner
     {
@@ -157,6 +158,7 @@ contract Staking is IERC721Receiver, Ownable {
         );
         stakes[player].isClaimable = true;
         stakes[player].rewardedGemsAmount = gemsAmount;
+        stakes[player].wasRewardLoot = shouldRewardLoot;
     }
 
     // https://docs.openzeppelin.com/contracts/3.x/api/token/erc721#IERC721Receiver

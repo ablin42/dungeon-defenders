@@ -1,6 +1,6 @@
 import express, { Router } from "express";
-import { logInfo } from "../../../Config/Logger";
-import { getNFT, renderNFT, getNFTCollection } from "../../../Services/NFTService";
+import { logInfo } from "../../Config/Logger";
+import { getNFT, renderNFT, getNFTCollection } from "../../Services/NFTService";
 
 const router = express.Router();
 router.post('/:id/render', async (req, res) => {
