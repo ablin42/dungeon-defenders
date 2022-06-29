@@ -1,42 +1,53 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { NFT } from '../types';
+import { NFTAttribute, NFT } from '../types';
+import { useEthers } from '@usedapp/core';
+import Play from './Actions/Play';
+import { useStakes } from '../hooks';
 
 interface Props {
   NFT: NFT;
+  owner: string;
 }
 
-// TODO keeping it here for now, can be removed later once NFTCardAlternative fully implemented
+const BADGE_TYPE = ['primary', 'primary', 'success', 'success', 'success', 'success', 'info', 'info'];
 
-const BADGE_TYPE = ['primary', 'info', 'success', 'danger', 'warning', 'secondary'];
-
-const NFTCard = ({ NFT }: Props) => {
+// TODO should be somewhat pure
+const NFTCard = ({ NFT, owner }: Props) => {
   const { name, description, tokenId, image, external_url, attributes } = NFT;
+  const actualTokenId = tokenId || +name.replace(/^\D+/g, ''); // Trick to bypass the issue of tokenId not being set in the NFT object
+  const { account } = useEthers();
+  const stakes = account && useStakes(account);
+  const userStaking = stakes && +stakes.timestamp > 0;
+  const stakedId = stakes && +stakes.tokenId;
+  const isOwner = account === owner;
+  const isUserStakedToken = userStaking && actualTokenId == stakedId;
 
   const getMetadataDisplay = () => {
     return (
       <div className="card-body">
         <h5 className="card-title">
-          <Link to={`/NFT/${tokenId}`}>{name}</Link>
+          <Link to={`/NFT/${actualTokenId}`}>{name}</Link>
         </h5>
         <p className="card-text">{description}</p>
         <div className="d-flex justify-content-between align-items-center">
           <b>
-            ID#{tokenId}
+            ID#{actualTokenId}
             <br />
-            <a href="#">{external_url.substring(8)}</a>
+            <a href="#">{external_url.substring(7)}</a>
           </b>
           <small className="text-muted" style={{ textAlign: 'right' }}>
-            {Object.entries(attributes).map((attribute: any, index: number) => {
-              const [key, value] = attribute;
+            {attributes.map((attribute: NFTAttribute, index: number) => {
+              const { trait_type, value } = attribute;
               return (
-                <span key={key} className={`badge bg-${BADGE_TYPE[index]} m-1`}>
-                  {key}: {value}
+                <span key={trait_type} className={`badge bg-${BADGE_TYPE[index]} m-1`}>
+                  {trait_type}: {value}
                 </span>
               );
             })}
           </small>
         </div>
+        <div>{account && (isOwner || isUserStakedToken) && <Play userAddress={account} tokenId={actualTokenId} />}</div>
       </div>
     );
   };
