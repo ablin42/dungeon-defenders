@@ -9,11 +9,15 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract Staking is IERC721Receiver, Ownable {
     // TODO natspec
     IERC721 public characterToken;
+    IERC721 public lootToken;
     IERC20 public gemsToken;
     uint256 public STAKING_FEE = 100 * 10**18;
 
     struct Stake {
         uint256 tokenId;
+        uint256 weaponId;
+        uint256 armorId;
+        uint256 bootsId;
         uint256 gemsAmount;
         uint256 rewardedGemsAmount;
         uint256 timestamp;
@@ -21,8 +25,8 @@ contract Staking is IERC721Receiver, Ownable {
         bool isInitialized;
     }
 
-    event NFTStaked(address owner, uint256 tokenId, uint256 gemsAmount);
-    event NFTUnstaked(address owner, uint256 tokenId, uint256 rewardedAmount);
+    event NFTStaked(address owner, uint256 defenderId, uint256 weaponId, uint256 armorId, uint256 bootsId, uint256 gemsAmount);
+    event NFTUnstaked(address owner, uint256 defenderId, uint256 weaponId, uint256 armorId, uint256 bootsId, uint256 rewardedAmount);
     event Claimed(address owner);
 
     // Map staker address to stake details
@@ -45,8 +49,9 @@ contract Staking is IERC721Receiver, Ownable {
         _;
     }
 
-    constructor(IERC721 _characterToken, IERC20 _gemsToken) {
+    constructor(IERC721 _characterToken, IERC721 _lootToken, IERC20 _gemsToken) {
         characterToken = _characterToken;
+        lootToken = _lootToken;
         gemsToken = _gemsToken;
     }
 
@@ -60,13 +65,21 @@ contract Staking is IERC721Receiver, Ownable {
     }
 
     // Might need to implement a reentrancy guard here to avoid double staking
-    function stake(uint256 _tokenId, uint256 gemsAmount)
+    function stake(uint256 _defenderId, uint256 _weaponId, uint256 _armorId, uint256 _bootsId, uint256 gemsAmount)
         external
         onlyOneStake
         minimumAmount(gemsAmount)
     {
+        require(characterToken.ownerOf(_defenderId) == msg.sender, "Must own defender");
+        require(_weaponId == 0 || lootToken.ownerOf(_weaponId) == msg.sender, "Must own weapon");
+        require(_armorId == 0 || lootToken.ownerOf(_armorId) == msg.sender, "Must own armor");
+        require(_bootsId == 0 || lootToken.ownerOf(_bootsId) == msg.sender, "Must own boots");
+
         stakes[msg.sender] = Stake(
-            _tokenId,
+            _defenderId,
+            _weaponId,
+            _armorId,
+            _bootsId,
             gemsAmount,
             STAKING_FEE,
             block.timestamp,
@@ -74,19 +87,40 @@ contract Staking is IERC721Receiver, Ownable {
             true
         );
         gemsToken.transferFrom(msg.sender, address(this), gemsAmount);
-        characterToken.safeTransferFrom(msg.sender, address(this), _tokenId);
-        emit NFTStaked(msg.sender, _tokenId, gemsAmount);
+        characterToken.safeTransferFrom(msg.sender, address(this), _defenderId);
+        if (_weaponId > 0) {
+            lootToken.safeTransferFrom(msg.sender, address(this), _weaponId);
+        }
+        if (_armorId > 0) {
+            lootToken.safeTransferFrom(msg.sender, address(this), _armorId);
+        }
+        if (_bootsId > 0) {
+            lootToken.safeTransferFrom(msg.sender, address(this), _bootsId);
+        }
+        emit NFTStaked(msg.sender, _defenderId, _weaponId, _armorId, _bootsId, gemsAmount);
     }
 
     // Pure unstaking logic
     function _unstake() internal {
         uint256 rewardedAmount = stakes[msg.sender].rewardedGemsAmount;
         uint256 tokenId = stakes[msg.sender].tokenId;
+        uint256 weaponId = stakes[msg.sender].weaponId;
+        uint256 armorId = stakes[msg.sender].armorId;
+        uint256 bootsId = stakes[msg.sender].bootsId;
         delete stakes[msg.sender];
 
         gemsToken.transfer(msg.sender, rewardedAmount);
         characterToken.safeTransferFrom(address(this), msg.sender, tokenId);
-        emit NFTUnstaked(msg.sender, tokenId, rewardedAmount);
+        if (weaponId > 0) {
+            lootToken.safeTransferFrom(address(this), msg.sender, weaponId);
+        }
+        if (armorId > 0) {
+            lootToken.safeTransferFrom(address(this), msg.sender, armorId);
+        }
+        if (bootsId > 0) {
+            lootToken.safeTransferFrom(address(this), msg.sender, bootsId);
+        }
+        emit NFTUnstaked(msg.sender, tokenId, weaponId, armorId, bootsId, rewardedAmount);
     }
 
     // Might need reentrancy guard here too

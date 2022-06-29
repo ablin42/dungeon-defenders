@@ -7,10 +7,36 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 
+interface ILoot {
+    struct Loot {
+        bytes32 name; 
+
+        // Attributes
+        uint256 minLevelRequired;
+        int8 health;
+        int8 speed;
+        int8 strength;
+        int8 defense;
+
+        // Aesthetics 
+        uint8 background;
+        uint8 weapon;
+        uint8 armor;
+        uint8 boots;
+    }
+
+    function loot(uint256 tokenId) external view returns (Loot memory loot);
+
+    function ownerOf(uint256 tokenId) external view returns (address owner);
+}
+
 contract DungeonDefenders is ERC721, ERC721URIStorage, DefenderUtils {
 
-    constructor() ERC721("DungeonDefenders", "DDS") {}
-
+    ILoot public lootToken;
+    constructor(ILoot _lootToken)
+        ERC721("DungeonDefenders", "DDS") {
+        lootToken = _lootToken;
+    }
     // when we have a final app
     // function _baseURI() internal pure override returns (string memory) {
     //     return "https://ourapp.vercel.app/api";
@@ -90,5 +116,50 @@ contract DungeonDefenders is ERC721, ERC721URIStorage, DefenderUtils {
         output = string(abi.encodePacked('data:application/json;base64,', json));
 
         return output;
+    }
+
+    
+    function equipLoot(uint256 _defenderId, uint256 _lootId) public onlyOwner {
+        require(lootToken.ownerOf(_lootId) == ownerOf(_defenderId), "Must own defender and loot");
+        ILoot.Loot memory loot = lootToken.loot(_lootId);
+
+        if (loot.background > 0) {
+            aesthetics[_defenderId].background = loot.background;
+            aesthetics[_defenderId].slots[AES_BACKGROUND_IDX] = _lootId;
+        }
+        if (loot.weapon > 0) {
+            aesthetics[_defenderId].weapon = loot.weapon;
+            aesthetics[_defenderId].slots[AES_WEAPON_IDX] = _lootId;
+        }
+        if (loot.armor > 0) {
+            aesthetics[_defenderId].armor = loot.armor;
+            aesthetics[_defenderId].slots[AES_ARMOR_IDX] = _lootId;
+        }
+        if (loot.boots > 0) {
+            aesthetics[_defenderId].boots = loot.weapon;
+            aesthetics[_defenderId].slots[AES_BOOTS_IDX] = _lootId;
+        }
+    }
+    
+    function unequipLoot(uint256 _defenderId, uint256 _lootId) public onlyOwner {
+        require(lootToken.ownerOf(_lootId) == ownerOf(_defenderId), "Must own defender and loot");
+        ILoot.Loot memory loot = lootToken.loot(_lootId);
+
+        if (loot.background > 0) {
+            aesthetics[_defenderId].background = 0;
+            aesthetics[_defenderId].slots[AES_BACKGROUND_IDX] = 0;
+        }
+        if (loot.weapon > 0) {
+            aesthetics[_defenderId].weapon = 0;
+            aesthetics[_defenderId].slots[AES_WEAPON_IDX] = 0;
+        }
+        if (loot.armor > 0) {
+            aesthetics[_defenderId].armor = 0;
+            aesthetics[_defenderId].slots[AES_ARMOR_IDX] = 0;
+        }
+        if (loot.boots > 0) {
+            aesthetics[_defenderId].boots = 0;
+            aesthetics[_defenderId].slots[AES_BOOTS_IDX] = 0;
+        }
     }
 }
