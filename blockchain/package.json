@@ -3,6 +3,9 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
+    "deploy:loot": "ts-node --files ./scripts/Loot/deploy.ts",
+    "createLoot": "ts-node --files ./scripts/Loot/createLoot.ts",
+    "getLoot": "ts-node --files ./scripts/Loot/getLoot.ts",
     "deploy:dds": "ts-node --files ./scripts/DungeonDefenders/deploy.ts",
     "createDefender": "ts-node --files ./scripts/DungeonDefenders/createDefender.ts",
     "getDefender": "ts-node --files ./scripts/DungeonDefenders/getDefender.ts",
