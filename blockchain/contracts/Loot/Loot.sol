@@ -9,7 +9,10 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 
 contract DungeonLoot is ERC721, ERC721URIStorage, LootFactory {
 
-    constructor() ERC721("DungeonLoot", "DLOOT") {}
+    constructor() ERC721("DungeonLoot", "DLOOT") {
+        // tokenId == 0 is used to indicate no loot
+        safeMint(address(this), "NULL_LOOT");
+    }
 
     function safeMint(address to, bytes32 name) public {
         uint tokenId = createRandomLoot(name);
