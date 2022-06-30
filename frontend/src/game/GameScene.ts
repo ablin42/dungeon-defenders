@@ -18,9 +18,9 @@ const DUNGEON_SIZE = 3;
 const NUM_OF_ROOMS = 5;
 const SPAWN_ROOM_SIZE = 8;
 const ENEMY_ROOM_SIZE = 12;
-const BOSS_ROOM_SIZE = 16;
+const BOSS_ROOM_SIZE = 6;
 
-const CELL_SIZE = BOSS_ROOM_SIZE;
+const CELL_SIZE = 16;
 
 export class GameScene extends Phaser.Scene {
   floorLayer!: Phaser.GameObjects.Layer;
@@ -172,8 +172,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
-    console.log(this);
-
     this.graphics = this.add.graphics();
 
     this.floorLayer = this.add.layer();
@@ -185,6 +183,17 @@ export class GameScene extends Phaser.Scene {
     this.enemyPhysicGroup = this.physics.add.group();
 
     const map = simpleDungeonGenerator(DUNGEON_SIZE, NUM_OF_ROOMS);
+
+    let isGameOver = false;
+    const onGameOver = () => {
+        if (isGameOver) {
+            return;
+        }
+
+        isGameOver = true;
+        const {owner} = this.scene.settings.data as { owner: string };
+        triggerRewardAllocation(owner)
+    }
 
     for (let y = 0; y < DUNGEON_SIZE; y++) {
       for (let x = 0; x < DUNGEON_SIZE; x++) {
@@ -204,9 +213,7 @@ export class GameScene extends Phaser.Scene {
             break;
           case RoomType.BOSS_ROOM:
             roomSize = BOSS_ROOM_SIZE;
-            this.treasureChest.create(this, this.gameLayer, pos.x, pos.y, () =>
-              triggerRewardAllocation('0xA5Bee0D628445024f8278974BdD2d26c4a140f76'),
-            );
+            this.treasureChest.create(this, this.gameLayer, pos.x, pos.y, onGameOver);
             break;
         }
 
