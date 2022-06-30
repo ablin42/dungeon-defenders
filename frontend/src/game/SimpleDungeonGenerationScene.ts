@@ -73,7 +73,7 @@ export class SimpleDungeonGenerationScene extends Phaser.Scene
                         rect.setStrokeStyle(2, 0x00ff00);
                         rect.setFillStyle(0x00ff00);
                         roadLength = CELL_SIZE - SPAWN_ROOM_SIZE;
-                        this.player.create(this, this.gameLayer, x * CELL_SIZE * UNIT_SIZE, y * CELL_SIZE * UNIT_SIZE);
+                        this.player.create(this, 0, 0, this.gameLayer, x * CELL_SIZE * UNIT_SIZE, y * CELL_SIZE * UNIT_SIZE);
                         break;
                     case RoomType.ENEMY_ROOM:
                         rect = this.add.rectangle(x * CELL_SIZE * UNIT_SIZE, y * CELL_SIZE * UNIT_SIZE, ENEMY_ROOM_SIZE * UNIT_SIZE, ENEMY_ROOM_SIZE * UNIT_SIZE);

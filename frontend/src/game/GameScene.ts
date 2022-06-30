@@ -7,6 +7,8 @@ import { createTile, loadTiles } from './TileManager';
 import { TreasureChest } from './TreasureChest';
 import { Vector2 } from './utils';
 import toast from 'react-hot-toast';
+import { GameConfig } from './Index';
+import { loadAssets } from './GameAssets';
 
 const triggerRewardAllocation = async (account: string, defenderId: string | number) => {
   toast.success('You won, GG !', {
@@ -55,6 +57,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   preload() {
+    loadAssets(this);
     Player.preload(this);
     TreasureChest.preload(this);
     loadTiles(this);
@@ -179,6 +182,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
+    const { ownerAddress, defenderId, defender, weapon } = this.scene.settings.data as GameConfig;
+
     this.graphics = this.add.graphics();
 
     this.floorLayer = this.add.layer();
@@ -198,8 +203,7 @@ export class GameScene extends Phaser.Scene {
       }
 
       isGameOver = true;
-      const { owner, defenderId } = this.scene.settings.data as { owner: string; defenderId: number };
-      triggerRewardAllocation(owner, defenderId);
+      triggerRewardAllocation(ownerAddress, defenderId);
     };
 
     for (let y = 0; y < DUNGEON_SIZE; y++) {
@@ -213,7 +217,7 @@ export class GameScene extends Phaser.Scene {
             continue;
           case RoomType.SPAWN_ROOM:
             roomSize = SPAWN_ROOM_SIZE;
-            this.player.create(this, this.gameLayer, pos.x, pos.y);
+            this.player.create(this, defender.characterType, weapon.weapon, this.gameLayer, pos.x, pos.y);
             break;
           case RoomType.ENEMY_ROOM:
             roomSize = ENEMY_ROOM_SIZE;

@@ -16,9 +16,9 @@ contract LootFactory is ContractUtils{
     int8 INIT_ATTR_MAX = 40;
     uint8 MAX_LEVEL = 10;
     uint8 NUM_OF_BACKGROUNDS = 3;
-    uint8 NUM_OF_WEAPONS = 3;
-    uint8 NUM_OF_ARMOR = 3;
-    uint8 NUM_OF_BOOTS = 3;
+    uint8 NUM_OF_WEAPONS = 13;
+    uint8 NUM_OF_ARMOR = 1;
+    uint8 NUM_OF_BOOTS = 1;
 
     struct Loot {
         bytes32 name; 
@@ -39,19 +39,40 @@ contract LootFactory is ContractUtils{
 
     Loot[] public loot;
 
+    function _createEmpty() internal returns (uint) {
+        uint tokenId = _tokenIdCounter.current();
+        loot.push(Loot(
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ));
+        _tokenIdCounter.increment();
+        return tokenId;
+    }
+
     function _createLoot(bytes32 _name) internal returns (uint) {
         uint tokenId = _tokenIdCounter.current();
-        uint8 lootType = _generateRandomUintValueInBounds(_name, tokenId, "LOOT_TYPE", 0, 4);
-        
-        if (lootType == 0) {
-            loot.push(_createBackground(_name, tokenId));
-        } else if (lootType == 1) {
-            loot.push(_createWeapon(_name, tokenId));
-        } else if (lootType == 2) {
-            loot.push(_createArmor(_name, tokenId));
-        } else if (lootType == 3) {
-            loot.push(_createBoots(_name, tokenId));
-        }
+
+        loot.push(_createWeapon(_name, tokenId));
+
+        // TODO; lootType is only rolling 0, 1, 2 for some reason
+        // uint8 lootType = _generateRandomUintValueInBounds(_name, tokenId, "LOOT_TYPE", 0, 12);
+        // if (lootType == 0) {
+        //     loot.push(_createBackground(_name, tokenId));
+        // } else if (lootType == 1) {
+        //     loot.push(_createBoots(_name, tokenId));
+        // } else if (lootType == 2) {
+        //     loot.push(_createArmor(_name, tokenId));
+        // } else {
+        //     loot.push(_createWeapon(_name, tokenId));
+        // }
         
         _tokenIdCounter.increment();
         emit NewLootGenerated(tokenId, _name);

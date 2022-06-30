@@ -11,7 +11,8 @@ contract DungeonLoot is ERC721, ERC721URIStorage, LootFactory {
 
     constructor() ERC721("DungeonLoot", "DLOOT") {
         // tokenId == 0 is used to indicate no loot
-        safeMint(address(this), "NULL_LOOT");
+        _createEmpty();
+        _safeMint(address(this), 0);
     }
 
     function safeMint(address to, bytes32 name) public {

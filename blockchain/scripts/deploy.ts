@@ -4,12 +4,14 @@ import * as nftJson from "../artifacts/contracts/DungeonDefenders/DungeonDefende
 import * as gemJson from "../artifacts/contracts/Gems.sol/Gems.json";
 import * as stakingJson from "../artifacts/contracts/Staking.sol/Staking.json";
 import * as lootJson from "../artifacts/contracts/Loot/Loot.sol/DungeonLoot.json";
+import { Gems } from "../typechain";
 
-// import { connectToWallet } from "./utils";
+import { connectToWallet } from "./utils";
+import { Contract } from "ethers";
 
 async function main() {
-  // const { signer } = await connectToWallet();
-  const [signer] = await ethers.getSigners();
+  const { signer } = await connectToWallet();
+  // const [signer] = await ethers.getSigners();
 
   // *Deploy Gems*
   console.log("Deploying GEMS contract");
@@ -18,11 +20,14 @@ async function main() {
     gemJson.bytecode,
     signer
   );
-  const tokenContract = await TokenFactory.deploy();
-  console.log("Awaiting confirmations");
-  await tokenContract.deployed();
-  console.log("Completed");
-  console.log(`GEMS Contract deployed at ${tokenContract.address}`);
+  let tokenContract!: Gems;
+  const deployToken = async () => {
+    tokenContract = await TokenFactory.deploy() as Gems;
+    console.log("Awaiting confirmations");
+    await tokenContract.deployed();
+    console.log("Completed");
+    console.log(`GEMS Contract deployed at ${tokenContract.address}`);
+  }
 
   // *Deploy LOOT*
   console.log("Deploying DungeonLoot contract");
@@ -31,11 +36,18 @@ async function main() {
     lootJson.bytecode,
     signer
   );
-  const lootContract = await LootFactory.deploy();
-  console.log("Awaiting confirmations");
-  await lootContract.deployed();
-  console.log("Completed");
-  console.log(`DungeonLoot Contract deployed at ${lootContract.address}`);
+  let lootContract!: Contract;
+  const deployLoot = async () => {
+    lootContract = await LootFactory.deploy();
+    console.log("Awaiting confirmations");
+    await lootContract.deployed();
+    console.log("Completed");
+    console.log(`DungeonLoot Contract deployed at ${lootContract.address}`);
+  }
+
+  await deployLoot();
+  await deployToken();
+  //await Promise.all([deployToken(), deployLoot()]);
 
   // *Deploy NFT*
   console.log("Deploying NFT contract");
@@ -66,6 +78,19 @@ async function main() {
   await stakingContract.deployed();
   console.log("Completed");
   console.log(`Staking Contract deployed at ${stakingContract.address}`);
+
+  console.log(`export const GEMS_CONTRACT_ADDRESS = '${tokenContract.address}';`);
+  console.log(`export const LOOT_CONTRACT_ADDRESS = '${lootContract.address}';`);
+  console.log(`export const NFT_CONTRACT_ADDRESS = '${nftContract.address}';`);
+  console.log(`export const STAKE_CONTRACT_ADDRESS = '${stakingContract.address}';`);
+
+  console.log(`NFT_CONTRACT_ADDRESS=${nftContract.address}`);
+  console.log(`LOOT_CONTRACT_ADDRESS=${lootContract.address}`);
+  console.log(`STAKING_CONTRACT_ADDRESS=${stakingContract.address}`);
+
+  tokenContract.transfer(stakingContract.address, ethers.utils.parseEther('2000000'));
+  tokenContract.transfer("0x8a7Ff4D8573fe8549f8D4AFF392273eCE9f5f6bE", ethers.utils.parseEther('2000'));
+
 }
 
 main().catch((error) => {

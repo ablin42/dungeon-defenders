@@ -12,7 +12,12 @@ export function loadTiles(scene: Phaser.Scene) {
     scene.load.spritesheet('tiles', getPublicAssetUrl('Tiles.png'), { frameWidth: 16, frameHeight: 16 });
 }
 
+const FLOOR_TILES = [29, 29,29, 29,29, 29,29, 29,29, 29,29, 29,29, 29,29, 29,29, 29, 30, 31, 36, 37, 38, 43, 44]
 export function createTile(scene: Phaser.Scene, x: number, y: number, tile = 29, optons?: CreateTileOptions) {
+    if (tile === 29) {
+        tile = FLOOR_TILES[Math.floor(Math.random() * FLOOR_TILES.length)];
+    }
+
     const spawnX = x + (optons?.animate ? -HALF_UNIT_SIZE : 0);
     const spawnY = y + (optons?.animate ? -HALF_UNIT_SIZE : 0);
     const tileSprite = scene.add.sprite(spawnX, spawnY, 'tiles', tile);

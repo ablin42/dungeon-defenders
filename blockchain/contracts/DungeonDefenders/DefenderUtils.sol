@@ -22,7 +22,7 @@ contract DefenderUtils is DefenderFactory {
         7000    // level 10
     ];
 
-    function gainExperience(uint256 _tokenId, uint256 _expToGain) public {
+    function gainExperience(uint256 _tokenId, uint256 _expToGain) external {
         require(defenders[_tokenId].level < 10, "Defender is already max level");
         require(defenderExperience[_tokenId] + _expToGain > defenderExperience[_tokenId], "Can't gain anymore experience");
         defenderExperience[_tokenId] += _expToGain;

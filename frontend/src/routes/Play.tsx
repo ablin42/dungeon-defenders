@@ -1,13 +1,51 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { initializeGame } from '../game/Index';
 import { useLocation } from 'react-router-dom';
+import { Loot, useDefender, useLoot } from '../hooks';
+import toast from 'react-hot-toast';
+
+type State = {
+  owner: string,
+  defenderId: string | number,
+  weaponId: number,
+  armorId: number,
+  bootsId: number,
+
+  gemsAmount: number,
+}
 
 export default function Play() {
-  const { state } = useLocation();
+  const { state } = useLocation() as {state: State};
+  const defender = useDefender(state.defenderId);
+  const weapon = useLoot(state.weaponId);
+  const [init, setInit] = useState(false);
 
   useEffect(() => {
-    initializeGame('game', state);
-  }, []);
+    if (init) {
+      return;
+    }
+
+    console.log(defender, weapon);
+    if (!defender) {
+      return;
+    }
+
+    const w: Loot = {
+      health: 0,
+      speed: 0,
+      strength: 0,
+      defense: 0,
+    
+      // Aesthetics 
+      background: 0,
+      weapon: 4,
+      armor: 0,
+      boots: 0
+    }
+
+    setInit(true);
+    initializeGame('game', { ownerAddress: state.owner, defenderId: state.defenderId, defender, weapon: w });
+  }, [defender, weapon]);
 
   return (
     <>

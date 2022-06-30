@@ -7,10 +7,10 @@ import { logError, logInfo, logWarn } from "../Config/Logger";
 import { BACKGROUND_COMPONENTS, PLAYER_COMPONENTS, WEAPON_COMPONENTS } from "../Data/NFTComponents";
 import { Contract, ethers } from 'ethers';
 import { NFT_CONTRACT_ADDRESS, WALLET_PRIVATE_KEY } from "../Config/Config";
-import { DungeonDefenders, } from "../Models/NFTToken";
 import * as db from './DBService';
-import compiledContract from "../Data/NFTToken";
-import { DungeonLoot } from "../Models/Loot";
+import { NFT_ABI } from "../Data/ABI/NFT";
+import { DungeonDefenders } from "../Models/DungeonDefenders";
+import { DungeonLoot } from "../Models/DungeonLoot";
 
 export function getNFTOwner(tokenId: string) : string | undefined {
     return db.getNFTOwner(tokenId);
@@ -149,7 +149,7 @@ export function connectToDungeonDefenderContract(funcName: string) {
 
     const contract: DungeonDefenders = new Contract(
         NFT_CONTRACT_ADDRESS,
-        compiledContract.abi,
+        NFT_ABI,
         signer
     ) as DungeonDefenders;
 
@@ -170,7 +170,7 @@ export function registerEventListeners() {
     }
 
     const {provider, contract: tokenContract} = connectResult;
-    const iface = new Interface(compiledContract.abi);
+    const iface = new Interface(NFT_ABI);
 
     logInfo('Connecting to transfer events', 'registerEventListeners');
     const transferFilter = tokenContract.filters.Transfer();

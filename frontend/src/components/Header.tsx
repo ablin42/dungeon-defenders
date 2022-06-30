@@ -4,6 +4,7 @@ import { useEthers } from '@usedapp/core';
 
 import ConnectWallet from './Actions/ConnectWallet';
 import styled from 'styled-components';
+import { useGemsBalance } from '../hooks';
 
 const Wrapper = styled.div`
   display: flex;
@@ -11,6 +12,7 @@ const Wrapper = styled.div`
 
 const Header = () => {
   const { account } = useEthers();
+  const gemsBalance = useGemsBalance(account);
 
   return (
     <header>
@@ -23,9 +25,12 @@ const Header = () => {
           </div>
           <Wrapper>
             {account && (
+              <>
+              <div>Gems: {gemsBalance}</div>
               <Link to={`/NFT/user/${account}`} className="me-3">
-                <button className="btn btn-success">Play</button>
+                <button className="btn btn-success">Your Collection</button>
               </Link>
+              </>
             )}
             <ConnectWallet />
           </Wrapper>

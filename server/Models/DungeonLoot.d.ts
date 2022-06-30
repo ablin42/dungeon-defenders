@@ -19,16 +19,14 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
-interface DungeonDefendersInterface extends ethers.utils.Interface {
+interface DungeonLootInterface extends ethers.utils.Interface {
   functions: {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
-    "createRandomDefender(bytes32)": FunctionFragment;
-    "defenderExperience(uint256)": FunctionFragment;
-    "defenders(uint256)": FunctionFragment;
-    "gainExperience(uint256,uint256)": FunctionFragment;
+    "createRandomLoot(bytes32)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
+    "loot(uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
     "safeMint(address,bytes32)": FunctionFragment;
@@ -46,20 +44,8 @@ interface DungeonDefendersInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "createRandomDefender",
+    functionFragment: "createRandomLoot",
     values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "defenderExperience",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "defenders",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "gainExperience",
-    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getApproved",
@@ -69,6 +55,7 @@ interface DungeonDefendersInterface extends ethers.utils.Interface {
     functionFragment: "isApprovedForAll",
     values: [string, string]
   ): string;
+  encodeFunctionData(functionFragment: "loot", values: [BigNumberish]): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownerOf",
@@ -103,16 +90,7 @@ interface DungeonDefendersInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "createRandomDefender",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "defenderExperience",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "defenders", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "gainExperience",
+    functionFragment: "createRandomLoot",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -123,6 +101,7 @@ interface DungeonDefendersInterface extends ethers.utils.Interface {
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "loot", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "safeMint", data: BytesLike): Result;
@@ -148,15 +127,13 @@ interface DungeonDefendersInterface extends ethers.utils.Interface {
   events: {
     "Approval(address,address,uint256)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
-    "DefenderLeveledUp(uint256,uint8)": EventFragment;
-    "NewDefenderGenerated(uint256,bytes32)": EventFragment;
+    "NewLootGenerated(uint256,bytes32)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "DefenderLeveledUp"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewDefenderGenerated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NewLootGenerated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
@@ -176,19 +153,15 @@ export type ApprovalForAllEvent = TypedEvent<
   }
 >;
 
-export type DefenderLeveledUpEvent = TypedEvent<
-  [BigNumber, number] & { defenderId: BigNumber; level: number }
->;
-
-export type NewDefenderGeneratedEvent = TypedEvent<
-  [BigNumber, string] & { defenderId: BigNumber; name: string }
+export type NewLootGeneratedEvent = TypedEvent<
+  [BigNumber, string] & { lootId: BigNumber; name: string }
 >;
 
 export type TransferEvent = TypedEvent<
   [string, string, BigNumber] & { from: string; to: string; tokenId: BigNumber }
 >;
 
-export class DungeonDefenders extends BaseContract {
+export class DungeonLoot extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -229,7 +202,7 @@ export class DungeonDefenders extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: DungeonDefendersInterface;
+  interface: DungeonLootInterface;
 
   functions: {
     approve(
@@ -240,46 +213,8 @@ export class DungeonDefenders extends BaseContract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    createRandomDefender(
+    createRandomLoot(
       _name: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    defenderExperience(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    defenders(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        string,
-        number,
-        number,
-        number,
-        number,
-        number,
-        number,
-        number,
-        number
-      ] & {
-        name: string;
-        level: number;
-        characterType: number;
-        health: number;
-        speed: number;
-        strength: number;
-        defense: number;
-        dungeonWins: number;
-        dungeonLosses: number;
-      }
-    >;
-
-    gainExperience(
-      _tokenId: BigNumberish,
-      _expToGain: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -293,6 +228,35 @@ export class DungeonDefenders extends BaseContract {
       operator: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    loot(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        string,
+        BigNumber,
+        number,
+        number,
+        number,
+        number,
+        number,
+        number,
+        number,
+        number
+      ] & {
+        name: string;
+        minLevelRequired: BigNumber;
+        health: number;
+        speed: number;
+        strength: number;
+        defense: number;
+        background: number;
+        weapon: number;
+        armor: number;
+        boots: number;
+      }
+    >;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
@@ -356,36 +320,8 @@ export class DungeonDefenders extends BaseContract {
 
   balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-  createRandomDefender(
+  createRandomLoot(
     _name: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  defenderExperience(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  defenders(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, number, number, number, number, number, number, number, number] & {
-      name: string;
-      level: number;
-      characterType: number;
-      health: number;
-      speed: number;
-      strength: number;
-      defense: number;
-      dungeonWins: number;
-      dungeonLosses: number;
-    }
-  >;
-
-  gainExperience(
-    _tokenId: BigNumberish,
-    _expToGain: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -399,6 +335,35 @@ export class DungeonDefenders extends BaseContract {
     operator: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  loot(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [
+      string,
+      BigNumber,
+      number,
+      number,
+      number,
+      number,
+      number,
+      number,
+      number,
+      number
+    ] & {
+      name: string;
+      minLevelRequired: BigNumber;
+      health: number;
+      speed: number;
+      strength: number;
+      defense: number;
+      background: number;
+      weapon: number;
+      armor: number;
+      boots: number;
+    }
+  >;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -456,48 +421,10 @@ export class DungeonDefenders extends BaseContract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    createRandomDefender(
+    createRandomLoot(
       _name: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    defenderExperience(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    defenders(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        string,
-        number,
-        number,
-        number,
-        number,
-        number,
-        number,
-        number,
-        number
-      ] & {
-        name: string;
-        level: number;
-        characterType: number;
-        health: number;
-        speed: number;
-        strength: number;
-        defense: number;
-        dungeonWins: number;
-        dungeonLosses: number;
-      }
-    >;
-
-    gainExperience(
-      _tokenId: BigNumberish,
-      _expToGain: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     getApproved(
       tokenId: BigNumberish,
@@ -509,6 +436,35 @@ export class DungeonDefenders extends BaseContract {
       operator: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    loot(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        string,
+        BigNumber,
+        number,
+        number,
+        number,
+        number,
+        number,
+        number,
+        number,
+        number
+      ] & {
+        name: string;
+        minLevelRequired: BigNumber;
+        health: number;
+        speed: number;
+        strength: number;
+        defense: number;
+        background: number;
+        weapon: number;
+        armor: number;
+        boots: number;
+      }
+    >;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -595,36 +551,20 @@ export class DungeonDefenders extends BaseContract {
       { owner: string; operator: string; approved: boolean }
     >;
 
-    "DefenderLeveledUp(uint256,uint8)"(
-      defenderId?: null,
-      level?: null
-    ): TypedEventFilter<
-      [BigNumber, number],
-      { defenderId: BigNumber; level: number }
-    >;
-
-    DefenderLeveledUp(
-      defenderId?: null,
-      level?: null
-    ): TypedEventFilter<
-      [BigNumber, number],
-      { defenderId: BigNumber; level: number }
-    >;
-
-    "NewDefenderGenerated(uint256,bytes32)"(
-      defenderId?: null,
+    "NewLootGenerated(uint256,bytes32)"(
+      lootId?: null,
       name?: null
     ): TypedEventFilter<
       [BigNumber, string],
-      { defenderId: BigNumber; name: string }
+      { lootId: BigNumber; name: string }
     >;
 
-    NewDefenderGenerated(
-      defenderId?: null,
+    NewLootGenerated(
+      lootId?: null,
       name?: null
     ): TypedEventFilter<
       [BigNumber, string],
-      { defenderId: BigNumber; name: string }
+      { lootId: BigNumber; name: string }
     >;
 
     "Transfer(address,address,uint256)"(
@@ -655,24 +595,8 @@ export class DungeonDefenders extends BaseContract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    createRandomDefender(
+    createRandomLoot(
       _name: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    defenderExperience(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    defenders(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    gainExperience(
-      _tokenId: BigNumberish,
-      _expToGain: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -686,6 +610,8 @@ export class DungeonDefenders extends BaseContract {
       operator: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    loot(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -753,24 +679,8 @@ export class DungeonDefenders extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    createRandomDefender(
+    createRandomLoot(
       _name: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    defenderExperience(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    defenders(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    gainExperience(
-      _tokenId: BigNumberish,
-      _expToGain: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -782,6 +692,11 @@ export class DungeonDefenders extends BaseContract {
     isApprovedForAll(
       owner: string,
       operator: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    loot(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -183,10 +183,14 @@ contract DungeonDefenders is ERC721, ERC721URIStorage, DefenderUtils {
         return output;
     }
 
-    function equipLoot(uint256 _defenderId, uint256 _lootId) public onlyOwner {
+    function equipLoot(uint256 _defenderId, uint256 _lootId) public {
         require(
-            lootToken.ownerOf(_lootId) == ownerOf(_defenderId),
-            "Must own defender and loot"
+            ownerOf(_defenderId) == msg.sender,
+            "Must own defender"
+        );
+        require(
+            lootToken.ownerOf(_lootId) == msg.sender,
+            "Must own loot"
         );
         ILoot.Loot memory loot = lootToken.loot(_lootId);
 
@@ -208,13 +212,15 @@ contract DungeonDefenders is ERC721, ERC721URIStorage, DefenderUtils {
         }
     }
 
-    function unequipLoot(uint256 _defenderId, uint256 _lootId)
-        public
-        onlyOwner
+    function unequipLoot(uint256 _defenderId, uint256 _lootId) public
     {
         require(
-            lootToken.ownerOf(_lootId) == ownerOf(_defenderId),
-            "Must own defender and loot"
+            ownerOf(_defenderId) == msg.sender,
+            "Must own defender"
+        );
+        require(
+            lootToken.ownerOf(_lootId) == msg.sender,
+            "Must own loot"
         );
         ILoot.Loot memory loot = lootToken.loot(_lootId);
 

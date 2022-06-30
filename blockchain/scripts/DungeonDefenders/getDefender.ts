@@ -28,6 +28,7 @@ async function main() {
   const defender = await defenderFactory.defenders(defenderIdx);
   console.log(`Name: ${ethers.utils.parseBytes32String(defender.name)}`);
   console.log(`Level: ${defender.level}`);
+  console.log(`Type: ${defender.characterType}`);
   console.log(`== ATTRIBUTES ==`);
   console.log(`Health: ${defender.health}`);
   console.log(`Speed: ${defender.speed}`);

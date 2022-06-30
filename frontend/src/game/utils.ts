@@ -12,6 +12,8 @@ export function fill2DArray(size: number, fill: () => any) {
 }
 
 export class Vector2 {
+    static zero = new Vector2(0, 0);
+
     x: number;
     y: number;
     constructor (x: number, y: number) {

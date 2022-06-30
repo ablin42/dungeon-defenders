@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { ethers, utils } from 'ethers';
 import { useContractFunction, useCall } from '@usedapp/core';
 import { Contract } from '@ethersproject/contracts';
 import { NFT_ABI } from '../ABI/NFT';
@@ -66,6 +66,91 @@ export function useSlots(tokenId: string | number) {
   }
   const slots = [+value?.slots[1], +value?.slots[2], +value?.slots[3]];
   return slots;
+}
+
+// Check defenders
+export type Defender = {
+  characterType: number;
+  health: number;
+  speed: number;
+  strength: number;
+  defense: number;
+}
+export function useDefender(tokenId: string | number) {
+  const { value, error } =
+    useCall(
+      tokenId && {
+        contract: NFTContract,
+        method: 'defenders',
+        args: [tokenId],
+      },
+    ) ?? {};
+
+  // ? Circumventing a bug that probably happened due to an NFT
+  // ?  being minted before server listener for events, and then picked it up
+  if (!value) return;
+  if (error) {
+    console.error(`Error fetching defender #${tokenId}`, error.message);
+    return;
+  }
+  const defender: Defender = value as Defender;
+  return defender;
+}
+
+// Check defenders
+export type Loot = {
+  health: number;
+  speed: number;
+  strength: number;
+  defense: number;
+
+  // Aesthetics 
+  background: number;
+  weapon: number;
+  armor: number;
+  boots: number;
+}
+export function useLoot(tokenId: string | number) {
+  const { value, error } =
+    useCall(
+      tokenId && {
+        contract: LOOTContract,
+        method: 'loot',
+        args: [tokenId],
+      },
+    ) ?? {};
+
+  // ? Circumventing a bug that probably happened due to an NFT
+  // ?  being minted before server listener for events, and then picked it up
+  if (!value) return;
+  if (error) {
+    console.error(`Error fetching loot #${tokenId}`, error.message);
+    return;
+  }
+  const loot: Loot = value as Loot;
+  return loot;
+}
+
+// Get gem balance
+export function useGemsBalance(address?: string) {
+  const { value, error } =
+    useCall(
+      address && {
+        contract: GEMSContract,
+        method: 'balanceOf',
+        args: [address],
+      },
+    ) ?? {};
+
+  // ? Circumventing a bug that probably happened due to an NFT
+  // ?  being minted before server listener for events, and then picked it up
+  if (!value) return "0";
+  if (error) {
+    console.error(`Error fetching gems balance for address=${address}`, error.message);
+    return;
+  }
+  
+  return ethers.utils.formatEther(value[0]);
 }
 
 // Check if user has approved STAKING contract for all NFTs

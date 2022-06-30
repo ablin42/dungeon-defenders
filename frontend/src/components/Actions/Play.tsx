@@ -11,6 +11,7 @@ import {
   useIsStaked,
   useApproveGEMS,
   useStakes,
+  useTokenURI,
 } from '../../hooks/index';
 import { STAKE_CONTRACT_ADDRESS, STATUS_TYPES, GEMS_TOTAL_SUPPLY, NETWORK_EXPLORER } from '../../constants';
 import toast from 'react-hot-toast';
@@ -111,7 +112,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
       );
 
       if (successIndex === 2) {
-        setTimeout(() => {
+        setTimeout(async () => {
           navigate(`/Play`, {
             replace: true,
             state: {
@@ -120,6 +121,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
               weaponId: equipedLoot[0],
               armorId: equipedLoot[1],
               bootsId: equipedLoot[2],
+
               gemsAmount,
             },
           });
@@ -205,6 +207,19 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
               <br />
             </>
           ) : null}
+          <button onClick={() =>  navigate(`/Play`, {
+            state: {
+              owner: userAddress,
+              defenderId: tokenId,
+              weaponId: equipedLoot[0],
+              armorId: equipedLoot[1],
+              bootsId: equipedLoot[2],
+
+              gemsAmount,
+            },
+          })} className="btn btn-lg btn-success w-100" >
+            Play
+          </button>
           <button onClick={() => sendTx(unstake)} className="btn btn-lg btn-success w-100" disabled={!claimable}>
             Claim
           </button>

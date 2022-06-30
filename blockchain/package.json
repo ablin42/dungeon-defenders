@@ -3,6 +3,8 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
+    "deploy": "ts-node --files ./scripts/deploy.ts",
+    "transferGems": "ts-node --files ./scripts/transferGems.ts",
     "deploy:loot": "ts-node --files ./scripts/Loot/deploy.ts",
     "createLoot": "ts-node --files ./scripts/Loot/createLoot.ts",
     "getLoot": "ts-node --files ./scripts/Loot/getLoot.ts",

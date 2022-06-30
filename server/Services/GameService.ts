@@ -2,8 +2,8 @@ import { STAKING_CONTRACT_ADDRESS, WALLET_PRIVATE_KEY } from "../Config/Config";
 import { logError } from "../Config/Logger";
 import { Staking } from "../Models/Staking";
 import { connectToWallet } from "../Utils";
-import compiledContract from '../Data/StakingToken';
 import { Contract, ethers } from "ethers";
+import { STAKE_ABI } from "../Data/ABI/STAKE";
 
 export function connectToStakingContract(funcName: string) {
     if (!WALLET_PRIVATE_KEY) {
@@ -23,7 +23,7 @@ export function connectToStakingContract(funcName: string) {
 
     const contract: Staking = new Contract(
         STAKING_CONTRACT_ADDRESS,
-        compiledContract.abi,
+        STAKE_ABI,
         signer
     ) as Staking;
 
@@ -45,7 +45,8 @@ export async function allocateRewards(address: string) {
 
     const gemReward = Math.floor(100 + Math.random() * 100);
     const gemRewardBN = ethers.utils.parseEther(gemReward.toString());;
+    const expReward = 260;
     const shouldRewardLoot = Math.random() < 0.33;
-    const tx = await contract.allocateRewards(gemRewardBN, address, shouldRewardLoot);
+    const tx = await contract.allocateRewards(gemRewardBN, expReward, address, shouldRewardLoot);
     await tx.wait();
 }

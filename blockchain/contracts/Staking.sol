@@ -6,11 +6,12 @@ import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+import "./DungeonDefenders/DefenderInterface.sol";
 import "./Loot/LootInterface.sol";
 
 contract Staking is IERC721Receiver, Ownable {
     // TODO natspec
-    IERC721 public characterToken;
+    DefenderInterface public characterToken;
     LootInterface public lootToken;
     IERC20 public gemsToken;
     uint256 public STAKING_FEE = 100 * 10**18;
@@ -21,6 +22,7 @@ contract Staking is IERC721Receiver, Ownable {
         uint256 armorId;
         uint256 bootsId;
         uint256 gemsAmount;
+        uint256 rewardedExpAmount;
         uint256 rewardedGemsAmount;
         uint256 timestamp;
         bool wasRewardLoot;
@@ -43,6 +45,7 @@ contract Staking is IERC721Receiver, Ownable {
         uint256 armorId,
         uint256 bootsId,
         uint256 rewardedAmount,
+        uint256 rewardedExp,
         bool wasRewardLoot
     );
     event Claimed(address owner);
@@ -68,7 +71,7 @@ contract Staking is IERC721Receiver, Ownable {
     }
 
     constructor(
-        IERC721 _characterToken,
+        DefenderInterface _characterToken,
         LootInterface _lootToken,
         IERC20 _gemsToken
     ) {
@@ -117,6 +120,7 @@ contract Staking is IERC721Receiver, Ownable {
             _armorId,
             _bootsId,
             gemsAmount,
+            0,
             STAKING_FEE,
             block.timestamp,
             false,
@@ -147,6 +151,7 @@ contract Staking is IERC721Receiver, Ownable {
     // Pure unstaking logic
     function _unstake() internal {
         uint256 rewardedAmount = stakes[msg.sender].rewardedGemsAmount;
+        uint256 rewardedExp = stakes[msg.sender].rewardedExpAmount;
         bool wasRewardLoot = stakes[msg.sender].wasRewardLoot;
         uint256 tokenId = stakes[msg.sender].tokenId;
         uint256 weaponId = stakes[msg.sender].weaponId;
@@ -155,6 +160,10 @@ contract Staking is IERC721Receiver, Ownable {
         delete stakes[msg.sender];
 
         gemsToken.transfer(msg.sender, rewardedAmount);
+        // TODO; not working for some reason
+        // if (rewardedExp > 0) {
+        //     characterToken.gainExperience(tokenId, rewardedExp);
+        // }
         characterToken.safeTransferFrom(address(this), msg.sender, tokenId);
         if (weaponId > 0) {
             lootToken.safeTransferFrom(address(this), msg.sender, weaponId);
@@ -176,6 +185,7 @@ contract Staking is IERC721Receiver, Ownable {
             armorId,
             bootsId,
             rewardedAmount,
+            rewardedExp,
             wasRewardLoot
         );
     }
@@ -205,6 +215,7 @@ contract Staking is IERC721Receiver, Ownable {
     // Close the game and allocate rewards
     function allocateRewards(
         uint256 gemsAmount,
+        uint256 expAmount,
         address player,
         bool shouldRewardLoot
     ) external onlyOwner {
@@ -214,6 +225,7 @@ contract Staking is IERC721Receiver, Ownable {
         );
         stakes[player].isClaimable = true;
         stakes[player].rewardedGemsAmount = gemsAmount;
+        stakes[player].rewardedExpAmount = expAmount;
         stakes[player].wasRewardLoot = shouldRewardLoot;
     }
 

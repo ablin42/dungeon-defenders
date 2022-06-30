@@ -1,13 +1,13 @@
 import { LOOT_CONTRACT_ADDRESS, WALLET_PRIVATE_KEY } from '../Config/Config';
 import { logError, logInfo, logWarn } from '../Config/Logger';
-import { DungeonLoot } from '../Models/Loot';
 import { connectToWallet } from '../Utils';
 import * as db from './DBService';
-import compiledContract from "../Data/LootToken";
 import { getNFT } from './NFTService';
 import { NFT } from '../Models/NFT';
 import { Contract, ethers } from 'ethers';
 import { Interface } from 'ethers/lib/utils';
+import { LOOT_ABI } from '../Data/ABI/LOOT';
+import { DungeonLoot } from '../Models/DungeonLoot';
 
 export function connectToDungeonLootContract(funcName: string) {
     if (!WALLET_PRIVATE_KEY) {
@@ -27,7 +27,7 @@ export function connectToDungeonLootContract(funcName: string) {
 
     const contract: DungeonLoot = new Contract(
         LOOT_CONTRACT_ADDRESS,
-        compiledContract.abi,
+        LOOT_ABI,
         signer
     ) as DungeonLoot;
 
@@ -88,7 +88,7 @@ export function registerEventListeners() {
     }
 
     const {provider, contract: tokenContract} = connectResult;
-    const iface = new Interface(compiledContract.abi);
+    const iface = new Interface(LOOT_ABI);
 
     logInfo('Connecting to transfer events', 'loot | registerEventListeners');
     const transferFilter = tokenContract.filters.Transfer();

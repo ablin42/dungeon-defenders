@@ -19,7 +19,7 @@ export const GAME_CONFIG : Phaser.Types.Core.GameConfig = {
             //debug: true,
         }
     },
-    plugins: {	// add to plugins.global 👇
+    plugins: {	
 		global: [ NineSlicePlugin.Plugin.DefaultCfg ]
 	},
     scene: [MainMenuScene, GameScene]
