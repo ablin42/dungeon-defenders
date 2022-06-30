@@ -10,15 +10,16 @@ import { NFT_CONTRACT_ADDRESS, WALLET_PRIVATE_KEY } from "../Config/Config";
 import { DungeonDefenders, } from "../Models/NFTToken";
 import * as db from './DBService';
 import compiledContract from "../Data/NFTToken";
+import { DungeonLoot } from "../Models/Loot";
 
 export function getNFTOwner(tokenId: string) : string | undefined {
     return db.getNFTOwner(tokenId);
 }
 
-export async function getNFT(tokenId: string, exisitingContract?: DungeonDefenders) : Promise<NFT | undefined> {
+export async function getNFT(tokenId: string, exisitingContract?: DungeonDefenders | DungeonLoot) : Promise<NFT | undefined> {
     let contract = exisitingContract;
     if (!contract) {
-        const connectResult = connectToDungeonDefenderContract('registerEventListeners');
+        const connectResult = connectToDungeonDefenderContract('getNFT');
         if (!connectResult) {
             return undefined;
         }
@@ -40,7 +41,7 @@ export async function getNFTCollection(address: string) : Promise<NFT[]> {
         return [];
     }
 
-    const connectResult = connectToDungeonDefenderContract('registerEventListeners');
+    const connectResult = connectToDungeonDefenderContract('getNFTCollection');
     if (!connectResult) {
         return [];
     }
@@ -60,7 +61,7 @@ export async function getLatestNFTs(numOfNFTs: number) : Promise<NFT[]> {
             .sort((a, b) => nftToMint[a] - nftToMint[b])
             .splice(0, numOfNFTs);
             
-    const connectResult = connectToDungeonDefenderContract('registerEventListeners');
+    const connectResult = connectToDungeonDefenderContract('getLatestNFTs');
     if (!connectResult) {
         return [];
     }
