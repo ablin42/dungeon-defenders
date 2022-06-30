@@ -6,7 +6,20 @@ import { logError } from '../Config/Logger';
 const db = new JsonDB(new Config('Data/db', true, false, '/'));
 
 const NFT_TO_ADDRESS_TABLE = 'nftToAddress';
+const NFT_TO_MINT_TABLE = 'nftToMintBlockNumber';
 const ADDRESS_TO_COLLECTION_TABLE = 'addressToCollection';
+
+export function updateNFTMintTime(tokenId: string, blockNumber: number) {
+    db.push(`/${NFT_TO_MINT_TABLE}/${tokenId}`, blockNumber, true);
+}
+export function getNFTToMint() {
+    try {
+        return db.getData(`/${NFT_TO_MINT_TABLE}`) as Record<string, number>;
+    } catch (e) {
+        logError(JSON.stringify(e), 'getNFTToMint');
+        return {};
+    }
+}
 
 export function updateNFTOwner(tokenId: string, owner: string) {
     const oldOwner = getNFTOwner(tokenId);
