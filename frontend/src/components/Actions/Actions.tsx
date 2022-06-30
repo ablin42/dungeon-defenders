@@ -10,7 +10,7 @@ const Actions: React.FC<ActionProps> = ({ userAddress }) => {
     <>
       <div className="col-8 offset-2 pt-5 pb-5 mt-5">
         <h1 className="fw-light">Start Playing</h1>
-        <Link to={`/user/${userAddress}`}>
+        <Link to={`/NFT/user/${userAddress}`}>
           <button className="btn btn-success btn-lg mb-4">Play</button>
         </Link>
       </div>

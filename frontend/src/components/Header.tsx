@@ -18,7 +18,7 @@ const Header = () => {
           </div>
           <div>
             <Link to={`/NFT/user/${account}`} className="d-flex align-items-center">
-              <strong>My Defenders</strong>
+              <strong>Play</strong>
             </Link>
           </div>
           <ConnectWallet />

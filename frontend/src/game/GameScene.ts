@@ -8,10 +8,16 @@ import { TreasureChest } from './TreasureChest';
 import { Vector2 } from './utils';
 import toast from 'react-hot-toast';
 
-const triggerRewardAllocation = async (account: string) => {
+const triggerRewardAllocation = async (account: string, defenderId: string | number) => {
   const res = await fetch(`${API_ADDRESS}/v1/game/${account}/allocateRewards`, { method: 'POST' });
-  if (res.status !== 200) toast.error('Failed to allocate rewards, emergency withdrawal needed');
-  // TODO navigate to /NFT/:id to claim reward
+  if (res.status !== 200)
+    toast.error('Failed to allocate rewards, emergency withdrawal needed', { position: 'top-right' });
+
+  toast.success('You won, GG !', {
+    icon: '✅',
+    position: 'top-right',
+  });
+  window.location.href = `/NFT/${defenderId}`;
 };
 
 const DUNGEON_SIZE = 3;
@@ -186,14 +192,14 @@ export class GameScene extends Phaser.Scene {
 
     let isGameOver = false;
     const onGameOver = () => {
-        if (isGameOver) {
-            return;
-        }
+      if (isGameOver) {
+        return;
+      }
 
-        isGameOver = true;
-        const {owner} = this.scene.settings.data as { owner: string };
-        triggerRewardAllocation(owner)
-    }
+      isGameOver = true;
+      const { owner, defenderId } = this.scene.settings.data as { owner: string; defenderId: number };
+      triggerRewardAllocation(owner, defenderId);
+    };
 
     for (let y = 0; y < DUNGEON_SIZE; y++) {
       for (let x = 0; x < DUNGEON_SIZE; x++) {

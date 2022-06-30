@@ -61,7 +61,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
   const GEMSallowance = useAllowanceGEMS(userAddress);
   const staked = useIsStaked(userAddress);
   const stakedId = stakes && +stakes.tokenId;
-  const claimable = staked && +stakes.isClaimable;
+  const claimable = staked && stakes.isClaimable;
   // *STATE*
   const [isPending, setIsPending] = useState(false);
   const [gemsAmount, setGemsAmount] = useState('100');
@@ -78,20 +78,6 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
     unstakeState,
   ]);
   // TODO can be refactored to avoid having STATES & STATUS
-
-  useEffect(() => {
-    navigate(`/Play`, {
-      replace: true,
-      state: {
-        owner: userAddress,
-        defenderId: tokenId,
-        weaponId: equipedLoot[0],
-        armorId: equipedLoot[1],
-        bootsId: equipedLoot[2],
-        gemsAmount,
-      },
-    });
-  }, []);
 
   useEffect(() => {
     const newSTATES = [approveNFTState, approveGEMSState, stakeState, unstakeState];
