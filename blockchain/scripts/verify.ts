@@ -5,11 +5,18 @@ async function main() {
   const LOOT = "0x3b4CFc8861ec9657c647A3064070c558ED4E3892";
   const NFT = "0xf27f5F0B206fD3AA4418bBf3ba46A39a353109aC";
   const STAKING = "0xb53a5c6E5d0435D90De49e6FE1E9eD7e8166522A";
+  const FAUCET = "0xb8E29dC8FED6804c91380ab080C4BD0B24D0772B";
 
   // *VERIFY GEMS*
   const verifyGems = hre.run("verify:verify", {
     address: GEMS,
     constructorArguments: [],
+  });
+
+  // *VERIFY FAUCET*
+  const verifyFaucet = hre.run("verify:verify", {
+    address: FAUCET,
+    constructorArguments: [GEMS],
   });
 
   // *VERIFY LOOT*
@@ -30,7 +37,13 @@ async function main() {
     constructorArguments: [NFT, LOOT, GEMS],
   });
 
-  await Promise.all([verifyGems, verifyLoot, verifyNFT, verifyStaking]);
+  await Promise.all([
+    verifyGems,
+    verifyFaucet,
+    verifyLoot,
+    verifyNFT,
+    verifyStaking,
+  ]);
   console.log("Verified contracts");
 }
 
