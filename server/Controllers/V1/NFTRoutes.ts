@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 import { logInfo } from "../../Config/Logger";
-import { getNFT, renderNFT, getNFTCollection } from "../../Services/NFTService";
+import { getNFT, renderNFT, getNFTCollection, getLatestNFTs } from "../../Services/NFTService";
 
 const router = express.Router();
 router.post('/:id/render', async (req, res) => {
@@ -14,16 +14,17 @@ router.post('/:id/render', async (req, res) => {
 
     return res.end(renderedNFT);
 })
-// router.get('/', (_req, res) => {
-//     logInfo(`Getting all NFT metadatas`);
-//     const metadatas = getNFTMetadatas();
-
-//     return res.json({NFTs: metadatas});
-// })
-router.get('/:id', (req, res) => {
+router.get('/latest/:numToGet', async (req, res) => {
+    const numToGet = parseInt(req.params.numToGet);
+    logInfo(`Getting latest=${numToGet} NFTs`);
+    const NFTs = await getLatestNFTs(numToGet);
+    
+    return res.json(NFTs);
+})
+router.get('/:id', async (req, res) => {
     const tokenId = req.params.id;
     logInfo(`Getting metadata for tokenId=${tokenId}`);
-    const metadata = getNFT(tokenId);
+    const metadata = await getNFT(tokenId);
     logInfo(`Got metadata for tokenId=${tokenId} metadata=${JSON.stringify(metadata)}`);
 
     if (!metadata) {

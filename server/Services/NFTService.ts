@@ -5,7 +5,7 @@ import mergeImages from 'merge-images';
 import { Canvas, Image } from 'canvas';
 import { logError, logInfo, logWarn } from "../Config/Logger";
 import { BACKGROUND_COMPONENTS, PLAYER_COMPONENTS, WEAPON_COMPONENTS } from "../Data/NFTComponents";
-import { Contract } from 'ethers';
+import { Contract, ethers } from 'ethers';
 import { NFT_CONTRACT_ADDRESS, WALLET_PRIVATE_KEY } from "../Config/Config";
 import { DungeonDefenders, } from "../Models/NFTToken";
 import * as db from './DBService';
@@ -44,7 +44,26 @@ export async function getNFTCollection(address: string) : Promise<NFT[]> {
     if (!connectResult) {
         return [];
     }
+    const {contract} = connectResult;
 
+    const ops : Promise<NFT | undefined>[] = tokenIds.map(t => getNFT(t, contract));
+    const responses = await Promise.all(ops);
+    const NFTs = responses.filter(r => !!r) as NFT[];
+
+    return NFTs;
+}
+
+export async function getLatestNFTs(numOfNFTs: number) : Promise<NFT[]> {
+    const nftToMint = db.getNFTToMint();
+
+    const tokenIds = Object.keys(nftToMint)
+            .sort((a, b) => nftToMint[a] - nftToMint[b])
+            .splice(0, numOfNFTs);
+            
+    const connectResult = connectToDungeonDefenderContract('registerEventListeners');
+    if (!connectResult) {
+        return [];
+    }
     const {contract} = connectResult;
 
     const ops : Promise<NFT | undefined>[] = tokenIds.map(t => getNFT(t, contract));
@@ -136,8 +155,11 @@ export function connectToDungeonDefenderContract(funcName: string) {
     return { provider, wallet, signer, contract}
 }
 
-async function handleTransferEvent(tokenId: number, newOwner: string) {
+async function handleTransferEvent(tokenId: number, newOwner: string, blockNumber?: number) {
     const tokenIdStr = tokenId.toString();
+    if (blockNumber) {
+        db.updateNFTMintTime(tokenIdStr, blockNumber);
+    }
     db.updateNFTOwner(tokenIdStr, newOwner);
 }
 export function registerEventListeners() {
@@ -153,6 +175,7 @@ export function registerEventListeners() {
     const transferFilter = tokenContract.filters.Transfer();
     provider.on(transferFilter, async (log) => {
         const parsedLog = iface.parseLog(log);
+        
         const fromStr = parsedLog.args.from;
         const toStr = parsedLog.args.to;
         const tokenId = parsedLog.args.tokenId.toString();
@@ -161,6 +184,6 @@ export function registerEventListeners() {
           "registerEventListeners"
         );
     
-        await handleTransferEvent(tokenId, toStr);
+        await handleTransferEvent(tokenId, toStr, ethers.constants.AddressZero === fromStr ? log.blockNumber : undefined);
     });
 }
