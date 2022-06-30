@@ -2,6 +2,7 @@ import React from 'react';
 import { useEthers } from '@usedapp/core';
 import Mint from '../components/Actions/Mint';
 import Loot from '../components/Actions/MintLoot';
+import Faucet from '../components/Actions/Faucet';
 import LatestNFT from './LatestNFT';
 
 const App = () => {
@@ -13,6 +14,7 @@ const App = () => {
       <div className="container">
         <div className="col-lg-6 col-md-8 mx-auto">{account && <Mint userAddress={account} />}</div>
         <div className="col-lg-6 col-md-8 mx-auto">{account && <Loot userAddress={account} />}</div>
+        <div className="col-lg-6 col-md-8 mx-auto">{account && <Faucet />}</div>
       </div>
       <div className="album bg-dark">
         <div className="container ">

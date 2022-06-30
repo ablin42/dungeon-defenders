@@ -8,11 +8,12 @@ import { useGemsBalance } from '../hooks';
 
 const Wrapper = styled.div`
   display: flex;
+  align-items: center;
 `;
 
 const Header = () => {
   const { account } = useEthers();
-  const gemsBalance = useGemsBalance(account);
+  const gemsBalance = useGemsBalance(account) || 0;
 
   return (
     <header>
@@ -26,10 +27,12 @@ const Header = () => {
           <Wrapper>
             {account && (
               <>
-              <div>Gems: {gemsBalance}</div>
-              <Link to={`/NFT/user/${account}`} className="me-3">
-                <button className="btn btn-success">Your Collection</button>
-              </Link>
+                <Wrapper className="me-3">
+                  <b>{+gemsBalance} Gems</b>
+                </Wrapper>
+                <Link to={`/NFT/user/${account}`} className="me-3">
+                  <button className="btn btn-success">Your Collection</button>
+                </Link>
               </>
             )}
             <ConnectWallet />

@@ -1,26 +1,30 @@
-import { ethers, utils } from 'ethers';
+import { ethers } from 'ethers';
 import { useContractFunction, useCall } from '@usedapp/core';
 import { Contract } from '@ethersproject/contracts';
 import { NFT_ABI } from '../ABI/NFT';
 import { STAKE_ABI } from '../ABI/STAKE';
 import { GEMS_ABI } from '../ABI/GEMS';
 import { LOOT_ABI } from '../ABI/LOOT';
+import { FAUCET_ABI } from '../ABI/FAUCET';
 import {
   NFT_CONTRACT_ADDRESS,
   STAKE_CONTRACT_ADDRESS,
   GEMS_CONTRACT_ADDRESS,
   LOOT_CONTRACT_ADDRESS,
+  FAUCET_CONTRACT_ADDRESS,
 } from '../constants';
 
 const NFTContractInterface = new ethers.utils.Interface(NFT_ABI);
 const STAKEContractInterface = new ethers.utils.Interface(STAKE_ABI);
 const GEMSContractInterface = new ethers.utils.Interface(GEMS_ABI);
 const LOOTContractInterface = new ethers.utils.Interface(LOOT_ABI);
+const FAUCETContractInterface = new ethers.utils.Interface(FAUCET_ABI);
 
 const NFTContract = new Contract(NFT_CONTRACT_ADDRESS, NFTContractInterface);
 const STAKEContract = new ethers.Contract(STAKE_CONTRACT_ADDRESS, STAKEContractInterface);
 const GEMSContract = new ethers.Contract(GEMS_CONTRACT_ADDRESS, GEMSContractInterface);
 const LOOTContract = new ethers.Contract(LOOT_CONTRACT_ADDRESS, LOOTContractInterface);
+const FAUCETContract = new ethers.Contract(FAUCET_CONTRACT_ADDRESS, FAUCETContractInterface);
 
 // *NFT HOOKS*
 export function useMint() {
@@ -75,7 +79,7 @@ export type Defender = {
   speed: number;
   strength: number;
   defense: number;
-}
+};
 export function useDefender(tokenId: string | number) {
   const { value, error } =
     useCall(
@@ -104,12 +108,12 @@ export type Loot = {
   strength: number;
   defense: number;
 
-  // Aesthetics 
+  // Aesthetics
   background: number;
   weapon: number;
   armor: number;
   boots: number;
-}
+};
 export function useLoot(tokenId: string | number) {
   const { value, error } =
     useCall(
@@ -144,12 +148,12 @@ export function useGemsBalance(address?: string) {
 
   // ? Circumventing a bug that probably happened due to an NFT
   // ?  being minted before server listener for events, and then picked it up
-  if (!value) return "0";
+  if (!value) return '0';
   if (error) {
     console.error(`Error fetching gems balance for address=${address}`, error.message);
     return;
   }
-  
+
   return ethers.utils.formatEther(value[0]);
 }
 
@@ -371,4 +375,18 @@ export function useOwnerOfLoot(tokenId: string | number) {
   }
 
   return value?.[0];
+}
+
+// *FAUCET HOOKS*
+// TODO could implement reading owner + withdraw tx to display or not a withdraw button
+// Deposit gems to refill the faucet
+export function useDeposit() {
+  const { state, send } = useContractFunction(FAUCETContract, 'deposit', {});
+  return { state, send };
+}
+
+// Claim gems from the faucet
+export function useClaim() {
+  const { state, send } = useContractFunction(FAUCETContract, 'claim', {});
+  return { state, send };
 }
