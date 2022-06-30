@@ -1,6 +1,9 @@
+// *EXTERNALS*
 import { ethers } from 'ethers';
 import { useContractFunction, useCall } from '@usedapp/core';
 import { Contract } from '@ethersproject/contracts';
+
+// *INTERNALS*
 import { NFT_ABI } from '../ABI/NFT';
 import { STAKE_ABI } from '../ABI/STAKE';
 import { GEMS_ABI } from '../ABI/GEMS';
@@ -370,7 +373,7 @@ export function useOwnerOfLoot(tokenId: string | number) {
     ) ?? {};
 
   if (error) {
-    console.error(`Error fetching Token ${tokenId} URI`, error.message);
+    console.error(`Error fetching Owner of LOOT ${tokenId}`, error.message);
     return undefined;
   }
 
@@ -378,7 +381,6 @@ export function useOwnerOfLoot(tokenId: string | number) {
 }
 
 // *FAUCET HOOKS*
-// TODO could implement reading owner + withdraw tx to display or not a withdraw button
 // Deposit gems to refill the faucet
 export function useDeposit() {
   const { state, send } = useContractFunction(FAUCETContract, 'deposit', {});
@@ -389,4 +391,27 @@ export function useDeposit() {
 export function useClaim() {
   const { state, send } = useContractFunction(FAUCETContract, 'claim', {});
   return { state, send };
+}
+
+// Withdraw gems from the faucet
+export function useWithdraw() {
+  const { state, send } = useContractFunction(FAUCETContract, 'withdraw', {});
+  return { state, send };
+}
+
+// Get Owner of faucet
+export function useOwnerOfFaucet() {
+  const { value, error } =
+    useCall({
+      contract: FAUCETContract,
+      method: 'owner',
+      args: [],
+    }) ?? {};
+
+  if (error) {
+    console.error(`Error fetching Owner of Faucet`, error.message);
+    return undefined;
+  }
+
+  return value?.[0];
 }

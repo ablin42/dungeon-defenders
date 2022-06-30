@@ -1,10 +1,13 @@
+// *EXTERNALS*
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { NFTAttribute, NFT } from '../types';
 import { useEthers } from '@usedapp/core';
+
+// *INTERNALS*
 import Play from './Actions/Play';
 import Equipment from './Actions/Equipment';
 import { useStakes, useSlots } from '../hooks';
+import { NFTAttribute, NFT } from '../types';
 
 interface Props {
   NFT: NFT;
@@ -14,13 +17,13 @@ interface Props {
 
 const BADGE_TYPE = ['primary', 'primary', 'success', 'success', 'success', 'success', 'info', 'info', 'info', 'info'];
 
-// TODO should be somewhat pure
+// TODO should make as pure as possible
 const NFTCard = ({ NFT, owner, isLoot }: Props) => {
   const { name, description, tokenId, image, external_url, attributes } = NFT;
   const actualTokenId = tokenId || +name.replace(/^\D+/g, ''); // Trick to bypass the issue of tokenId not being set in the NFT object
   const { account } = useEthers();
   const stakes = account && useStakes(account);
-  const slots = useSlots(tokenId);
+  const slots = !isLoot && useSlots(tokenId);
   const userStaking = stakes && +stakes.timestamp > 0;
   const stakedId = stakes && +stakes.tokenId;
   const isOwner = account === owner;
@@ -46,7 +49,7 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
           </div>
         </div>
         <div>
-          {account && !isLoot && (isOwner || isUserStakedToken) && (
+          {account && !isLoot && slots && (isOwner || isUserStakedToken) && (
             <>
               <Equipment userAddress={account} tokenId={actualTokenId} />
               <div className="mb-3" />

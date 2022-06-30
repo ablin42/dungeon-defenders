@@ -11,14 +11,10 @@ import { GameConfig } from './Index';
 import { loadAssets } from './GameAssets';
 
 const triggerRewardAllocation = async (account: string, defenderId: string | number) => {
-  toast.success('You won, GG !', {
-    icon: '✅',
-    position: 'top-right',
-  });
+  toast.success('You won, GG !');
 
   const res = await fetch(`${API_ADDRESS}/v1/game/${account}/allocateRewards`, { method: 'POST' });
-  if (res.status !== 200)
-    toast.error('Failed to allocate rewards, emergency withdrawal needed', { position: 'top-right', icon: '❌' });
+  if (res.status !== 200) toast.error('Failed to allocate rewards, emergency withdrawal needed');
 
   window.location.href = `/NFT/${defenderId}`;
 };

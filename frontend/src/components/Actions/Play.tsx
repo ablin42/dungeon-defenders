@@ -1,7 +1,11 @@
-/* eslint-disable @typescript-eslint/ban-types */
+// *EXTERNALS*
 import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { TransactionStatus } from '@usedapp/core';
 import { useNavigate } from 'react-router-dom';
+
+// *INTERNALS*
 import {
   useStake,
   useUnstake,
@@ -11,12 +15,10 @@ import {
   useIsStaked,
   useApproveGEMS,
   useStakes,
-  useTokenURI,
 } from '../../hooks/index';
 import { STAKE_CONTRACT_ADDRESS, STATUS_TYPES, GEMS_TOTAL_SUPPLY, NETWORK_EXPLORER } from '../../constants';
-import toast from 'react-hot-toast';
-import { TransactionStatus } from '@usedapp/core';
 import LoadingBtn from '../LoadingBtn';
+import { sendTx } from '../../utils';
 
 type ActionProps = {
   userAddress: string;
@@ -26,6 +28,7 @@ type ActionProps = {
 
 type FormProps = {
   value: string;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   onChange: Function;
   children: React.ReactNode;
 };
@@ -66,37 +69,32 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
   // *STATE*
   const [isPending, setIsPending] = useState(false);
   const [gemsAmount, setGemsAmount] = useState('100');
-  const [STATUS, setSTATUS] = useState<Array<string>>([
-    approveNFTState.status,
-    approveGEMSState.status,
-    stakeState.status,
-    unstakeState.status,
-  ]);
   const [STATES, setSTATES] = useState<Array<TransactionStatus>>([
     approveNFTState,
     approveGEMSState,
     stakeState,
     unstakeState,
   ]);
-  // TODO can be refactored to avoid having STATES & STATUS
+
+  const handleStateChange = (STATES: Array<TransactionStatus>, index: number) => {
+    const newSTATES = JSON.parse(JSON.stringify(STATES));
+    newSTATES[index].status = STATUS_TYPES.NONE;
+    setSTATES(newSTATES);
+    setIsPending(false);
+  };
 
   useEffect(() => {
-    const newSTATES = [approveNFTState, approveGEMSState, stakeState, unstakeState];
-    const newSTATUS = [approveNFTState.status, approveGEMSState.status, stakeState.status, unstakeState.status];
-    setSTATUS(newSTATUS);
-    setSTATES(newSTATES);
+    setSTATES([approveNFTState, approveGEMSState, stakeState, unstakeState]);
   }, [approveNFTState, approveGEMSState, stakeState, unstakeState]);
 
   useEffect(() => {
+    const STATUS = STATES.map((state) => state.status as string);
     setIsPending(STATUS.includes(STATUS_TYPES.PENDING) || STATUS.includes(STATUS_TYPES.MINING));
 
     if (STATUS.find((item) => item === STATUS_TYPES.SUCCESS)) {
       const successIndex = STATUS.findIndex((i) => i === STATUS_TYPES.SUCCESS);
       const targetedState = STATES[successIndex];
-      const newSTATUS = JSON.parse(JSON.stringify(STATUS));
-      newSTATUS[successIndex] = STATUS_TYPES.NONE;
-      setSTATUS(newSTATUS);
-      setIsPending(false);
+      handleStateChange(STATES, successIndex);
 
       toast.success(
         <>
@@ -105,10 +103,6 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
             {targetedState.receipt?.transactionHash.substring(0, 12)}...
           </a>
         </>,
-        {
-          icon: '✅',
-          position: 'top-right',
-        },
       );
 
       if (successIndex === 2) {
@@ -130,41 +124,24 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
     }
     if (STATUS.find((item) => item === STATUS_TYPES.EXCEPTION) || STATUS.find((item) => item === STATUS_TYPES.FAIL)) {
       const statusIndex = STATUS.findIndex((i) => i === STATUS_TYPES.EXCEPTION || i === STATUS_TYPES.FAIL);
-      const newSTATUS = JSON.parse(JSON.stringify(STATUS));
-      newSTATUS[statusIndex] = STATUS_TYPES.NONE;
-      setSTATUS(newSTATUS);
-      setIsPending(false);
+      handleStateChange(STATES, statusIndex);
 
-      toast.error(`Tx Error: ${STATES[statusIndex].errorMessage}`, {
-        icon: '❌',
-        position: 'top-right',
-      });
+      toast.error(`Tx Error: ${STATES[statusIndex].errorMessage}`);
     }
-  }, [STATUS]);
+  }, [STATES]);
 
   const approveNFT = async () => {
     sendApproveNFT(STAKE_CONTRACT_ADDRESS, true);
   };
-
   const approveGEMS = async () => {
     sendApproveGEMS(STAKE_CONTRACT_ADDRESS, GEMS_TOTAL_SUPPLY);
   };
-
   const stake = async () => {
     const formattedGemsAmount = ethers.utils.parseEther(gemsAmount);
     sendStake(tokenId, equipedLoot[0], equipedLoot[1], equipedLoot[2], formattedGemsAmount);
   };
-
   const unstake = async () => {
     sendUnstake();
-  };
-
-  const sendTx = async (tx: Function) => {
-    toast(`Tx Pending...`, {
-      icon: '⏳',
-      position: 'top-right',
-    });
-    tx();
   };
 
   // To handle loading state when sending stake action
@@ -207,17 +184,22 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
               <br />
             </>
           ) : null}
-          <button onClick={() =>  navigate(`/Play`, {
-            state: {
-              owner: userAddress,
-              defenderId: tokenId,
-              weaponId: equipedLoot[0],
-              armorId: equipedLoot[1],
-              bootsId: equipedLoot[2],
+          <button
+            onClick={() =>
+              navigate(`/Play`, {
+                state: {
+                  owner: userAddress,
+                  defenderId: tokenId,
+                  weaponId: equipedLoot[0],
+                  armorId: equipedLoot[1],
+                  bootsId: equipedLoot[2],
 
-              gemsAmount,
-            },
-          })} className="btn btn-lg btn-success w-100" >
+                  gemsAmount,
+                },
+              })
+            }
+            className="btn btn-lg btn-success w-100"
+          >
             Play
           </button>
           <button onClick={() => sendTx(unstake)} className="btn btn-lg btn-success w-100" disabled={!claimable}>

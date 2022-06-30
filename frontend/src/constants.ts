@@ -1,3 +1,4 @@
+// *EXTERNALS*
 import { ethers } from 'ethers';
 
 export const GEMS_CONTRACT_ADDRESS = '0x6b21bc1cE9bc33c866A9BD3105679BdBDc79a059';

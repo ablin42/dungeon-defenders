@@ -1,9 +1,13 @@
+// *EXTERNALS*
 import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+
+// *INTERNALS*
 import { NETWORK_EXPLORER, STATUS_TYPES } from '../../constants';
 import { useMintLoot } from '../../hooks/index';
-import toast from 'react-hot-toast';
+import { sendTx } from '../../utils';
 import LoadingBtn from '../LoadingBtn';
 
 type ActionProps = {
@@ -26,10 +30,6 @@ const Loot: React.FC<ActionProps> = ({ userAddress }) => {
             {state.receipt?.transactionHash.substring(0, 12)}...
           </a>
         </>,
-        {
-          icon: '✅',
-          position: 'top-right',
-        },
       );
       // Ignore 0x & take first 64 characters representing tokenID
       const tokenIdHex = state.receipt?.logs[0].data.substring(2, 66);
@@ -47,23 +47,14 @@ const Loot: React.FC<ActionProps> = ({ userAddress }) => {
       }, 5000);
     }
     if (state.status === STATUS_TYPES.EXCEPTION || state.status === STATUS_TYPES.FAIL) {
-      toast.error(`Tx Error: ${state.errorMessage}`, {
-        icon: '❌',
-        position: 'top-right',
-      });
+      toast.error(`Tx Error: ${state.errorMessage}`);
 
       setIsMinting(false);
     }
   }, [state]);
 
   const mint = async () => {
-    if (isMinting) {
-      return;
-    }
-    toast(`Tx Pending...`, {
-      icon: '⏳',
-      position: 'top-right',
-    });
+    if (isMinting) return;
     sendMint(userAddress, ethers.utils.formatBytes32String(name));
   };
 
@@ -86,7 +77,7 @@ const Loot: React.FC<ActionProps> = ({ userAddress }) => {
         {isMinting ? (
           <LoadingBtn text={'Minting...'} />
         ) : (
-          <button onClick={() => mint()} className="btn btn-lg btn-primary">
+          <button onClick={() => sendTx(mint)} className="btn btn-lg btn-primary">
             Mint Loot
           </button>
         )}

@@ -1,37 +1,49 @@
+// *EXTERNALS*
 import { ethers } from 'ethers';
-import React, { useEffect, useState } from 'react';
-import { NETWORK_EXPLORER, STATUS_TYPES, FAUCET_CONTRACT_ADDRESS } from '../../constants';
-import { useDeposit, useClaim, useGemsBalance } from '../../hooks/index';
 import toast from 'react-hot-toast';
-import LoadingBtn from '../LoadingBtn';
 import { TransactionStatus } from '@usedapp/core';
+import React, { useEffect, useState } from 'react';
+// *INTERNALS*
+import { NETWORK_EXPLORER, STATUS_TYPES, FAUCET_CONTRACT_ADDRESS } from '../../constants';
+import { useDeposit, useClaim, useWithdraw, useOwnerOfFaucet, useGemsBalance } from '../../hooks/index';
+import LoadingBtn from '../LoadingBtn';
+import { sendTx } from '../../utils';
 
-const Faucet = () => {
-  const [isPending, setIsPending] = useState(false);
-  const [amount, setAmount] = useState('0');
+interface ActionProps {
+  userAddress: string;
+}
+
+const Faucet = ({ userAddress }: ActionProps) => {
+  // *HOOKS*
   const { state: claimState, send: sendClaim } = useClaim();
   const { state: depositState, send: sendDeposit } = useDeposit();
-  const [STATUS, setSTATUS] = useState<Array<string>>([claimState.status, depositState.status]);
-  const [STATES, setSTATES] = useState<Array<TransactionStatus>>([claimState, depositState]);
+  const { state: withdrawState, send: sendWithdraw } = useWithdraw();
   const balance = useGemsBalance(FAUCET_CONTRACT_ADDRESS) || 0;
+  const owner = useOwnerOfFaucet();
+  // *STATE*
+  const [isPending, setIsPending] = useState(false);
+  const [amount, setAmount] = useState('0');
+  const [STATES, setSTATES] = useState<Array<TransactionStatus>>([claimState, depositState, withdrawState]);
 
-  useEffect(() => {
-    const newSTATES = [claimState, depositState];
-    const newSTATUS = [claimState.status, depositState.status];
-    setSTATUS(newSTATUS);
+  const handleStateChange = (STATES: Array<TransactionStatus>, index: number) => {
+    const newSTATES = JSON.parse(JSON.stringify(STATES));
+    newSTATES[index].status = STATUS_TYPES.NONE;
     setSTATES(newSTATES);
-  }, [claimState, depositState]);
+    setIsPending(false);
+  };
 
   useEffect(() => {
+    setSTATES([claimState, depositState, withdrawState]);
+  }, [claimState, depositState, withdrawState]);
+
+  useEffect(() => {
+    const STATUS = STATES.map((state) => state.status as string);
     setIsPending(STATUS.includes(STATUS_TYPES.PENDING) || STATUS.includes(STATUS_TYPES.MINING));
 
     if (STATUS.find((item) => item === STATUS_TYPES.SUCCESS)) {
       const successIndex = STATUS.findIndex((i) => i === STATUS_TYPES.SUCCESS);
       const targetedState = STATES[successIndex];
-      const newSTATUS = JSON.parse(JSON.stringify(STATUS));
-      newSTATUS[successIndex] = STATUS_TYPES.NONE;
-      setSTATUS(newSTATUS);
-      setIsPending(false);
+      handleStateChange(STATES, successIndex);
 
       toast.success(
         <>
@@ -40,42 +52,24 @@ const Faucet = () => {
             {targetedState.receipt?.transactionHash.substring(0, 12)}...
           </a>
         </>,
-        {
-          icon: '✅',
-          position: 'top-right',
-        },
       );
     }
     if (STATUS.find((item) => item === STATUS_TYPES.EXCEPTION) || STATUS.find((item) => item === STATUS_TYPES.FAIL)) {
       const statusIndex = STATUS.findIndex((i) => i === STATUS_TYPES.EXCEPTION || i === STATUS_TYPES.FAIL);
-      const newSTATUS = JSON.parse(JSON.stringify(STATUS));
-      newSTATUS[statusIndex] = STATUS_TYPES.NONE;
-      setSTATUS(newSTATUS);
-      setIsPending(false);
+      handleStateChange(STATES, statusIndex);
 
-      toast.error(`Tx Error: ${STATES[statusIndex].errorMessage}`, {
-        icon: '❌',
-        position: 'top-right',
-      });
+      toast.error(`Tx Error: ${STATES[statusIndex].errorMessage}`);
     }
-  }, [STATUS]);
+  }, [STATES]);
 
   const claim = async () => {
     sendClaim();
   };
-
+  const withdraw = async () => {
+    sendWithdraw();
+  };
   const deposit = async () => {
     sendDeposit(ethers.utils.parseEther(amount));
-  };
-
-  // TODO extract to a separate component
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  const sendTx = async (tx: Function) => {
-    toast(`Tx Pending...`, {
-      icon: '⏳',
-      position: 'top-right',
-    });
-    tx();
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,6 +96,17 @@ const Faucet = () => {
           </button>
         )}
       </div>
+      {owner &&
+        owner === userAddress &&
+        (isPending ? (
+          <div className="mb-3">
+            <LoadingBtn fullWidth="w-100" type="danger" />
+          </div>
+        ) : (
+          <button onClick={() => sendTx(withdraw)} className="btn btn-lg btn-danger w-100 mb-3">
+            Withdraw
+          </button>
+        ))}
       {isPending ? (
         <LoadingBtn fullWidth="w-100" type="success" />
       ) : (

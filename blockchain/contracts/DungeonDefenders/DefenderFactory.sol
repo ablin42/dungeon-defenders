@@ -46,6 +46,15 @@ contract DefenderFactory is ContractUtils, Ownable {
     Defender[] public defenders;
     Aesthetics[] public aesthetics;
 
+    // More practical to properly read the slots from the front-end
+    function getSlots(uint256 defenderId)
+        public
+        view
+        returns (uint256[] memory slots)
+    {
+        return aesthetics[defenderId].slots;
+    }
+
     function _createDefender(bytes32 _name) internal returns (uint256) {
         uint256 tokenId = _tokenIdCounter.current();
         defenders.push(

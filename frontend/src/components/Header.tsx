@@ -1,9 +1,11 @@
+// *EXTERNALS*
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useEthers } from '@usedapp/core';
-
-import ConnectWallet from './Actions/ConnectWallet';
 import styled from 'styled-components';
+
+// *INTERNALS*
+import ConnectWallet from './Actions/ConnectWallet';
 import { useGemsBalance } from '../hooks';
 
 const Wrapper = styled.div`
