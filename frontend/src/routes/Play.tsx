@@ -1,10 +1,13 @@
 import React, { useEffect } from 'react';
 import { initializeGame } from '../game/Index';
+import { useLocation } from 'react-router-dom';
 
 export default function Play() {
-    useEffect(() => {
-        initializeGame('game');
-    }, [])
+  const { state } = useLocation();
+
+  useEffect(() => {
+    initializeGame('game', state);
+  }, []);
 
   return (
     <>

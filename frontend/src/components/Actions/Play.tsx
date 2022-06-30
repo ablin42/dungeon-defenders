@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   useStake,
   useUnstake,
@@ -50,6 +51,7 @@ const FormUtil = ({ value, onChange, children }: FormProps) => {
 
 const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
   // *HOOKS*
+  const navigate = useNavigate();
   const { state: approveNFTState, send: sendApproveNFT } = useApprove();
   const { state: approveGEMSState, send: sendApproveGEMS } = useApproveGEMS();
   const { state: stakeState, send: sendStake } = useStake();
@@ -76,6 +78,20 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
     unstakeState,
   ]);
   // TODO can be refactored to avoid having STATES & STATUS
+
+  useEffect(() => {
+    navigate(`/Play`, {
+      replace: true,
+      state: {
+        owner: userAddress,
+        defenderId: tokenId,
+        weaponId: equipedLoot[0],
+        armorId: equipedLoot[1],
+        bootsId: equipedLoot[2],
+        gemsAmount,
+      },
+    });
+  }, []);
 
   useEffect(() => {
     const newSTATES = [approveNFTState, approveGEMSState, stakeState, unstakeState];
@@ -107,6 +123,22 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
           position: 'top-right',
         },
       );
+
+      if (successIndex === 2) {
+        setTimeout(() => {
+          navigate(`/Play`, {
+            replace: true,
+            state: {
+              owner: userAddress,
+              defenderId: tokenId,
+              weaponId: equipedLoot[0],
+              armorId: equipedLoot[1],
+              bootsId: equipedLoot[2],
+              gemsAmount,
+            },
+          });
+        }, 5000);
+      }
     }
     if (STATUS.find((item) => item === STATUS_TYPES.EXCEPTION) || STATUS.find((item) => item === STATUS_TYPES.FAIL)) {
       const statusIndex = STATUS.findIndex((i) => i === STATUS_TYPES.EXCEPTION || i === STATUS_TYPES.FAIL);
