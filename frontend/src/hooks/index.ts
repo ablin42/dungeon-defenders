@@ -22,7 +22,7 @@ const STAKEContract = new ethers.Contract(STAKE_CONTRACT_ADDRESS, STAKEContractI
 const GEMSContract = new ethers.Contract(GEMS_CONTRACT_ADDRESS, GEMSContractInterface);
 const LOOTContract = new ethers.Contract(LOOT_CONTRACT_ADDRESS, LOOTContractInterface);
 
-// NFT HOOKS
+// *NFT HOOKS*
 export function useMint() {
   const { state, send } = useContractFunction(NFTContract, 'safeMint', {});
   return { state, send };
@@ -136,7 +136,7 @@ export function useOwnerOf(tokenId: string | number) {
 //   return { state, send };
 // }
 
-// GEMS HOOKS
+// *GEMS HOOKS*
 // Approve GEMS to be used by our STAKING contract
 export function useApproveGEMS() {
   const { state, send } = useContractFunction(GEMSContract, 'approve', {});
@@ -167,9 +167,7 @@ export function useAllowanceGEMS(userAddress: string) {
   return allowance;
 }
 
-// STAKING HOOKS
-
-// ? Stake should handle items sent aswell (eg burn 100 gems & stake your nft to play with bonus)
+// *STAKING HOOKS*
 export function useStake() {
   const { state, send } = useContractFunction(STAKEContract, 'stake', {});
   return { state, send };
@@ -218,8 +216,7 @@ export function useStakes(userAddress: string) {
   return value;
 }
 
-// TODO LOOT HOOKS
-
+// *LOOT HOOKS*
 // Mint loot
 export function useMintLoot() {
   const { state, send } = useContractFunction(LOOTContract, 'safeMint', {});
