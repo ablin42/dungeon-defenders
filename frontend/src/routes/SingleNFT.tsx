@@ -14,7 +14,6 @@ export default function SingleNFT() {
   if (NFTObject) NFTObject.tokenId = nftId;
 
   // TODO doesnt handle 0 results (show infinite loading)
-
   return (
     <div className="text-center mt-5 mb-5">
       <h2 className="mb-2">Oh, Great Defender !</h2>

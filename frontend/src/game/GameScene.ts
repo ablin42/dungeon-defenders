@@ -9,14 +9,15 @@ import { Vector2 } from './utils';
 import toast from 'react-hot-toast';
 
 const triggerRewardAllocation = async (account: string, defenderId: string | number) => {
-  const res = await fetch(`${API_ADDRESS}/v1/game/${account}/allocateRewards`, { method: 'POST' });
-  if (res.status !== 200)
-    toast.error('Failed to allocate rewards, emergency withdrawal needed', { position: 'top-right' });
-
   toast.success('You won, GG !', {
     icon: '✅',
     position: 'top-right',
   });
+
+  const res = await fetch(`${API_ADDRESS}/v1/game/${account}/allocateRewards`, { method: 'POST' });
+  if (res.status !== 200)
+    toast.error('Failed to allocate rewards, emergency withdrawal needed', { position: 'top-right', icon: '❌' });
+
   window.location.href = `/NFT/${defenderId}`;
 };
 

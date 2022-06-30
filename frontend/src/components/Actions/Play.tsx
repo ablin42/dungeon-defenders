@@ -31,7 +31,7 @@ type FormProps = {
 
 const FormUtil = ({ value, onChange, children }: FormProps) => {
   return (
-    <div className="form-group text-start">
+    <div className="form-group text-start ms-1 me-1">
       <label htmlFor="gemsAmount">Gems Amount (min. 100)</label>
       <div className="input-group">
         <input
@@ -173,7 +173,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
       </FormUtil>
     );
   // To handle loading state when sending any other action
-  if (isPending) return <LoadingBtn type="success" />;
+  if (isPending) return <LoadingBtn type="success" fullWidth="w-100" />;
   // To handle loading state with no button (loading up the page for the 1st time)
   if (NFTallowance === undefined && GEMSallowance === undefined && staked === undefined)
     return <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>;
@@ -205,7 +205,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
               <br />
             </>
           ) : null}
-          <button onClick={() => sendTx(unstake)} className="btn btn-lg btn-success" disabled={!claimable}>
+          <button onClick={() => sendTx(unstake)} className="btn btn-lg btn-success w-100" disabled={!claimable}>
             Claim
           </button>
         </>
