@@ -3,6 +3,11 @@ import { Link } from 'react-router-dom';
 import { useEthers } from '@usedapp/core';
 
 import ConnectWallet from './Actions/ConnectWallet';
+import styled from 'styled-components';
+
+const Wrapper = styled.div`
+  display: flex;
+`;
 
 const Header = () => {
   const { account } = useEthers();
@@ -16,12 +21,14 @@ const Header = () => {
               <strong>Dungeon Defenders</strong>
             </Link>
           </div>
-          <div>
-            <Link to={`/NFT/user/${account}`} className="d-flex align-items-center">
-              <strong>Play</strong>
-            </Link>
-          </div>
-          <ConnectWallet />
+          <Wrapper>
+            {account && (
+              <Link to={`/NFT/user/${account}`} className="me-3">
+                <button className="btn btn-success">Play</button>
+              </Link>
+            )}
+            <ConnectWallet />
+          </Wrapper>
         </div>
       </div>
     </header>

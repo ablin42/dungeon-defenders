@@ -1,8 +1,8 @@
 import React from 'react';
 import { useEthers } from '@usedapp/core';
-import Actions from '../components/Actions/Actions';
 import Mint from '../components/Actions/Mint';
 import Loot from '../components/Actions/MintLoot';
+import LatestNFT from './LatestNFT';
 
 const App = () => {
   const { account } = useEthers();
@@ -16,8 +16,10 @@ const App = () => {
       </div>
       <div className="album bg-dark">
         <div className="container ">
-          <div className="col-lg-6 col-md-8 mx-auto">
-            <div>{account && <Actions userAddress={account} />}</div>
+          <div className="col-lg-12 mx-auto">
+            <div className="pt-1 pb-5 m-5">
+              <LatestNFT />
+            </div>
           </div>
         </div>
       </div>

@@ -134,8 +134,8 @@ const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
   const getLootList = () => {
     return (
       <>
-        <div className="text-start">Loot Equiped</div>
-        <ul className="list-group text-start">
+        <div className="text-start mt-3 ms-1">Loot Equiped</div>
+        <ul className="list-group text-start m-1">
           <li className="list-group-item">
             <div className="row" style={{ alignItems: 'center' }}>
               <div className="col-4">

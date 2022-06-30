@@ -38,5 +38,10 @@ a {
 
 /* just for demo purposes */
 .btn {
-  width: 175px;
+  width: 150px;
+}
+
+.list-group-item {
+  color: #ebebeb !important;
+  background-color: #101010 !important;
 }
