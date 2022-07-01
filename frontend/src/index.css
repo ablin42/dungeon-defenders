@@ -45,3 +45,7 @@ a {
   color: #ebebeb !important;
   background-color: #101010 !important;
 }
+
+.small-btn {
+  width: 110px !important;
+}

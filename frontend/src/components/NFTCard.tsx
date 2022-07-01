@@ -6,7 +6,7 @@ import { useEthers } from '@usedapp/core';
 // *INTERNALS*
 import Play from './Actions/Play';
 import Equipment from './Actions/Equipment';
-import { useStakes, useAesthetics } from '../hooks';
+import { useStakes, useSlots } from '../hooks';
 import { NFTAttribute, NFT } from '../types';
 
 interface Props {
@@ -19,11 +19,11 @@ const BADGE_TYPE = ['primary', 'primary', 'success', 'success', 'success', 'succ
 
 // TODO should make as pure as possible
 const NFTCard = ({ NFT, owner, isLoot }: Props) => {
-  const { name, description, tokenId, image, external_url, attributes } = NFT;
+  const { name, tokenId, image, external_url, attributes } = NFT;
   const actualTokenId = tokenId || +name.replace(/^\D+/g, ''); // Trick to bypass the issue of tokenId not being set in the NFT object
   const { account } = useEthers();
   const stakes = account && useStakes(account);
-  const slots = !isLoot && useAesthetics(tokenId);
+  const slots = !isLoot && useSlots(tokenId);
   const userStaking = stakes && +stakes.timestamp > 0;
   const stakedId = stakes && +stakes.tokenId;
   const isOwner = account === owner;

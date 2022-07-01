@@ -130,7 +130,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
   };
 
   if (isPending[STATE_INDEX.APPROVENFT] || isPending[STATE_INDEX.APPROVEGEMS] || isPending[STATE_INDEX.UNSTAKE])
-    return <LoadingBtn type="success" fullWidth="w-100" />;
+    return <LoadingBtn type="success" width="100%" />;
   // To handle loading state with no button (loading up the page for the 1st time)
   if (NFTallowance === undefined && GEMSallowance === undefined && staked === undefined)
     return <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>;

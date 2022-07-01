@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { TransactionStatus } from '@usedapp/core';
 
 // *INTERNALS*
-import { useEquip, useUnequip, useAesthetics, useApproveLoot, useAllowanceLoot } from '../../hooks/index';
+import { useEquip, useUnequip, useSlots, useApproveLoot, useAllowanceLoot } from '../../hooks/index';
 import { STATUS_TYPES, STAKE_CONTRACT_ADDRESS } from '../../constants';
 import LoadingBtn from '../LoadingBtn';
 import { sendTx, handleTxStatus } from '../../utils';
@@ -72,7 +72,7 @@ const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
   const { state: unequipState, send: sendUnequip } = useUnequip();
   const { state: approveState, send: sendApprove } = useApproveLoot();
   const LOOTAllowance = useAllowanceLoot(userAddress);
-  const slots = useAesthetics(tokenId);
+  const slots = useSlots(tokenId);
   // *STATE*
   const [loots, setLoots] = useState(slots ? [slots[1], slots[2], slots[3]] : [0, 0, 0]);
   const [STATES, setSTATES] = useState<Array<TransactionStatus>>([equipState, unequipState, approveState]);
@@ -136,13 +136,19 @@ const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
                       disabled={slots[id] !== 0}
                     >
                       {isPending[STATE_INDEX.EQUIP] || isPending[STATE_INDEX.UNEQUIP] ? (
-                        <LoadingBtn type="primary" />
+                        <LoadingBtn type="primary" width="110px" />
                       ) : slots[id] === 0 ? (
-                        <button onClick={() => sendTx(() => equip(loots[id]))} className="btn btn-lg btn-primary">
+                        <button
+                          onClick={() => sendTx(() => equip(loots[id]))}
+                          className="btn btn-lg btn-primary small-btn"
+                        >
                           Equip
                         </button>
                       ) : (
-                        <button onClick={() => sendTx(() => unequip(loots[id]))} className="btn btn-lg btn-primary">
+                        <button
+                          onClick={() => sendTx(() => unequip(loots[id]))}
+                          className="btn btn-lg btn-primary small-btn"
+                        >
                           Unequip
                         </button>
                       )}
@@ -162,7 +168,7 @@ const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
       {LOOTAllowance ? (
         getLootList()
       ) : isPending[STATE_INDEX.APPROVE] ? (
-        <LoadingBtn type="primary" fullWidth="w-100" />
+        <LoadingBtn type="primary" width="100%" />
       ) : (
         <button onClick={() => sendTx(approve)} className="btn btn-lg btn-primary w-100 mt-3">
           Approve LOOT

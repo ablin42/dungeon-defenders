@@ -111,7 +111,7 @@ const Faucet = ({ userAddress }: ActionProps) => {
         owner === userAddress &&
         (isPending[STATE_INDEX.WITHDRAW] ? (
           <div className="mb-3">
-            <LoadingBtn fullWidth="w-100" type="danger" />
+            <LoadingBtn width="100%" type="danger" />
           </div>
         ) : (
           <button onClick={() => sendTx(withdraw)} className="btn btn-lg btn-danger w-100 mb-3">
@@ -119,7 +119,7 @@ const Faucet = ({ userAddress }: ActionProps) => {
           </button>
         ))}
       {isPending[STATE_INDEX.CLAIM] ? (
-        <LoadingBtn fullWidth="w-100" type="success" />
+        <LoadingBtn width="100%" type="success" />
       ) : (
         <button onClick={() => sendTx(claim)} className="btn btn-lg btn-success w-100 ">
           Claim 500 GEMS

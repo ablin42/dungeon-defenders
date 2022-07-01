@@ -53,13 +53,13 @@ export function useUnequip() {
   return { state, send };
 }
 
-// Fetch aesthetics
-export function useAesthetics(tokenId: string | number) {
+// Fetch loot id in slots
+export function useSlots(tokenId: string | number) {
   const { value, error } =
     useCall(
       tokenId && {
         contract: NFTContract,
-        method: 'aesthetics',
+        method: 'getSlots',
         args: [tokenId],
       },
     ) ?? {};
@@ -71,7 +71,7 @@ export function useAesthetics(tokenId: string | number) {
     console.error(`Error fetching slots for Defender #${tokenId}`, error.message);
     return [0, 0, 0];
   }
-  const slots = [+value?.[1], +value?.[2], +value?.[3]];
+  const slots = [+value?.slots[1], +value?.slots[2], +value?.slots[3]];
   return slots;
 }
 
