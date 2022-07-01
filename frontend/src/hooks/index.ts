@@ -53,13 +53,13 @@ export function useUnequip() {
   return { state, send };
 }
 
-// Check aesthetics
-export function useSlots(tokenId: string | number) {
+// Fetch aesthetics
+export function useAesthetics(tokenId: string | number) {
   const { value, error } =
     useCall(
       tokenId && {
         contract: NFTContract,
-        method: 'getSlots',
+        method: 'aesthetics',
         args: [tokenId],
       },
     ) ?? {};
@@ -71,7 +71,7 @@ export function useSlots(tokenId: string | number) {
     console.error(`Error fetching slots for Defender #${tokenId}`, error.message);
     return [0, 0, 0];
   }
-  const slots = [+value?.slots[1], +value?.slots[2], +value?.slots[3]];
+  const slots = [+value?.[1], +value?.[2], +value?.[3]];
   return slots;
 }
 
@@ -244,14 +244,15 @@ export function useBurnGEMS() {
 }
 
 // Check if user has approved STAKING contract for all NFTs
-export function useAllowanceGEMS(userAddress: string) {
+export function useAllowanceGEMS(userAddress: string, contract: string) {
   const { value, error } =
     useCall(
-      userAddress && {
-        contract: GEMSContract,
-        method: 'allowance',
-        args: [userAddress, STAKE_CONTRACT_ADDRESS],
-      },
+      userAddress &&
+        contract && {
+          contract: GEMSContract,
+          method: 'allowance',
+          args: [userAddress, contract],
+        },
     ) ?? {};
   const allowance = value ? parseInt(ethers.utils.formatEther(value[0])) : undefined;
 

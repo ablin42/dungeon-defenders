@@ -28,10 +28,9 @@ export default function UserLoot() {
     const wrapper = async () => {
       const result = await getUserLOOT(userAddress);
       setUserLOOT(result);
+      setIsLoading(false);
     };
     wrapper();
-
-    setIsLoading(false);
   }, []);
 
   return (

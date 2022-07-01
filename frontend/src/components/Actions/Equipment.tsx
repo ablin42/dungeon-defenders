@@ -1,13 +1,12 @@
 // *EXTERNALS*
 import React, { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
 import { TransactionStatus } from '@usedapp/core';
 
 // *INTERNALS*
-import { useEquip, useUnequip, useSlots, useApproveLoot, useAllowanceLoot } from '../../hooks/index';
-import { STATUS_TYPES, NETWORK_EXPLORER, STAKE_CONTRACT_ADDRESS } from '../../constants';
+import { useEquip, useUnequip, useAesthetics, useApproveLoot, useAllowanceLoot } from '../../hooks/index';
+import { STATUS_TYPES, STAKE_CONTRACT_ADDRESS } from '../../constants';
 import LoadingBtn from '../LoadingBtn';
-import { sendTx } from '../../utils';
+import { sendTx, handleTxStatus } from '../../utils';
 
 type ActionProps = {
   tokenId: number | string;
@@ -19,6 +18,7 @@ type FormProps = {
   value: number | string;
   // eslint-disable-next-line @typescript-eslint/ban-types
   onChange: Function;
+  disabled: boolean;
   children: React.ReactNode;
 };
 
@@ -37,7 +37,13 @@ const LOOT_LIST = [
   },
 ];
 
-const FormUtil = ({ label, value, onChange, children }: FormProps) => {
+const STATE_INDEX = {
+  EQUIP: 0,
+  UNEQUIP: 1,
+  APPROVE: 2,
+};
+
+const FormUtil = ({ label, value, onChange, disabled, children }: FormProps) => {
   return (
     <div className="row">
       {label && <label htmlFor="gemsAmount">{label}</label>}
@@ -51,6 +57,7 @@ const FormUtil = ({ label, value, onChange, children }: FormProps) => {
             aria-label="Gems Amount"
             onChange={(e) => onChange(e.target.value)}
             value={value}
+            disabled={disabled}
           />
           {children}
         </div>
@@ -65,17 +72,17 @@ const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
   const { state: unequipState, send: sendUnequip } = useUnequip();
   const { state: approveState, send: sendApprove } = useApproveLoot();
   const LOOTAllowance = useAllowanceLoot(userAddress);
-  const slots = useSlots(tokenId);
+  const slots = useAesthetics(tokenId);
   // *STATE*
-  const [isPending, setIsPending] = useState(false);
   const [loots, setLoots] = useState(slots ? [slots[1], slots[2], slots[3]] : [0, 0, 0]);
   const [STATES, setSTATES] = useState<Array<TransactionStatus>>([equipState, unequipState, approveState]);
+  const STATUS = STATES.map((state) => state.status as string);
+  const isPending = STATUS.map((status) => status === STATUS_TYPES.PENDING || status === STATUS_TYPES.MINING);
 
-  const handleStateChange = (STATUS: Array<TransactionStatus>, index: number) => {
-    const newSTATES = JSON.parse(JSON.stringify(STATUS));
+  const handleStateChange = (STATES: Array<TransactionStatus>, index: number) => {
+    const newSTATES = [...STATES] as any[];
     newSTATES[index].status = STATUS_TYPES.NONE;
     setSTATES(newSTATES);
-    setIsPending(false);
   };
 
   useEffect(() => {
@@ -87,30 +94,7 @@ const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
   }, [equipState, unequipState, approveState]);
 
   useEffect(() => {
-    const STATUS = STATES.map((state) => state.status as string);
-    setIsPending(STATUS.includes(STATUS_TYPES.PENDING) || STATUS.includes(STATUS_TYPES.MINING));
-
-    if (STATUS.find((item) => item === STATUS_TYPES.SUCCESS)) {
-      const successIndex = STATUS.findIndex((i) => i === STATUS_TYPES.SUCCESS);
-      const targetedState = STATES[successIndex];
-      handleStateChange(STATES, successIndex);
-
-      toast.success(
-        <>
-          Tx Success:
-          <a target="_blank" rel="noreferrer" href={`${NETWORK_EXPLORER}/tx/${targetedState.receipt?.transactionHash}`}>
-            {targetedState.receipt?.transactionHash.substring(0, 12)}...
-          </a>
-        </>,
-        {},
-      );
-    }
-    if (STATUS.find((item) => item === STATUS_TYPES.EXCEPTION) || STATUS.find((item) => item === STATUS_TYPES.FAIL)) {
-      const statusIndex = STATUS.findIndex((i) => i === STATUS_TYPES.EXCEPTION || i === STATUS_TYPES.FAIL);
-      handleStateChange(STATES, statusIndex);
-
-      toast.error(`Tx Error: ${STATES[statusIndex].errorMessage}`);
-    }
+    handleTxStatus(STATES, STATUS, handleStateChange);
   }, [STATES]);
 
   const handleSetLoot = (value: React.ChangeEvent<HTMLInputElement>, index: number) => {
@@ -149,8 +133,9 @@ const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
                     <FormUtil
                       value={loots[id]}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSetLoot(e, id)}
+                      disabled={slots[id] !== 0}
                     >
-                      {isPending ? (
+                      {isPending[STATE_INDEX.EQUIP] || isPending[STATE_INDEX.UNEQUIP] ? (
                         <LoadingBtn type="primary" />
                       ) : slots[id] === 0 ? (
                         <button onClick={() => sendTx(() => equip(loots[id]))} className="btn btn-lg btn-primary">
@@ -172,15 +157,14 @@ const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
     );
   };
 
-  // To handle loading state
-  if (isPending) return <>{!LOOTAllowance ? <LoadingBtn type="primary" /> : getLootList()}</>;
-
   return (
     <>
       {LOOTAllowance ? (
         getLootList()
+      ) : isPending[STATE_INDEX.APPROVE] ? (
+        <LoadingBtn type="primary" fullWidth="w-100" />
       ) : (
-        <button onClick={() => sendTx(approve)} className="btn btn-lg btn-primary mt-3">
+        <button onClick={() => sendTx(approve)} className="btn btn-lg btn-primary w-100 mt-3">
           Approve LOOT
         </button>
       )}

@@ -29,10 +29,9 @@ export default function UserNFT() {
     const wrapper = async () => {
       const result = await getUserNFT(userAddress);
       setUserNFT(result);
+      setIsLoading(false);
     };
     wrapper();
-
-    setIsLoading(false);
   }, []);
 
   return (
