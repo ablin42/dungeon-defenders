@@ -1,40 +1,44 @@
 const hre = require("hardhat");
 
 async function main() {
-  const GEMS = "0x5CF7EBA340cb884ED87f48778f5473eF47bbE981";
-  const LOOT = "0x3b4CFc8861ec9657c647A3064070c558ED4E3892";
-  const NFT = "0xf27f5F0B206fD3AA4418bBf3ba46A39a353109aC";
-  const STAKING = "0xb53a5c6E5d0435D90De49e6FE1E9eD7e8166522A";
-  const FAUCET = "0xb8E29dC8FED6804c91380ab080C4BD0B24D0772B";
+  const GEMS_CONTRACT_ADDRESS = "0x2812E79AD5644CD27A74c618fF257b7f5805E684";
+  const FAUCET_CONTRACT_ADDRESS = "0x8c5C54d36b10Dc9eE1344469B30dF62F03346873";
+  const LOOT_CONTRACT_ADDRESS = "0x263f7074fD5900144DF0ACd61CF4a06DCA16d28f";
+  const NFT_CONTRACT_ADDRESS = "0x55CF0a999bF0C3AbF4A2A3B9A4b9514fE2046cd4";
+  const STAKE_CONTRACT_ADDRESS = "0xC70783a4d2179ffD3ED96ec974976754900F42b1";
 
   // *VERIFY GEMS*
   const verifyGems = hre.run("verify:verify", {
-    address: GEMS,
+    address: GEMS_CONTRACT_ADDRESS,
     constructorArguments: [],
   });
 
   // *VERIFY FAUCET*
   const verifyFaucet = hre.run("verify:verify", {
-    address: FAUCET,
-    constructorArguments: [GEMS],
+    address: FAUCET_CONTRACT_ADDRESS,
+    constructorArguments: [GEMS_CONTRACT_ADDRESS],
   });
 
   // *VERIFY LOOT*
   const verifyLoot = hre.run("verify:verify", {
-    address: LOOT,
+    address: LOOT_CONTRACT_ADDRESS,
     constructorArguments: [],
   });
 
   // *VERIFY NFT*
   const verifyNFT = hre.run("verify:verify", {
-    address: NFT,
-    constructorArguments: [LOOT],
+    address: NFT_CONTRACT_ADDRESS,
+    constructorArguments: [LOOT_CONTRACT_ADDRESS],
   });
 
   // *VERIFY STAKING*
   const verifyStaking = hre.run("verify:verify", {
-    address: STAKING,
-    constructorArguments: [NFT, LOOT, GEMS],
+    address: STAKE_CONTRACT_ADDRESS,
+    constructorArguments: [
+      NFT_CONTRACT_ADDRESS,
+      LOOT_CONTRACT_ADDRESS,
+      GEMS_CONTRACT_ADDRESS,
+    ],
   });
 
   await Promise.all([

@@ -38,10 +38,14 @@ a {
 
 /* just for demo purposes */
 .btn {
-  width: 150px;
+  width: 175px;
 }
 
 .list-group-item {
   color: #ebebeb !important;
   background-color: #101010 !important;
+}
+
+.small-btn {
+  width: 110px !important;
 }

@@ -1,35 +1,33 @@
-import React from 'react';
+// *EXTERNALS*
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Buffer } from 'buffer';
 
+// *INTERNALS*
 import NFTCard from '../components/NFTCard';
 import { useOwnerOfLoot, useTokenURILoot } from '../hooks/index';
+import LoadWith404 from '../components/LoadWith404';
 
 export default function SingleLOOT() {
   const params = useParams();
   const { lootId } = params;
+  const [isLoading, setIsLoading] = useState(true);
   const URI = useTokenURILoot(lootId || 0);
   const owner = useOwnerOfLoot(lootId || 0);
   const LOOTObject = URI ? JSON.parse(Buffer.from(URI, 'base64').toString()) : null;
   if (LOOTObject) LOOTObject.tokenId = lootId;
 
-  // TODO doesnt handle 0 results (show infinite loading)
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000 * 5);
+  }, []);
+
   return (
     <div className="text-center mt-5 mb-5">
       <h2 className="mb-2">Hrmm.. Juicy loot</h2>
       <div className="container col-4">
-        {URI ? (
-          <NFTCard NFT={LOOTObject} owner={owner} isLoot />
-        ) : (
-          <div className="text-center" style={{ height: '65vh', display: 'flex', justifyContent: 'center' }}>
-            <span
-              style={{ alignSelf: 'center' }}
-              className="spinner-border spinner-border-sm"
-              role="status"
-              aria-hidden="true"
-            ></span>
-          </div>
-        )}
+        {URI ? <NFTCard NFT={LOOTObject} owner={owner} isLoot /> : <LoadWith404 isLoading={isLoading} />}
       </div>
     </div>
   );

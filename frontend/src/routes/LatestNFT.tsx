@@ -1,5 +1,7 @@
+// *EXTERNALS*
 import React, { useEffect, useState } from 'react';
 
+// *INTERNALS*
 import { API_ADDRESS } from '../constants';
 import NFTCard from '../components/NFTCard';
 import type { NFT } from '../types';
@@ -22,7 +24,6 @@ export default function LatestNFT() {
     wrapper();
   }, []);
 
-  // TODO doesnt handle 0 results (show infinite loading)
   return (
     <div className="container">
       <h2 className="text-center mt-5 mb-5">Our Newly Born Defenders</h2>

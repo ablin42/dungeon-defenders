@@ -1,7 +1,10 @@
-/* eslint-disable @typescript-eslint/ban-types */
+// *EXTERNALS*
 import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
+import { TransactionStatus } from '@usedapp/core';
 import { useNavigate } from 'react-router-dom';
+
+// *INTERNALS*
 import {
   useStake,
   useUnstake,
@@ -11,12 +14,10 @@ import {
   useIsStaked,
   useApproveGEMS,
   useStakes,
-  useTokenURI,
 } from '../../hooks/index';
-import { STAKE_CONTRACT_ADDRESS, STATUS_TYPES, GEMS_TOTAL_SUPPLY, NETWORK_EXPLORER } from '../../constants';
-import toast from 'react-hot-toast';
-import { TransactionStatus } from '@usedapp/core';
+import { STAKE_CONTRACT_ADDRESS, STATUS_TYPES, GEMS_TOTAL_SUPPLY } from '../../constants';
 import LoadingBtn from '../LoadingBtn';
+import { sendTx, handleTxStatus } from '../../utils';
 
 type ActionProps = {
   userAddress: string;
@@ -26,8 +27,16 @@ type ActionProps = {
 
 type FormProps = {
   value: string;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   onChange: Function;
   children: React.ReactNode;
+};
+
+const STATE_INDEX = {
+  APPROVENFT: 0,
+  APPROVEGEMS: 1,
+  STAKE: 2,
+  UNSTAKE: 3,
 };
 
 const FormUtil = ({ value, onChange, children }: FormProps) => {
@@ -59,59 +68,34 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
   const { state: unstakeState, send: sendUnstake } = useUnstake();
   const stakes = userAddress && useStakes(userAddress);
   const NFTallowance = useAllowance(userAddress);
-  const GEMSallowance = useAllowanceGEMS(userAddress);
+  const GEMSallowance = useAllowanceGEMS(userAddress, STAKE_CONTRACT_ADDRESS);
   const staked = useIsStaked(userAddress);
   const stakedId = stakes && +stakes.tokenId;
   const claimable = staked && stakes.isClaimable;
   // *STATE*
-  const [isPending, setIsPending] = useState(false);
   const [gemsAmount, setGemsAmount] = useState('100');
-  const [STATUS, setSTATUS] = useState<Array<string>>([
-    approveNFTState.status,
-    approveGEMSState.status,
-    stakeState.status,
-    unstakeState.status,
-  ]);
   const [STATES, setSTATES] = useState<Array<TransactionStatus>>([
     approveNFTState,
     approveGEMSState,
     stakeState,
     unstakeState,
   ]);
-  // TODO can be refactored to avoid having STATES & STATUS
+  const STATUS = STATES.map((state) => state.status as string);
+  const isPending = STATUS.map((status) => status === STATUS_TYPES.PENDING || status === STATUS_TYPES.MINING);
+
+  const handleStateChange = (STATES: Array<TransactionStatus>, index: number) => {
+    const newSTATES = [...STATES] as any[];
+    newSTATES[index].status = STATUS_TYPES.NONE;
+    setSTATES(newSTATES);
+  };
 
   useEffect(() => {
-    const newSTATES = [approveNFTState, approveGEMSState, stakeState, unstakeState];
-    const newSTATUS = [approveNFTState.status, approveGEMSState.status, stakeState.status, unstakeState.status];
-    setSTATUS(newSTATUS);
-    setSTATES(newSTATES);
+    setSTATES([approveNFTState, approveGEMSState, stakeState, unstakeState]);
   }, [approveNFTState, approveGEMSState, stakeState, unstakeState]);
 
   useEffect(() => {
-    setIsPending(STATUS.includes(STATUS_TYPES.PENDING) || STATUS.includes(STATUS_TYPES.MINING));
-
-    if (STATUS.find((item) => item === STATUS_TYPES.SUCCESS)) {
-      const successIndex = STATUS.findIndex((i) => i === STATUS_TYPES.SUCCESS);
-      const targetedState = STATES[successIndex];
-      const newSTATUS = JSON.parse(JSON.stringify(STATUS));
-      newSTATUS[successIndex] = STATUS_TYPES.NONE;
-      setSTATUS(newSTATUS);
-      setIsPending(false);
-
-      toast.success(
-        <>
-          Tx Success:
-          <a target="_blank" rel="noreferrer" href={`${NETWORK_EXPLORER}/tx/${targetedState.receipt?.transactionHash}`}>
-            {targetedState.receipt?.transactionHash.substring(0, 12)}...
-          </a>
-        </>,
-        {
-          icon: '✅',
-          position: 'top-right',
-        },
-      );
-
-      if (successIndex === 2) {
+    const successHandler = (index: number) => {
+      if (index === 2) {
         setTimeout(async () => {
           navigate(`/Play`, {
             replace: true,
@@ -121,61 +105,32 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
               weaponId: equipedLoot[0],
               armorId: equipedLoot[1],
               bootsId: equipedLoot[2],
-
               gemsAmount,
             },
           });
         }, 5000);
       }
-    }
-    if (STATUS.find((item) => item === STATUS_TYPES.EXCEPTION) || STATUS.find((item) => item === STATUS_TYPES.FAIL)) {
-      const statusIndex = STATUS.findIndex((i) => i === STATUS_TYPES.EXCEPTION || i === STATUS_TYPES.FAIL);
-      const newSTATUS = JSON.parse(JSON.stringify(STATUS));
-      newSTATUS[statusIndex] = STATUS_TYPES.NONE;
-      setSTATUS(newSTATUS);
-      setIsPending(false);
+    };
 
-      toast.error(`Tx Error: ${STATES[statusIndex].errorMessage}`, {
-        icon: '❌',
-        position: 'top-right',
-      });
-    }
-  }, [STATUS]);
+    handleTxStatus(STATES, STATUS, handleStateChange, successHandler);
+  }, [STATES]);
 
   const approveNFT = async () => {
     sendApproveNFT(STAKE_CONTRACT_ADDRESS, true);
   };
-
   const approveGEMS = async () => {
     sendApproveGEMS(STAKE_CONTRACT_ADDRESS, GEMS_TOTAL_SUPPLY);
   };
-
   const stake = async () => {
     const formattedGemsAmount = ethers.utils.parseEther(gemsAmount);
     sendStake(tokenId, equipedLoot[0], equipedLoot[1], equipedLoot[2], formattedGemsAmount);
   };
-
   const unstake = async () => {
     sendUnstake();
   };
 
-  const sendTx = async (tx: Function) => {
-    toast(`Tx Pending...`, {
-      icon: '⏳',
-      position: 'top-right',
-    });
-    tx();
-  };
-
-  // To handle loading state when sending stake action
-  if (isPending && NFTallowance && GEMSallowance && !staked)
-    return (
-      <FormUtil value={gemsAmount} onChange={setGemsAmount}>
-        <LoadingBtn type="success" />
-      </FormUtil>
-    );
-  // To handle loading state when sending any other action
-  if (isPending) return <LoadingBtn type="success" fullWidth="w-100" />;
+  if (isPending[STATE_INDEX.APPROVENFT] || isPending[STATE_INDEX.APPROVEGEMS] || isPending[STATE_INDEX.UNSTAKE])
+    return <LoadingBtn type="success" width="100%" />;
   // To handle loading state with no button (loading up the page for the 1st time)
   if (NFTallowance === undefined && GEMSallowance === undefined && staked === undefined)
     return <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>;
@@ -183,21 +138,27 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
   return (
     <>
       {!NFTallowance && (
-        <button onClick={() => sendTx(approveNFT)} className="btn btn-lg btn-success">
+        <button onClick={() => sendTx(approveNFT)} className="btn btn-lg btn-success w-100">
           Approve NFTs
         </button>
       )}
       {!GEMSallowance && NFTallowance && (
-        <button onClick={() => sendTx(approveGEMS)} className="btn btn-lg btn-success">
+        <button onClick={() => sendTx(approveGEMS)} className="btn btn-lg btn-success w-100">
           Approve GEMS
         </button>
       )}
       {NFTallowance && GEMSallowance && !staked ? (
-        <FormUtil value={gemsAmount} onChange={setGemsAmount}>
-          <button onClick={() => sendTx(stake)} className="btn btn-lg btn-success">
-            Stake & Play
-          </button>
-        </FormUtil>
+        isPending[STATE_INDEX.STAKE] ? (
+          <FormUtil value={gemsAmount} onChange={setGemsAmount}>
+            <LoadingBtn type="success" />
+          </FormUtil>
+        ) : (
+          <FormUtil value={gemsAmount} onChange={setGemsAmount}>
+            <button onClick={() => sendTx(stake)} className="btn btn-lg btn-success">
+              Stake & Play
+            </button>
+          </FormUtil>
+        )
       ) : null}
       {NFTallowance && GEMSallowance && staked && tokenId == stakedId ? (
         <>
@@ -207,19 +168,23 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
               <br />
             </>
           ) : null}
-          <button onClick={() =>  navigate(`/Play`, {
-            state: {
-              owner: userAddress,
-              defenderId: tokenId,
-              weaponId: equipedLoot[0],
-              armorId: equipedLoot[1],
-              bootsId: equipedLoot[2],
-
-              gemsAmount,
-            },
-          })} className="btn btn-lg btn-success w-100" >
+          {/* <button
+            onClick={() =>
+              navigate(`/Play`, {
+                state: {
+                  owner: userAddress,
+                  defenderId: tokenId,
+                  weaponId: equipedLoot[0],
+                  armorId: equipedLoot[1],
+                  bootsId: equipedLoot[2],
+                  gemsAmount,
+                },
+              })
+            }
+            className="btn btn-lg btn-success w-100"
+          >
             Play
-          </button>
+          </button> */}
           <button onClick={() => sendTx(unstake)} className="btn btn-lg btn-success w-100" disabled={!claimable}>
             Claim
           </button>

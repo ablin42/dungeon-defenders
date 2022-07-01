@@ -1,13 +1,11 @@
-import { ethers } from 'ethers';
-import React, { useEffect, useState } from 'react';
+// *EXTERNALS*
+import React from 'react';
+
+// *INTERNALS*
 import { useApproveGEMS } from '../../hooks/index';
 import { STAKE_CONTRACT_ADDRESS, GEMS_TOTAL_SUPPLY } from '../../constants';
 
-type ActionProps = {
-  userAddress: string;
-};
-
-const ApproveGEMS: React.FC<ActionProps> = ({ userAddress }) => {
+const ApproveGEMS = () => {
   const { state, send: sendApprove } = useApproveGEMS();
 
   const approve = async () => {
