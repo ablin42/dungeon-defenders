@@ -17,21 +17,25 @@ export function getNFTOwner(tokenId: string) : string | undefined {
 }
 
 export async function getNFT(tokenId: string, exisitingContract?: DungeonDefenders | DungeonLoot) : Promise<NFT | undefined> {
-    let contract = exisitingContract;
-    if (!contract) {
-        const connectResult = connectToDungeonDefenderContract('getNFT');
-        if (!connectResult) {
-            return undefined;
+    try {
+        let contract = exisitingContract;
+        if (!contract) {
+            const connectResult = connectToDungeonDefenderContract('getNFT');
+            if (!connectResult) {
+                return undefined;
+            }
+        
+            const {contract: c} = connectResult;
+            contract = c;
         }
     
-        const {contract: c} = connectResult;
-        contract = c;
+        const tokenURIBase64 = await contract.tokenURI(tokenId);
+        const jsonBase64 = tokenURIBase64.split(',')[1];
+        const jsonStr = Buffer.from(jsonBase64, 'base64').toString('ascii');
+        return JSON.parse(jsonStr) as NFT;
+    } catch (error) {
+        logError(JSON.stringify(error as any), 'getNFT');
     }
-
-    const tokenURIBase64 = await contract.tokenURI(tokenId);
-    const jsonBase64 = tokenURIBase64.split(',')[1];
-    const jsonStr = Buffer.from(jsonBase64, 'base64').toString('ascii');
-    return JSON.parse(jsonStr) as NFT;
 }
 
 export async function getNFTCollection(address: string) : Promise<NFT[]> {
