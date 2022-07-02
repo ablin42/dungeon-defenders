@@ -1,9 +1,10 @@
 // *EXTERNALS*
 import React from 'react';
+import { STAKE_CONTRACT_ADDRESS } from 'dungeon-defenders-contracts';
 
 // *INTERNALS*
 import { useApproveGEMS } from '../../hooks/index';
-import { STAKE_CONTRACT_ADDRESS, GEMS_TOTAL_SUPPLY } from '../../constants';
+import { GEMS_TOTAL_SUPPLY } from '../../constants';
 
 const ApproveGEMS = () => {
   const { state, send: sendApprove } = useApproveGEMS();
