@@ -26,6 +26,7 @@ export class Weapon {
 
     create(scene : Phaser.Scene, weaponType: number, layer: Phaser.GameObjects.Layer) {
         this.asset = WEAPONS[weaponType];
+        console.log(weaponType, this.asset)
         this.sprite = scene.add.image(320, 320, this.asset.key);
         this.sprite.setOrigin((this.asset.center.x - 4) / this.asset.frameSize.x, this.asset.center.y / this.asset.frameSize.y);
         this.sprite.scale = UNIT_SCALE;

@@ -28,26 +28,24 @@ export default function Play() {
     }
 
     console.log(defender, weapon);
-    if (!defender) {
+    if (!defender || (state.weaponId && !weapon)) {
       return;
     }
 
-    const w: Loot = {
-      health: 0,
-      speed: 0,
-      strength: 0,
-      defense: 0,
-
-      // Aesthetics
-      background: 0,
-      weapon: 4,
-      armor: 0,
-      boots: 0,
-    };
-
     setInit(true);
-    initializeGame('game', { ownerAddress: state.owner, defenderId: state.defenderId, defender, weapon: w });
   }, [defender, weapon]);
+
+  useEffect(() => {
+    if (!init) {
+      return;
+    }
+
+    if (!defender || (state.weaponId && !weapon)) {
+      return;
+    }
+
+    initializeGame('game', { ownerAddress: state.owner, defenderId: state.defenderId, defender, weapon });
+  }, [init])
 
   return (
     <>

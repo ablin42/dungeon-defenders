@@ -1,4 +1,4 @@
-import { HALF_UNIT_SIZE, UNIT_SCALE, UNIT_SIZE } from './Constants';
+import { HALF_UNIT_SIZE, UNIT_SIZE } from './Constants';
 import { API_ADDRESS } from '../constants';
 import { Player } from './Player';
 
