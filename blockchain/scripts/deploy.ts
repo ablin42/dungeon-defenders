@@ -1,13 +1,11 @@
 import { ethers } from "hardhat";
 import "dotenv/config";
-import { Gems } from "../typechain";
 
 import {
   DEFENDER_ABI,
   DEFENDER_BYTECODE,
   FAUCET_ABI,
   FAUCET_BYTECODE,
-  GemsContact,
   GEMS_ABI,
   GEMS_BYTECODE,
   LOOT_ABI,
@@ -19,6 +17,7 @@ import {
 import { Contract, Signer } from "ethers";
 
 import {promises as fs} from 'fs';
+import { Gems } from "../typechain";
 
 async function deploy(signer: Signer) {
   // *Deploy Gems*
@@ -53,9 +52,9 @@ async function deploy(signer: Signer) {
     console.log(`DungeonLoot Contract deployed at ${lootContract.address}`);
   };
 
-  // await deployLoot();
-  // await deployToken();
-  await Promise.all([deployToken(), deployLoot()]);
+  await deployLoot();
+  await deployToken();
+  // await Promise.all([deployToken(), deployLoot()]);
 
   // *Deploy Faucet*
   console.log("Deploying FAUCET contract")
@@ -114,7 +113,7 @@ async function setup({
   faucetContract,
   stakingContract
 } : {
-  gemsContract: GemsContact,
+  gemsContract: Gems,
   faucetContract: Contract,
   stakingContract: Contract
 }) {

@@ -2,7 +2,7 @@ import "dotenv/config";
 import { Gems } from "../typechain";
 import { ethers } from "hardhat";
 import { Contract } from "ethers";
-import { GEMS_ABI, GEMS_CONTRACT_ADDRESS } from "..";
+import { GEMS_ABI, GEMS_CONTRACT_ADDRESS } from "../index";
 
 /**
  * Retrieve a token uri by token id
