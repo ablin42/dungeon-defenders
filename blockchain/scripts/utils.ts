@@ -18,8 +18,8 @@ export async function connectToWallet(
     process.env.MNEMONIC && process.env.MNEMONIC.length > 0
       ? ethers.Wallet.fromMnemonic(process.env.MNEMONIC)
       : process.env.PRIVATE_KEY
-      ? new ethers.Wallet(process.env.PRIVATE_KEY)
-      : null;
+        ? new ethers.Wallet(process.env.PRIVATE_KEY)
+        : null;
 
   // Validate wallet exists
   if (!wallet) {
