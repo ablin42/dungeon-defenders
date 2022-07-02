@@ -8,13 +8,24 @@ import { Loot, useDefender, useLoot } from '../hooks';
 
 type State = {
   owner: string;
-  defenderId: string | number;
-  weaponId: number;
-  armorId: number;
-  bootsId: number;
+  defenderId: string | 0,
+  weaponId: 0,
+  armorId: 0,
+  bootsId: 0,
 
-  gemsAmount: number;
+  gemsAmount: 0,
 };
+
+const DEFAULT_LOOT: Loot = {
+  health: 0,
+  speed: 0,
+  strength: 0,
+  defense: 0,
+  background: 0,
+  weapon: 0,
+  armor: 0,
+  boots: 0,
+}
 
 export default function Play() {
   const { state } = useLocation() as { state: State };
@@ -44,7 +55,7 @@ export default function Play() {
       return;
     }
 
-    initializeGame('game', { ownerAddress: state.owner, defenderId: state.defenderId, defender, weapon });
+    initializeGame('game', { ownerAddress: state.owner, defenderId: state.defenderId, defender, weapon: weapon ?? DEFAULT_LOOT });
   }, [init])
 
   return (
