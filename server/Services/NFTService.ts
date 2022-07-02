@@ -6,17 +6,11 @@ import { Canvas, Image } from 'canvas';
 import { logError, logInfo, logWarn } from "../Config/Logger";
 import { BACKGROUND_COMPONENTS, PLAYER_COMPONENTS, WEAPON_COMPONENTS } from "../Data/NFTComponents";
 import { Contract, ethers } from 'ethers';
-import { NFT_CONTRACT_ADDRESS, WALLET_PRIVATE_KEY } from "../Config/Config";
-import * as db from './DBService';
-import { NFT_ABI } from "../Data/ABI/NFT";
-import { DungeonDefenders } from "../Models/DungeonDefenders";
-import { DungeonLoot } from "../Models/DungeonLoot";
+import { WALLET_PRIVATE_KEY } from "../Config/Config";
+import db from './db/DBService';
+import { DEFENDER_ABI, DEFENDER_CONTRACT_ADDRESS, DungeonDefendersContract, DungeonLootContract } from 'dungeon-defenders-contracts';
 
-export function getNFTOwner(tokenId: string) : string | undefined {
-    return db.getNFTOwner(tokenId);
-}
-
-export async function getNFT(tokenId: string, exisitingContract?: DungeonDefenders | DungeonLoot) : Promise<NFT | undefined> {
+export async function getNFT(tokenId: string, exisitingContract?: DungeonDefendersContract | DungeonLootContract) : Promise<NFT | undefined> {
     try {
         let contract = exisitingContract;
         if (!contract) {
@@ -39,7 +33,7 @@ export async function getNFT(tokenId: string, exisitingContract?: DungeonDefende
 }
 
 export async function getNFTCollection(address: string) : Promise<NFT[]> {
-    const tokenIds = db.getNFTCollection(address);
+    const tokenIds = await db.getNFTCollection(address);
     if (!tokenIds || tokenIds.length === 0) {
         logWarn(`No NFTs for address=${address}`, 'getNFTCollection')
         return [];
@@ -59,7 +53,7 @@ export async function getNFTCollection(address: string) : Promise<NFT[]> {
 }
 
 export async function getLatestNFTs(numOfNFTs: number) : Promise<NFT[]> {
-    const nftToMint = db.getNFTToMint();
+    const nftToMint = await db.getNFTToMint();
 
     const tokenIds = Object.keys(nftToMint)
             .sort((a, b) => nftToMint[a] - nftToMint[b])
@@ -140,7 +134,7 @@ export function connectToDungeonDefenderContract(funcName: string) {
         logError('Don\'t have wallet secret key setup', funcName);
         return;
     }
-    if (!NFT_CONTRACT_ADDRESS) {
+    if (!DEFENDER_CONTRACT_ADDRESS) {
         logError('Don\'t have nft contract address setup', funcName);
         return;
     }
@@ -151,11 +145,11 @@ export function connectToDungeonDefenderContract(funcName: string) {
         return;
     }
 
-    const contract: DungeonDefenders = new Contract(
-        NFT_CONTRACT_ADDRESS,
-        NFT_ABI,
+    const contract: DungeonDefendersContract = new Contract(
+        DEFENDER_CONTRACT_ADDRESS,
+        DEFENDER_ABI,
         signer
-    ) as DungeonDefenders;
+    ) as DungeonDefendersContract;
 
     return { provider, wallet, signer, contract}
 }
@@ -163,9 +157,9 @@ export function connectToDungeonDefenderContract(funcName: string) {
 async function handleTransferEvent(tokenId: number, newOwner: string, blockNumber?: number) {
     const tokenIdStr = tokenId.toString();
     if (blockNumber) {
-        db.updateNFTMintTime(tokenIdStr, blockNumber);
+        await db.updateNFTMintTime(tokenIdStr, blockNumber);
     }
-    db.updateNFTOwner(tokenIdStr, newOwner);
+    await db.updateNFTOwner(tokenIdStr, newOwner);
 }
 export function registerEventListeners() {
     const connectResult = connectToDungeonDefenderContract('registerEventListeners');
@@ -174,7 +168,7 @@ export function registerEventListeners() {
     }
 
     const {provider, contract: tokenContract} = connectResult;
-    const iface = new Interface(NFT_ABI);
+    const iface = new Interface(DEFENDER_ABI);
 
     logInfo('Connecting to transfer events', 'registerEventListeners');
     const transferFilter = tokenContract.filters.Transfer();

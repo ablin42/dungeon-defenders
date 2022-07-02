@@ -1,13 +1,12 @@
-import { LOOT_CONTRACT_ADDRESS, WALLET_PRIVATE_KEY } from '../Config/Config';
+import { WALLET_PRIVATE_KEY } from '../Config/Config';
 import { logError, logInfo, logWarn } from '../Config/Logger';
 import { connectToWallet } from '../Utils';
-import * as db from './DBService';
+import db from './db/DBService';
 import { getNFT } from './NFTService';
 import { NFT } from '../Models/NFT';
 import { Contract, ethers } from 'ethers';
 import { Interface } from 'ethers/lib/utils';
-import { LOOT_ABI } from '../Data/ABI/LOOT';
-import { DungeonLoot } from '../Models/DungeonLoot';
+import { DungeonLootContract, LOOT_ABI, LOOT_CONTRACT_ADDRESS } from 'dungeon-defenders-contracts';
 
 export function connectToDungeonLootContract(funcName: string) {
     if (!WALLET_PRIVATE_KEY) {
@@ -25,17 +24,17 @@ export function connectToDungeonLootContract(funcName: string) {
         return;
     }
 
-    const contract: DungeonLoot = new Contract(
+    const contract: DungeonLootContract = new Contract(
         LOOT_CONTRACT_ADDRESS,
         LOOT_ABI,
         signer
-    ) as DungeonLoot;
+    ) as DungeonLootContract;
 
     return { provider, wallet, signer, contract}
 }
 
 export async function getLootCollection(address: string) : Promise<NFT[]> {
-    const tokenIds = db.getLootCollection(address);
+    const tokenIds = await db.getLootCollection(address);
     if (!tokenIds || tokenIds.length === 0) {
         logWarn(`No loots for address=${address}`, 'getLootCollection')
         return [];
@@ -55,7 +54,7 @@ export async function getLootCollection(address: string) : Promise<NFT[]> {
 }
 
 export async function getLatestLoots(numOfNFTs: number) : Promise<NFT[]> {
-    const nftToMint = db.getLootToMint();
+    const nftToMint = await db.getLootToMint();
 
     const tokenIds = Object.keys(nftToMint)
             .sort((a, b) => nftToMint[a] - nftToMint[b])
@@ -77,9 +76,9 @@ export async function getLatestLoots(numOfNFTs: number) : Promise<NFT[]> {
 async function handleTransferEvent(tokenId: number, newOwner: string, blockNumber?: number) {
     const tokenIdStr = tokenId.toString();
     if (blockNumber) {
-        db.updateLootMintTime(tokenIdStr, blockNumber);
+        await db.updateLootMintTime(tokenIdStr, blockNumber);
     }
-    db.updateLootOwner(tokenIdStr, newOwner);
+    await db.updateLootOwner(tokenIdStr, newOwner);
 }
 export function registerEventListeners() {
     const connectResult = connectToDungeonLootContract('loot | registerEventListeners');
