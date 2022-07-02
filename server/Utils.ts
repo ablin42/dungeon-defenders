@@ -12,11 +12,9 @@ export function connectToWallet() : [ethers.providers.BaseProvider, ethers.Walle
         return;
     }
 
-    const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY);
-    const providerOptions = {
-        alchemy: ALCHEMY_API_KEY
-    }
-    const provider = ethers.providers.getDefaultProvider("goerli", providerOptions);
+    const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY);    
+    
+    const provider = new ethers.providers.AlchemyProvider("goerli", ALCHEMY_API_KEY);
     const signer = wallet.connect(provider);
 
     return [provider, wallet, signer]
