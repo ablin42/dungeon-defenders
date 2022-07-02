@@ -2,28 +2,28 @@
 import { ethers } from 'ethers';
 import { useContractFunction, useCall } from '@usedapp/core';
 import { Contract } from '@ethersproject/contracts';
+import { 
+  DEFENDER_ABI,
+  DEFENDER_CONTRACT_ADDRESS,
+  GEMS_ABI,
+  GEMS_CONTRACT_ADDRESS,
+  LOOT_ABI,
+  LOOT_CONTRACT_ADDRESS,
+  FAUCET_ABI,
+  FAUCET_CONTRACT_ADDRESS,
+  STAKE_ABI,
+  STAKE_CONTRACT_ADDRESS
+} from 'dungeon-defenders-contracts';
 
 // *INTERNALS*
-import { NFT_ABI } from '../ABI/NFT';
-import { STAKE_ABI } from '../ABI/STAKE';
-import { GEMS_ABI } from '../ABI/GEMS';
-import { LOOT_ABI } from '../ABI/LOOT';
-import { FAUCET_ABI } from '../ABI/FAUCET';
-import {
-  NFT_CONTRACT_ADDRESS,
-  STAKE_CONTRACT_ADDRESS,
-  GEMS_CONTRACT_ADDRESS,
-  LOOT_CONTRACT_ADDRESS,
-  FAUCET_CONTRACT_ADDRESS,
-} from '../constants';
 
-const NFTContractInterface = new ethers.utils.Interface(NFT_ABI);
+const NFTContractInterface = new ethers.utils.Interface(DEFENDER_ABI);
 const STAKEContractInterface = new ethers.utils.Interface(STAKE_ABI);
 const GEMSContractInterface = new ethers.utils.Interface(GEMS_ABI);
 const LOOTContractInterface = new ethers.utils.Interface(LOOT_ABI);
 const FAUCETContractInterface = new ethers.utils.Interface(FAUCET_ABI);
 
-const NFTContract = new Contract(NFT_CONTRACT_ADDRESS, NFTContractInterface);
+const NFTContract = new Contract(DEFENDER_CONTRACT_ADDRESS, NFTContractInterface);
 const STAKEContract = new ethers.Contract(STAKE_CONTRACT_ADDRESS, STAKEContractInterface);
 const GEMSContract = new ethers.Contract(GEMS_CONTRACT_ADDRESS, GEMSContractInterface);
 const LOOTContract = new ethers.Contract(LOOT_CONTRACT_ADDRESS, LOOTContractInterface);
