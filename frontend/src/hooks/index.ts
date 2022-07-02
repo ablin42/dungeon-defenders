@@ -1,5 +1,5 @@
 // *EXTERNALS*
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { useContractFunction, useCall } from '@usedapp/core';
 import { Contract } from '@ethersproject/contracts';
 import { 
@@ -294,6 +294,19 @@ export function useIsStaked(userAddress: string) {
 }
 
 // Get user stakes info
+type Stake = {
+  tokenId: BigNumber;
+  weaponId: BigNumber;
+  armorId: BigNumber;
+  bootsId: BigNumber;
+  gemsAmount: BigNumber;
+  rewardedExpAmount: BigNumber;
+  rewardedGemsAmount: BigNumber;
+  timestamp: BigNumber;
+  wasRewardLoot: boolean;
+  isClaimable: boolean;
+  isInitialized: boolean;
+};
 export function useStakes(userAddress: string) {
   const { value, error } =
     useCall(
@@ -309,7 +322,7 @@ export function useStakes(userAddress: string) {
     return undefined;
   }
 
-  return value;
+  return value as Stake;
 }
 
 // *LOOT HOOKS*

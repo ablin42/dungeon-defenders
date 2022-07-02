@@ -72,7 +72,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
   const GEMSallowance = useAllowanceGEMS(userAddress, STAKE_CONTRACT_ADDRESS);
   const staked = useIsStaked(userAddress);
   const stakedId = stakes && +stakes.tokenId;
-  const claimable = staked && stakes.isClaimable;
+  const claimable = staked && stakes && stakes.isClaimable;
   // *STATE*
   const [gemsAmount, setGemsAmount] = useState('100');
   const [STATES, setSTATES] = useState<Array<TransactionStatus>>([
@@ -156,7 +156,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
         ) : (
           <FormUtil value={gemsAmount} onChange={setGemsAmount}>
             <button onClick={() => sendTx(stake)} className="btn btn-lg btn-success">
-              Stake & Play
+              Stake &amp; Play
             </button>
           </FormUtil>
         )
@@ -168,24 +168,13 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
               <span className="muted-text">Game not finished yet</span>
               <br />
             </>
-          ) : null}
-          {/* <button
-            onClick={() =>
-              navigate(`/Play`, {
-                state: {
-                  owner: userAddress,
-                  defenderId: tokenId,
-                  weaponId: equipedLoot[0],
-                  armorId: equipedLoot[1],
-                  bootsId: equipedLoot[2],
-                  gemsAmount,
-                },
-              })
-            }
-            className="btn btn-lg btn-success w-100"
-          >
-            Play
-          </button> */}
+          ) :  (
+            <ul>
+              <li>Rewarded Exp - { stakes.rewardedExpAmount.toNumber() }</li>
+              <li>Rewarded Gems - { ethers.utils.formatEther(stakes.rewardedGemsAmount) }</li>
+              <li>Loot Reward? - { stakes.wasRewardLoot.toString() }</li>
+            </ul>
+          )}
           <button onClick={() => sendTx(unstake)} className="btn btn-lg btn-success w-100" disabled={!claimable}>
             Claim
           </button>
