@@ -1,5 +1,5 @@
 // *EXTERNALS*
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useEthers } from '@usedapp/core';
 
@@ -24,10 +24,19 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
   const { account } = useEthers();
   const stakes = account && useStakes(account);
   const slots = !isLoot && useSlots(tokenId);
+  const [equipedLoot, setEquipedLoot] = useState(slots ? [slots[1], slots[2], slots[3]] : [0, 0, 0]);
   const userStaking = stakes && +stakes.timestamp > 0;
   const stakedId = stakes && +stakes.tokenId;
   const isOwner = account === owner;
   const isUserStakedToken = userStaking && actualTokenId == stakedId;
+
+  useEffect(() => {
+    if (slots && slots !== equipedLoot) setEquipedLoot(slots);
+  }, [slots.toString()]);
+
+  const onEquipmentUpdated = (updatedSlots: number[]) => {
+    setEquipedLoot(updatedSlots);
+  }
 
   const getMetadataDisplay = () => {
     return (
@@ -51,7 +60,7 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
         <div>
           {account && !isLoot && slots && (isOwner || isUserStakedToken) && (
             <>
-              <Equipment userAddress={account} tokenId={actualTokenId} />
+              <Equipment userAddress={account} tokenId={actualTokenId} onEquipmentUpdated={onEquipmentUpdated}  />
               <div className="mb-3" />
               <Play userAddress={account} tokenId={actualTokenId} equipedLoot={slots} />
             </>

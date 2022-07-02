@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import { TransactionStatus } from '@usedapp/core';
 import { useNavigate } from 'react-router-dom';
+import { STAKE_CONTRACT_ADDRESS } from 'dungeon-defenders-contracts';
 
 // *INTERNALS*
 import {
@@ -15,7 +16,7 @@ import {
   useApproveGEMS,
   useStakes,
 } from '../../hooks/index';
-import { STAKE_CONTRACT_ADDRESS, STATUS_TYPES, GEMS_TOTAL_SUPPLY } from '../../constants';
+import { STATUS_TYPES, GEMS_TOTAL_SUPPLY } from '../../constants';
 import LoadingBtn from '../LoadingBtn';
 import { sendTx, handleTxStatus } from '../../utils';
 
@@ -98,7 +99,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
       if (index === 2) {
         setTimeout(async () => {
           navigate(`/Play`, {
-            replace: true,
+            replace: false,
             state: {
               owner: userAddress,
               defenderId: tokenId,

@@ -2,8 +2,10 @@
 import { ethers } from 'ethers';
 import { TransactionStatus } from '@usedapp/core';
 import React, { useEffect, useState } from 'react';
+import { FAUCET_CONTRACT_ADDRESS } from 'dungeon-defenders-contracts';
+
 // *INTERNALS*
-import { STATUS_TYPES, FAUCET_CONTRACT_ADDRESS, GEMS_TOTAL_SUPPLY } from '../../constants';
+import { STATUS_TYPES, GEMS_TOTAL_SUPPLY } from '../../constants';
 import {
   useDeposit,
   useClaim,

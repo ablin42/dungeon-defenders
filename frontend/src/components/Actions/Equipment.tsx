@@ -1,16 +1,18 @@
 // *EXTERNALS*
 import React, { useEffect, useState } from 'react';
 import { TransactionStatus } from '@usedapp/core';
+import { STAKE_CONTRACT_ADDRESS } from 'dungeon-defenders-contracts';
 
 // *INTERNALS*
 import { useEquip, useUnequip, useSlots, useApproveLoot, useAllowanceLoot } from '../../hooks/index';
-import { STATUS_TYPES, STAKE_CONTRACT_ADDRESS } from '../../constants';
+import { STATUS_TYPES } from '../../constants';
 import LoadingBtn from '../LoadingBtn';
 import { sendTx, handleTxStatus } from '../../utils';
 
 type ActionProps = {
   tokenId: number | string;
   userAddress: string;
+  onEquipmentUpdated?: (slots: number[]) => void
 };
 
 type FormProps = {
@@ -66,7 +68,7 @@ const FormUtil = ({ label, value, onChange, disabled, children }: FormProps) => 
   );
 };
 
-const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
+const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId, onEquipmentUpdated }) => {
   // *HOOKS*
   const { state: equipState, send: sendEquip } = useEquip();
   const { state: unequipState, send: sendUnequip } = useUnequip();
@@ -96,6 +98,12 @@ const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId }) => {
   useEffect(() => {
     handleTxStatus(STATES, STATUS, handleStateChange);
   }, [STATES]);
+
+  useEffect(() => {
+    if (onEquipmentUpdated) {
+      onEquipmentUpdated(loots);
+    }
+  }, [loots])
 
   const handleSetLoot = (value: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const newLoot = JSON.parse(JSON.stringify(loots));

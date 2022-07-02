@@ -1,4 +1,4 @@
-import { HALF_UNIT_SIZE, UNIT_SCALE, UNIT_SIZE } from "./Constants";
+import { UNIT_SIZE } from "./Constants";
 import { Player } from "./Player";
 
 import { RoomType, simpleDungeonGenerator } from "./SimpleDungeonGenerator";
