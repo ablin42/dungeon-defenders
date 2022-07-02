@@ -1,16 +1,15 @@
-import { STAKING_CONTRACT_ADDRESS, WALLET_PRIVATE_KEY } from "../Config/Config";
+import { WALLET_PRIVATE_KEY } from "../Config/Config";
 import { logError } from "../Config/Logger";
-import { Staking } from "../Models/Staking";
 import { connectToWallet } from "../Utils";
 import { Contract, ethers } from "ethers";
-import { STAKE_ABI } from "../Data/ABI/STAKE";
+import { STAKE_ABI, STAKE_CONTRACT_ADDRESS, StakingContract } from "dungeon-defenders-contracts";
 
 export function connectToStakingContract(funcName: string) {
     if (!WALLET_PRIVATE_KEY) {
         logError('Don\'t have wallet secret key setup', funcName);
         return;
     }
-    if (!STAKING_CONTRACT_ADDRESS) {
+    if (!STAKE_CONTRACT_ADDRESS) {
         logError('Don\'t have stake contract address setup', funcName);
         return;
     }
@@ -21,11 +20,11 @@ export function connectToStakingContract(funcName: string) {
         return;
     }
 
-    const contract: Staking = new Contract(
-        STAKING_CONTRACT_ADDRESS,
+    const contract: StakingContract = new Contract(
+        STAKE_CONTRACT_ADDRESS,
         STAKE_ABI,
         signer
-    ) as Staking;
+    ) as StakingContract;
 
     return { provider, wallet, signer, contract}
 }
