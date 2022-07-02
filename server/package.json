@@ -4,8 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "build": "npx tsc index.ts",
-    "start": "NODE_ENV=production node dist/server.js",
+    "build": "npx tsc",
+    "start": "SET NODE_ENV=production & node dist/server.js",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/server.js\""
   },
   "author": "",
