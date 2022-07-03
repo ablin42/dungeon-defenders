@@ -19,7 +19,7 @@ const BADGE_TYPE = ['primary', 'primary', 'success', 'success', 'success', 'succ
 
 // TODO should make as pure as possible
 const NFTCard = ({ NFT, owner, isLoot }: Props) => {
-  const { name, tokenId, image, external_url, attributes } = NFT;
+  const { name, tokenId, image, attributes } = NFT;
   const actualTokenId = tokenId || +name.replace(/^\D+/g, ''); // Trick to bypass the issue of tokenId not being set in the NFT object
   const { account } = useEthers();
   const stakes = account && useStakes(account);
@@ -36,7 +36,7 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
 
   const onEquipmentUpdated = (updatedSlots: number[]) => {
     setEquipedLoot(updatedSlots);
-  }
+  };
 
   const getMetadataDisplay = () => {
     return (
@@ -60,7 +60,7 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
         <div>
           {account && !isLoot && slots && (isOwner || isUserStakedToken) && (
             <>
-              <Equipment userAddress={account} tokenId={actualTokenId} onEquipmentUpdated={onEquipmentUpdated}  />
+              <Equipment userAddress={account} tokenId={actualTokenId} onEquipmentUpdated={onEquipmentUpdated} />
               <div className="mb-3" />
               <Play userAddress={account} tokenId={actualTokenId} equipedLoot={slots} />
             </>
