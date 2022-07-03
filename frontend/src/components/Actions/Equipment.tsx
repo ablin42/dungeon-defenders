@@ -4,7 +4,7 @@ import { TransactionStatus } from '@usedapp/core';
 import { STAKE_CONTRACT_ADDRESS } from 'dungeon-defenders-contracts';
 
 // *INTERNALS*
-import { useEquip, useUnequip, useSlots, useApproveLoot, useAllowanceLoot } from '../../hooks/index';
+import { useEquip, useUnequip, useSlots, useApproveLoot, useAllowanceLoot, useAesthetics } from '../../hooks/index';
 import { STATUS_TYPES } from '../../constants';
 import LoadingBtn from '../LoadingBtn';
 import { sendTx, handleTxStatus } from '../../utils';
@@ -12,7 +12,7 @@ import { sendTx, handleTxStatus } from '../../utils';
 type ActionProps = {
   tokenId: number | string;
   userAddress: string;
-  onEquipmentUpdated?: (slots: number[]) => void
+  onEquipmentUpdated?: (slots: number[]) => void;
 };
 
 type FormProps = {
@@ -75,6 +75,7 @@ const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId, onEquipmentUpd
   const { state: approveState, send: sendApprove } = useApproveLoot();
   const LOOTAllowance = useAllowanceLoot(userAddress);
   const slots = useSlots(tokenId);
+  const aesthetics = useAesthetics(tokenId);
   // *STATE*
   const [loots, setLoots] = useState(slots ? [slots[1], slots[2], slots[3]] : [0, 0, 0]);
   const [STATES, setSTATES] = useState<Array<TransactionStatus>>([equipState, unequipState, approveState]);
@@ -103,7 +104,7 @@ const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId, onEquipmentUpd
     if (onEquipmentUpdated) {
       onEquipmentUpdated(loots);
     }
-  }, [loots])
+  }, [loots]);
 
   const handleSetLoot = (value: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const newLoot = JSON.parse(JSON.stringify(loots));
@@ -134,7 +135,7 @@ const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId, onEquipmentUpd
                   <div className="col-4">
                     <b>
                       {title}
-                      {slots[id]}
+                      {aesthetics[id]}
                     </b>
                   </div>
                   <div className="col-8">

@@ -2,7 +2,7 @@
 import { BigNumber, ethers } from 'ethers';
 import { useContractFunction, useCall } from '@usedapp/core';
 import { Contract } from '@ethersproject/contracts';
-import { 
+import {
   DEFENDER_ABI,
   DEFENDER_CONTRACT_ADDRESS,
   GEMS_ABI,
@@ -12,7 +12,7 @@ import {
   FAUCET_ABI,
   FAUCET_CONTRACT_ADDRESS,
   STAKE_ABI,
-  STAKE_CONTRACT_ADDRESS
+  STAKE_CONTRACT_ADDRESS,
 } from 'dungeon-defenders-contracts';
 
 // *INTERNALS*
@@ -73,6 +73,29 @@ export function useSlots(tokenId: string | number) {
   }
   const slots = [+value?.slots[1], +value?.slots[2], +value?.slots[3]];
   return slots;
+}
+
+// Fetch loot id in slots
+export function useAesthetics(tokenId: string | number) {
+  const { value, error } =
+    useCall(
+      tokenId && {
+        contract: NFTContract,
+        method: 'aesthetics',
+        args: [tokenId],
+      },
+    ) ?? {};
+
+  // ? Circumventing a bug that probably happened due to an NFT
+  // ?  being minted before server listener for events, and then picked it up
+  if (!value) return [0, 0, 0];
+  if (error) {
+    console.error(`Error fetching aesthetics for Defender #${tokenId}`, error.message);
+    return [0, 0, 0];
+  }
+
+  const aesthetics = [+value?.[1], +value?.[2], +value?.[3]];
+  return aesthetics;
 }
 
 // Check defenders
