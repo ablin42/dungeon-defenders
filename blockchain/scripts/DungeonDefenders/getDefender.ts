@@ -3,6 +3,7 @@ import * as factoryJson from "../../artifacts/contracts/DungeonDefenders/Defende
 import { DefenderFactory } from "../../typechain";
 import { connectToWallet } from "../utils";
 import { Contract, ethers } from "ethers";
+import { DEFENDER_CONTRACT_ADDRESS } from "../../index";
 
 /**
  * Retrieve a defender by index
@@ -12,14 +13,12 @@ async function main() {
   const { signer } = await connectToWallet();
 
   // Get inputs
-  if (process.argv.length < 3) throw new Error("DefenderFactory address missing");
-  const defenderFactoryAddress = process.argv[2];
-  if (process.argv.length < 4) throw new Error("defender index missing");
-  const defenderIdxStr = process.argv[3];
+  if (process.argv.length < 3) throw new Error("defender index missing");
+  const defenderIdxStr = process.argv[2];
   const defenderIdx = parseInt(defenderIdxStr);
 
   const defenderFactory = new Contract(
-    defenderFactoryAddress,
+    DEFENDER_CONTRACT_ADDRESS,
     factoryJson.abi,
     signer
   ) as DefenderFactory;

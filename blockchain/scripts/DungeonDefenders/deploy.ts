@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { ethers } from "ethers";
+import { LOOT_CONTRACT_ADDRESS } from "../../index";
 import * as defenderJson from "../../artifacts/contracts/DungeonDefenders/DungeonDefenders.sol/DungeonDefenders.json";
 import { connectToWallet } from "../utils";
 
@@ -16,7 +17,7 @@ async function main() {
     defenderJson.bytecode,
     signer
   );
-  const tokenContract = await TokenFactory.deploy();
+  const tokenContract = await TokenFactory.deploy(LOOT_CONTRACT_ADDRESS);
   console.log("Awaiting confirmations");
   await tokenContract.deployed();
   console.log("Completed");

@@ -3,6 +3,7 @@ import * as utilsJson from "../../artifacts/contracts/DungeonDefenders/DefenderU
 import { connectToWallet } from "../utils";
 import { Contract } from "ethers";
 import { DefenderUtils } from "../../typechain/DefenderUtils";
+import { DEFENDER_CONTRACT_ADDRESS } from "../../index";
 
 /**
  * Gains experience
@@ -12,17 +13,15 @@ async function main() {
   const { signer } = await connectToWallet();
 
   // Get inputs
-  if (process.argv.length < 3) throw new Error("DefenderUtils address missing");
-  const defenderUtilsAddress = process.argv[2];
-  if (process.argv.length < 4) throw new Error("token id missing");
-  const tokenIdStr = process.argv[3];
+  if (process.argv.length < 3) throw new Error("token id missing");
+  const tokenIdStr = process.argv[2];
   const tokenId = parseInt(tokenIdStr);
-  if (process.argv.length < 5) throw new Error("exp to gain missing");
-  const expToGainStr = process.argv[4];
+  if (process.argv.length < 4) throw new Error("exp to gain missing");
+  const expToGainStr = process.argv[3];
   const expToGain = parseInt(expToGainStr);
 
   const defenderUtils = new Contract(
-    defenderUtilsAddress,
+    DEFENDER_CONTRACT_ADDRESS,
     utilsJson.abi,
     signer
   ) as DefenderUtils;

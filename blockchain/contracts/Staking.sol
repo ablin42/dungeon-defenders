@@ -160,10 +160,10 @@ contract Staking is IERC721Receiver, Ownable {
         delete stakes[msg.sender];
 
         gemsToken.transfer(msg.sender, rewardedAmount);
-        // TODO; not working for some reason
-        // if (rewardedExp > 0) {
-        //     characterToken.gainExperience(tokenId, rewardedExp);
-        // }
+        if (rewardedExp > 0) {
+            characterToken.gainExperience(tokenId, rewardedExp);
+        }
+        characterToken.updateWinTracker(tokenId, true);
         characterToken.safeTransferFrom(address(this), msg.sender, tokenId);
         if (weaponId > 0) {
             lootToken.safeTransferFrom(address(this), msg.sender, weaponId);
