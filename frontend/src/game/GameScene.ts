@@ -1,23 +1,12 @@
 import { HALF_UNIT_SIZE, UNIT_SIZE } from './Constants';
-import { API_ADDRESS } from '../constants';
 import { Player } from './Player';
 
 import { DIR_DOWN, DIR_LEFT, DIR_RIGHT, DIR_UP, RoomType, simpleDungeonGenerator } from './SimpleDungeonGenerator';
 import { createTile, loadTiles } from './TileManager';
 import { TreasureChest } from './TreasureChest';
 import { Vector2 } from './utils';
-import toast from 'react-hot-toast';
 import { GameConfig } from './Index';
 import { loadAssets } from './GameAssets';
-
-const triggerRewardAllocation = async (account: string, defenderId: string | number) => {
-  toast.success('You won, GG !');
-
-  const res = await fetch(`${API_ADDRESS}/v1/game/${account}/allocateRewards`, { method: 'POST' });
-  if (res.status !== 200) toast.error('Failed to allocate rewards, emergency withdrawal needed');
-
-  window.location.href = `/NFT/${defenderId}`;
-};
 
 const DUNGEON_SIZE = 3;
 const NUM_OF_ROOMS = 5;
@@ -178,7 +167,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
-    const { ownerAddress, defenderId, defender, weapon } = this.scene.settings.data as GameConfig;
+    const { onGameOver, defender, weapon } = this.scene.settings.data as GameConfig;
 
     this.graphics = this.add.graphics();
 
@@ -192,15 +181,6 @@ export class GameScene extends Phaser.Scene {
 
     const map = simpleDungeonGenerator(DUNGEON_SIZE, NUM_OF_ROOMS);
 
-    let isGameOver = false;
-    const onGameOver = () => {
-      if (isGameOver) {
-        return;
-      }
-
-      isGameOver = true;
-      triggerRewardAllocation(ownerAddress, defenderId);
-    };
 
     for (let y = 0; y < DUNGEON_SIZE; y++) {
       for (let x = 0; x < DUNGEON_SIZE; x++) {

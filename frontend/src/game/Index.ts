@@ -6,8 +6,7 @@ import toast from 'react-hot-toast';
 import { Defender, Loot } from '../hooks';
 
 export type GameConfig = {
-  ownerAddress: string;
-  defenderId: string | number;
+  onGameOver: () => void;
   defender: Defender;
   weapon: Loot;
 };

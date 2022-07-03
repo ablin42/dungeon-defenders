@@ -1,6 +1,8 @@
 // *EXTERNALS*
 import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useLocation } from 'react-router-dom';
+import { API_ADDRESS } from '../constants';
 
 // *INTERNALS*
 import { initializeGame } from '../game/Index';
@@ -27,11 +29,35 @@ const DEFAULT_LOOT: Loot = {
   boots: 0,
 }
 
+const triggerRewardAllocation = async (account: string, defenderId: string | number) => {
+  toast.success('You won, GG !');
+
+  const res = await fetch(`${API_ADDRESS}/v1/game/${account}/allocateRewards`, { method: 'POST' });
+  if (res.status !== 200) toast.error('Failed to allocate rewards, emergency withdrawal needed');
+
+  window.location.href = `/NFT/${defenderId}`;
+};
+
 export default function Play() {
   const { state } = useLocation() as { state: State };
   const defender = useDefender(state.defenderId);
   const weapon = useLoot(state.weaponId);
   const [init, setInit] = useState(false);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [isAllocatingRewards, setIsAllocatingRewards] = useState(false);
+
+  console.log(isAllocatingRewards);
+
+  const onGameOver = async () => {
+    if (isGameOver) {
+      return;
+    }
+    
+    setIsGameOver(true);
+    setIsAllocatingRewards(true);
+    await triggerRewardAllocation(state.owner, state.defenderId);
+    setIsAllocatingRewards(false);
+  };
 
   useEffect(() => {
     if (init) {
@@ -55,12 +81,20 @@ export default function Play() {
       return;
     }
 
-    initializeGame('game', { ownerAddress: state.owner, defenderId: state.defenderId, defender, weapon: weapon ?? DEFAULT_LOOT });
+    initializeGame('game', { onGameOver, defender, weapon: weapon ?? DEFAULT_LOOT });
   }, [init])
 
   return (
     <>
       <h2 className="text-center mt-5 mb-5">Defend Some Dungeons</h2>
+      {isAllocatingRewards ? (
+        <div className='text-center'>
+          Allocating Rewards
+          <div className="ms-2 spinner-border spinner-border-sm text-success" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>
+        </div>
+      ) : null}
       <div className="container col-4">
         <div id="game"></div>
       </div>

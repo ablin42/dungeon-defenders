@@ -27,15 +27,9 @@ export async function connectToWallet(
   }
 
   // Get signer
-  const providerOptions = {
-    alchemy: process.env.ALCHEMY_API_KEY,
-  };
   console.log(`Using address ${wallet.address}`);
   console.log(`Using network ${network}`);
-  const provider = ethers.providers.getDefaultProvider(
-    network,
-    providerOptions
-  );
+  const provider = new ethers.providers.AlchemyProvider(network, process.env.ALCHEMY_API_KEY);
   const signer = wallet.connect(provider);
 
   // Check signer's balance
