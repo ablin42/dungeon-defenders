@@ -25,10 +25,10 @@ export async function getNFT(tokenId: string, exisitingContract?: DungeonDefende
     
         const tokenURIBase64 = await contract.tokenURI(tokenId);
         const jsonBase64 = tokenURIBase64.split(',')[1];
-        const jsonStr = Buffer.from(jsonBase64, 'base64').toString('ascii');
+        const jsonStr = Buffer.from(jsonBase64, 'base64').toString('utf-8');
         return JSON.parse(jsonStr) as NFT;
     } catch (error) {
-        logError(JSON.stringify(error as any), 'getNFT');
+        logError(error as any, 'getNFT');
     }
 }
 
@@ -56,7 +56,7 @@ export async function getLatestNFTs(numOfNFTs: number) : Promise<NFT[]> {
     const nftToMint = await db.getNFTToMint();
 
     const tokenIds = Object.keys(nftToMint)
-            .sort((a, b) => nftToMint[a] - nftToMint[b])
+            .sort((a, b) => nftToMint[b] - nftToMint[a])
             .splice(0, numOfNFTs);
             
     const connectResult = connectToDungeonDefenderContract('getLatestNFTs');
