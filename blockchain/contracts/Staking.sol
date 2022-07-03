@@ -223,6 +223,10 @@ contract Staking is IERC721Receiver, Ownable {
             isStaking(player),
             "Not staking: player needs to stake before allocating rewards"
         );
+        require(
+            stakes[player].isClaimable == false,
+            "Claimable: Already allocated rewards"
+        );
         stakes[player].isClaimable = true;
         stakes[player].rewardedGemsAmount = gemsAmount;
         stakes[player].rewardedExpAmount = expAmount;

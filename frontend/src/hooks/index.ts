@@ -87,7 +87,7 @@ export function useAesthetics(tokenId: string | number) {
     ) ?? {};
 
   // ? Circumventing a bug that probably happened due to an NFT
-  // ?  being minted before server listener for events, and then picked it up
+  // ? being minted before server listener for events, and then picked it up
   if (!value) return [0, 0, 0];
   if (error) {
     console.error(`Error fetching aesthetics for Defender #${tokenId}`, error.message);

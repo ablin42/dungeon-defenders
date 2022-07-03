@@ -168,11 +168,11 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
               <span className="muted-text">Game not finished yet</span>
               <br />
             </>
-          ) :  (
+          ) : (
             <ul>
-              <li>Rewarded Exp - { stakes.rewardedExpAmount.toNumber() }</li>
-              <li>Rewarded Gems - { ethers.utils.formatEther(stakes.rewardedGemsAmount) }</li>
-              <li>Loot Reward? - { stakes.wasRewardLoot.toString() }</li>
+              <li>Rewarded Exp - {stakes.rewardedExpAmount.toNumber()}</li>
+              <li>Rewarded Gems - {ethers.utils.formatEther(stakes.rewardedGemsAmount)}</li>
+              <li>Loot Reward? - {stakes.wasRewardLoot.toString()}</li>
             </ul>
           )}
           <button onClick={() => sendTx(unstake)} className="btn btn-lg btn-success w-100" disabled={!claimable}>

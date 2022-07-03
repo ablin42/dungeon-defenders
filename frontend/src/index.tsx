@@ -12,7 +12,7 @@ import reportWebVitals from './reportWebVitals';
 import Home from './routes/Home';
 import UserNFT from './routes/UserNFT';
 import SingleNFT from './routes/SingleNFT';
-import NotFound from './components/NotFound';
+import Error from './components/Error';
 import Play from './routes/Play';
 import SingleLOOT from './routes/SingleLOOT';
 
@@ -35,7 +35,7 @@ root.render(
           <Route path="/NFT/:nftId" element={<SingleNFT />} />
           <Route path="/LOOT/:lootId" element={<SingleLOOT />} />
 
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<Error />} />
         </Route>
       </Routes>
     </DAppProvider>
