@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 // *INTERNALS*
 import ConnectWallet from './Actions/ConnectWallet';
-import { useGemsBalance } from '../hooks';
+import { useGemsBalance, useStakes } from '../hooks';
 
 const Wrapper = styled.div`
   display: flex;
@@ -16,6 +16,7 @@ const Wrapper = styled.div`
 const Header = () => {
   const { account } = useEthers();
   const gemsBalance = useGemsBalance(account) || 0;
+  const stakes = useStakes(account && account);
 
   return (
     <header>
@@ -32,6 +33,16 @@ const Header = () => {
                 <Wrapper className="me-3">
                   <b>{+gemsBalance} Gems</b>
                 </Wrapper>
+                {stakes?.isInitialized && !stakes.isClaimable && (
+                  <Link to={`/Play`} className="me-3">
+                    <button className="btn btn-info">Game in progress</button>
+                  </Link>
+                )}
+                {stakes?.isClaimable && (
+                  <Link to={`/Play`} className="me-3">
+                    <button className="btn btn-info">Claim pending 🎉</button>
+                  </Link>
+                )}
                 <Link to={`/NFT/user/${account}`} className="me-3">
                   <button className="btn btn-success">Your Collection</button>
                 </Link>

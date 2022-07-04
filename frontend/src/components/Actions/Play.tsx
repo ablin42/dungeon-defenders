@@ -1,7 +1,7 @@
 // *EXTERNALS*
 import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
-import { TransactionStatus } from '@usedapp/core';
+import { TransactionState, TransactionStatus } from '@usedapp/core';
 import { useNavigate } from 'react-router-dom';
 import { STAKE_CONTRACT_ADDRESS } from 'dungeon-defenders-contracts';
 
@@ -85,8 +85,8 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
   const isPending = STATUS.map((status) => status === STATUS_TYPES.PENDING || status === STATUS_TYPES.MINING);
 
   const handleStateChange = (STATES: Array<TransactionStatus>, index: number) => {
-    const newSTATES = [...STATES] as any[];
-    newSTATES[index].status = STATUS_TYPES.NONE;
+    const newSTATES = [...STATES] as [TransactionStatus];
+    newSTATES[index].status = STATUS_TYPES.NONE as TransactionState;
     setSTATES(newSTATES);
   };
 
@@ -169,10 +169,16 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
               <br />
             </>
           ) : (
-            <ul>
-              <li>Rewarded Exp - {stakes.rewardedExpAmount.toNumber()}</li>
-              <li>Rewarded Gems - {ethers.utils.formatEther(stakes.rewardedGemsAmount)}</li>
-              <li>Loot Reward? - {stakes.wasRewardLoot.toString()}</li>
+            <ul className="list-group text-start">
+              <li className="list-group-item">
+                <b>Rewarded Exp - {stakes.rewardedExpAmount.toNumber()}</b>
+              </li>
+              <li className="list-group-item">
+                <b>Rewarded Gems - {ethers.utils.formatEther(stakes.rewardedGemsAmount)}</b>
+              </li>
+              <li className="list-group-item">
+                <b>Loot Reward - {stakes.wasRewardLoot ? '✅' : '❌'}</b>
+              </li>
             </ul>
           )}
           <button onClick={() => sendTx(unstake)} className="btn btn-lg btn-success w-100" disabled={!claimable}>
