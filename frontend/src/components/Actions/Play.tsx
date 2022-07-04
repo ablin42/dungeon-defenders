@@ -169,7 +169,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
               <br />
             </>
           ) : (
-            <ul className="list-group text-start">
+            <ul className="list-group text-start m-1 mb-3">
               <li className="list-group-item">
                 <b>Rewarded Exp - {stakes.rewardedExpAmount.toNumber()}</b>
               </li>
