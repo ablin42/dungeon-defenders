@@ -10,7 +10,7 @@ import Error from '../components/Error';
 import LoadingBtn from '../components/LoadingBtn';
 import { API_ADDRESS, STATUS_TYPES } from '../constants';
 import { initializeGame } from '../game/Index';
-import { Loot, useDefender, useLoot, useStakes, useUnstake } from '../hooks';
+import { Loot, useDefender, useEmergency, useLoot, useStakes, useUnstake } from '../hooks';
 import { sendTx, handleTxStatus } from '../utils';
 
 type State = {
@@ -50,12 +50,18 @@ export default function Play() {
   const defender = useDefender(stakes && +stakes.tokenId); //?state.defenderId
   const weapon = useLoot(stakes && +stakes.weaponId);
   const { state: unstakeState, send: sendUnstake } = useUnstake();
+  const { state: emergencyState, send: sendEmergency } = useEmergency();
   const [init, setInit] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isAllocatingRewards, setIsAllocatingRewards] = useState(false);
-  const [STATES, setSTATES] = useState<Array<TransactionStatus>>([unstakeState]);
+  const [STATES, setSTATES] = useState<Array<TransactionStatus>>([unstakeState, emergencyState]);
   const STATUS = STATES.map((state) => state.status as string);
   const isPending = STATUS.map((status) => status === STATUS_TYPES.PENDING || status === STATUS_TYPES.MINING);
+
+  const timestamp = stakes && +stakes.timestamp;
+  const expiration = timestamp && timestamp + 60 * 30;
+  const now = parseInt((Date.now() / 1000).toString());
+  const expired = expiration && expiration < now;
 
   const handleStateChange = (STATES: Array<TransactionStatus>, index: number) => {
     const newSTATES = [...STATES] as [TransactionStatus];
@@ -64,8 +70,8 @@ export default function Play() {
   };
 
   useEffect(() => {
-    setSTATES([unstakeState]);
-  }, [unstakeState]);
+    setSTATES([unstakeState, emergencyState]);
+  }, [unstakeState, emergencyState]);
 
   useEffect(() => {
     const successHandler = () => {
@@ -80,6 +86,9 @@ export default function Play() {
 
   const unstake = async () => {
     sendUnstake();
+  };
+  const emergency = async () => {
+    sendEmergency();
   };
 
   const onGameOver = async () => {
@@ -117,7 +126,7 @@ export default function Play() {
     initializeGame('game', { onGameOver, defender, weapon: weapon ?? DEFAULT_LOOT });
   }, [init]);
 
-  if (stakes?.isClaimable || isPending[0]) {
+  if (stakes?.isClaimable || expired || isPending[0]) {
     return (
       <div className="container text-center mb-5">
         <div className="col-4 offset-4 mt-5">
@@ -155,12 +164,29 @@ export default function Play() {
             </li>
           </ul>
           <div className="mt-2">
-            {isPending[0] ? (
-              <LoadingBtn text={'Claiming...'} type="success" width="100%" />
-            ) : (
-              <button onClick={() => sendTx(unstake)} className="btn btn-lg btn-success w-100 ">
-                Claim
-              </button>
+            {stakes?.isClaimable &&
+              (isPending[0] ? (
+                <LoadingBtn text={'Claiming...'} type="success" width="100%" />
+              ) : (
+                <button onClick={() => sendTx(unstake)} className="btn btn-lg btn-success w-100 ">
+                  Claim
+                </button>
+              ))}
+            {expired && !stakes.isClaimable && (
+              <div className="mb-2 mt-2">
+                <div className="text-muted mb-2">
+                  An issue might&rsquo;ve occured with your game, use this button to retrieve your stake
+                </div>
+                {isPending[1] ? (
+                  <LoadingBtn text={'Withdrawing...'} type="danger" width="100%" />
+                ) : (
+                  <>
+                    <button onClick={() => sendTx(emergency)} className="btn btn-lg btn-danger w-100 ">
+                      Emergency Withdraw
+                    </button>
+                  </>
+                )}
+              </div>
             )}
           </div>
         </div>
@@ -168,7 +194,8 @@ export default function Play() {
     );
   }
 
-  if (!account) return <Error title="Game not found, check your collection" />;
+  if (!account || !stakes || (stakes && !stakes.isInitialized))
+    return <Error title="Game not found, check your collection" url={!account ? '/' : `/NFT/user/${account}`} />;
 
   return (
     <>
