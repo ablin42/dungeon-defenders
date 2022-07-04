@@ -5,10 +5,13 @@ import "../ContractUtils.sol";
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract LootFactory is ContractUtils{
+/// @title Loot Factory for DungeonDefenders
+/// @author rkhadder & 0xharb
+/// @notice Used by Loot.sol
+contract LootFactory is ContractUtils {
     using Counters for Counters.Counter;
 
-    event NewLootGenerated(uint lootId, bytes32 name);
+    event NewLootGenerated(uint256 lootId, bytes32 name);
 
     Counters.Counter private _tokenIdCounter;
 
@@ -21,16 +24,14 @@ contract LootFactory is ContractUtils{
     uint8 NUM_OF_BOOTS = 1;
 
     struct Loot {
-        bytes32 name; 
-
+        bytes32 name;
         // Attributes
         uint256 minLevelRequired;
         int8 health;
         int8 speed;
         int8 strength;
         int8 defense;
-
-        // Aesthetics 
+        // Aesthetics
         uint8 background;
         uint8 weapon;
         uint8 armor;
@@ -39,26 +40,23 @@ contract LootFactory is ContractUtils{
 
     Loot[] public loot;
 
-    function _createEmpty() internal returns (uint) {
-        uint tokenId = _tokenIdCounter.current();
-        loot.push(Loot(
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-        ));
+    /// @notice Create an empty loot
+    /// @dev Used for loot with ID#0
+    /// @return The ID of the loot created
+    function _createEmpty() internal returns (uint256) {
+        uint256 tokenId = _tokenIdCounter.current();
+        loot.push(Loot(0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
         _tokenIdCounter.increment();
         return tokenId;
     }
 
-    function _createLoot(bytes32 _name) internal returns (uint) {
-        uint tokenId = _tokenIdCounter.current();
+    /// @notice Create loot with randomly generated values
+    /// @dev Called by createRandomLoot
+    /// @dev TODO left here
+    /// @param _name Name of the loot
+    /// @return The ID of the loot created
+    function _createLoot(bytes32 _name) internal returns (uint256) {
+        uint256 tokenId = _tokenIdCounter.current();
 
         loot.push(_createWeapon(_name, tokenId));
 
@@ -73,72 +71,195 @@ contract LootFactory is ContractUtils{
         // } else {
         //     loot.push(_createWeapon(_name, tokenId));
         // }
-        
+
         _tokenIdCounter.increment();
         emit NewLootGenerated(tokenId, _name);
         return tokenId;
     }
 
-    function _createBackground(bytes32 _name, uint256 tokenId) private view returns (Loot memory) {
-        return Loot(
-            _name,
-            _generateRandomUintValueInBounds(_name, tokenId, "MIN_LEVEL_REQUIRED", 0, MAX_LEVEL),
-            0,
-            0,
-            0,
-            0,
-            _generateRandomUintValueInBounds(_name, tokenId, "BACKGROUND", 0, NUM_OF_BACKGROUNDS),
-            0,
-            0,
-            0
-        );
-    }
-    
-    function _createWeapon(bytes32 _name, uint256 tokenId) private view returns (Loot memory) {
-        return Loot(
-            _name,
-            _generateRandomUintValueInBounds(_name, tokenId, "MIN_LEVEL_REQUIRED", 0, MAX_LEVEL),
-            0,
-            0,
-            _generateRandomIntValueInBounds(_name, tokenId, "STRENGTH", INIT_ATTR_MIN, INIT_ATTR_MAX),
-            0,
-            0,
-            _generateRandomUintValueInBounds(_name, tokenId, "WEAPON", 1, NUM_OF_WEAPONS + 1),
-            0,
-            0
-        );
-    }
-    
-    function _createArmor(bytes32 _name, uint256 tokenId) private view returns (Loot memory) {
-        return Loot(
-            _name,
-            _generateRandomUintValueInBounds(_name, tokenId, "MIN_LEVEL_REQUIRED", 0, MAX_LEVEL),
-            _generateRandomIntValueInBounds(_name, tokenId, "HEALTH", 0, INIT_ATTR_MAX / 2),
-            0,
-            0,
-            _generateRandomIntValueInBounds(_name, tokenId, "DEFENSE", INIT_ATTR_MIN, INIT_ATTR_MAX),
-            0,
-            0,
-            _generateRandomUintValueInBounds(_name, tokenId, "ARMOR", 1, NUM_OF_ARMOR + 1),
-            0
-        );
-    }
-    function _createBoots(bytes32 _name, uint256 tokenId) private view returns (Loot memory) {
-        return Loot(
-            _name,
-            _generateRandomUintValueInBounds(_name, tokenId, "MIN_LEVEL_REQUIRED", 0, MAX_LEVEL),
-            _generateRandomIntValueInBounds(_name, tokenId, "HEALTH", 0, INIT_ATTR_MAX / 2),
-            _generateRandomIntValueInBounds(_name, tokenId, "SPEED", INIT_ATTR_MIN, INIT_ATTR_MAX),
-            0,
-            0,
-            0,
-            0,
-            0,
-            _generateRandomUintValueInBounds(_name, tokenId, "BOOTS", 1, NUM_OF_BOOTS + 1)
-        );
+    /// @notice Generate a random background for the loot
+    /// @dev Called by _createLoot
+    /// @param _name Name of the loot being created
+    /// @param tokenId ID of the loot being created
+    /// @return Loot The current loot item
+    function _createBackground(bytes32 _name, uint256 tokenId)
+        private
+        view
+        returns (Loot memory)
+    {
+        return
+            Loot(
+                _name,
+                _generateRandomUintValueInBounds(
+                    _name,
+                    tokenId,
+                    "MIN_LEVEL_REQUIRED",
+                    0,
+                    MAX_LEVEL
+                ),
+                0,
+                0,
+                0,
+                0,
+                _generateRandomUintValueInBounds(
+                    _name,
+                    tokenId,
+                    "BACKGROUND",
+                    0,
+                    NUM_OF_BACKGROUNDS
+                ),
+                0,
+                0,
+                0
+            );
     }
 
-    function createRandomLoot(bytes32 _name) public returns (uint _tokenId)  {
+    /// @notice Generate a random weapon for the loot
+    /// @dev Called by _createLoot
+    /// @param _name Name of the loot being created
+    /// @param tokenId ID of the loot being created
+    /// @return Loot The current loot item
+    function _createWeapon(bytes32 _name, uint256 tokenId)
+        private
+        view
+        returns (Loot memory)
+    {
+        return
+            Loot(
+                _name,
+                _generateRandomUintValueInBounds(
+                    _name,
+                    tokenId,
+                    "MIN_LEVEL_REQUIRED",
+                    0,
+                    MAX_LEVEL
+                ),
+                0,
+                0,
+                _generateRandomIntValueInBounds(
+                    _name,
+                    tokenId,
+                    "STRENGTH",
+                    INIT_ATTR_MIN,
+                    INIT_ATTR_MAX
+                ),
+                0,
+                0,
+                _generateRandomUintValueInBounds(
+                    _name,
+                    tokenId,
+                    "WEAPON",
+                    1,
+                    NUM_OF_WEAPONS + 1
+                ),
+                0,
+                0
+            );
+    }
+
+    /// @notice Generate a random armor for the loot
+    /// @dev Called by _createLoot
+    /// @param _name Name of the loot being created
+    /// @param tokenId ID of the loot being created
+    /// @return Loot The current loot item
+    function _createArmor(bytes32 _name, uint256 tokenId)
+        private
+        view
+        returns (Loot memory)
+    {
+        return
+            Loot(
+                _name,
+                _generateRandomUintValueInBounds(
+                    _name,
+                    tokenId,
+                    "MIN_LEVEL_REQUIRED",
+                    0,
+                    MAX_LEVEL
+                ),
+                _generateRandomIntValueInBounds(
+                    _name,
+                    tokenId,
+                    "HEALTH",
+                    0,
+                    INIT_ATTR_MAX / 2
+                ),
+                0,
+                0,
+                _generateRandomIntValueInBounds(
+                    _name,
+                    tokenId,
+                    "DEFENSE",
+                    INIT_ATTR_MIN,
+                    INIT_ATTR_MAX
+                ),
+                0,
+                0,
+                _generateRandomUintValueInBounds(
+                    _name,
+                    tokenId,
+                    "ARMOR",
+                    1,
+                    NUM_OF_ARMOR + 1
+                ),
+                0
+            );
+    }
+
+    /// @notice Generate random boots for the loot
+    /// @dev Called by _createLoot
+    /// @param _name Name of the loot being created
+    /// @param tokenId ID of the loot being created
+    /// @return Loot The current loot item
+    function _createBoots(bytes32 _name, uint256 tokenId)
+        private
+        view
+        returns (Loot memory)
+    {
+        return
+            Loot(
+                _name,
+                _generateRandomUintValueInBounds(
+                    _name,
+                    tokenId,
+                    "MIN_LEVEL_REQUIRED",
+                    0,
+                    MAX_LEVEL
+                ),
+                _generateRandomIntValueInBounds(
+                    _name,
+                    tokenId,
+                    "HEALTH",
+                    0,
+                    INIT_ATTR_MAX / 2
+                ),
+                _generateRandomIntValueInBounds(
+                    _name,
+                    tokenId,
+                    "SPEED",
+                    INIT_ATTR_MIN,
+                    INIT_ATTR_MAX
+                ),
+                0,
+                0,
+                0,
+                0,
+                0,
+                _generateRandomUintValueInBounds(
+                    _name,
+                    tokenId,
+                    "BOOTS",
+                    1,
+                    NUM_OF_BOOTS + 1
+                )
+            );
+    }
+
+    /// @notice Calls _createLoot which handles the loot generation
+    /// @dev Called when minting
+    /// @param _name Name of the loot to create
+    /// @return _tokenId ID of the created loot
+    function createRandomLoot(bytes32 _name) public returns (uint256 _tokenId) {
         _tokenId = _createLoot(_name);
     }
 }

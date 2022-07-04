@@ -92,7 +92,7 @@ contract Staking is IERC721Receiver, AccessControl {
         return stakes[_staker].isInitialized;
     }
 
-    /// @notice Check Gems balance for `_staker`
+    /// @notice Check Gems balance for _staker
     /// @dev Useful for the contract to self check balance
     /// @param _staker The address of the staker
     /// @return Gems balance for _staker
