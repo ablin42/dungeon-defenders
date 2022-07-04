@@ -223,6 +223,10 @@ contract Staking is IERC721Receiver, Ownable {
             isStaking(player),
             "Not staking: player needs to stake before allocating rewards"
         );
+        require(
+            stakes[player].isClaimable == false,
+            "Claimable: Already allocated rewards"
+        );
         stakes[player].isClaimable = true;
         stakes[player].rewardedGemsAmount = gemsAmount;
         stakes[player].rewardedExpAmount = expAmount;
@@ -235,7 +239,7 @@ contract Staking is IERC721Receiver, Ownable {
         address,
         uint256,
         bytes calldata
-    ) external override returns (bytes4) {
+    ) external pure override returns (bytes4) {
         return
             bytes4(
                 keccak256("onERC721Received(address,address,uint256,bytes)")

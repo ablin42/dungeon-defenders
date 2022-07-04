@@ -2,7 +2,7 @@
 import React from 'react';
 
 // *INTERNALS*
-import NotFound from './NotFound';
+import Error from './Error';
 
 interface LoadProps {
   isLoading: boolean;
@@ -19,7 +19,7 @@ const LoadWith404 = ({ isLoading }: LoadProps) => {
       ></span>
     </div>
   ) : (
-    <NotFound />
+    <Error />
   );
 };
 

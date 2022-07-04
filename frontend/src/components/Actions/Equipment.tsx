@@ -1,6 +1,6 @@
 // *EXTERNALS*
 import React, { useEffect, useState } from 'react';
-import { TransactionStatus } from '@usedapp/core';
+import { TransactionState, TransactionStatus } from '@usedapp/core';
 import { STAKE_CONTRACT_ADDRESS } from 'dungeon-defenders-contracts';
 
 // *INTERNALS*
@@ -83,8 +83,8 @@ const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId, onEquipmentUpd
   const isPending = STATUS.map((status) => status === STATUS_TYPES.PENDING || status === STATUS_TYPES.MINING);
 
   const handleStateChange = (STATES: Array<TransactionStatus>, index: number) => {
-    const newSTATES = [...STATES] as any[];
-    newSTATES[index].status = STATUS_TYPES.NONE;
+    const newSTATES = [...STATES] as [TransactionStatus];
+    newSTATES[index].status = STATUS_TYPES.NONE as TransactionState;
     setSTATES(newSTATES);
   };
 

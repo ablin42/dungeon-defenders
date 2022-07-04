@@ -87,7 +87,7 @@ export function useAesthetics(tokenId: string | number) {
     ) ?? {};
 
   // ? Circumventing a bug that probably happened due to an NFT
-  // ?  being minted before server listener for events, and then picked it up
+  // ? being minted before server listener for events, and then picked it up
   if (!value) return [0, 0, 0];
   if (error) {
     console.error(`Error fetching aesthetics for Defender #${tokenId}`, error.message);
@@ -106,7 +106,7 @@ export type Defender = {
   strength: number;
   defense: number;
 };
-export function useDefender(tokenId: string | number) {
+export function useDefender(tokenId: string | number | undefined) {
   const { value, error } =
     useCall(
       tokenId && {
@@ -140,7 +140,7 @@ export type Loot = {
   armor: number;
   boots: number;
 };
-export function useLoot(tokenId: string | number) {
+export function useLoot(tokenId: string | number | undefined) {
   const { value, error } =
     useCall(
       tokenId && {
@@ -330,7 +330,7 @@ type Stake = {
   isClaimable: boolean;
   isInitialized: boolean;
 };
-export function useStakes(userAddress: string) {
+export function useStakes(userAddress: string | undefined) {
   const { value, error } =
     useCall(
       userAddress && {

@@ -1,21 +1,26 @@
 // *EXTERNALS*
+import { TransactionState, TransactionStatus, useEthers } from '@usedapp/core';
+import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useLocation } from 'react-router-dom';
-import { API_ADDRESS } from '../constants';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // *INTERNALS*
+import Error from '../components/Error';
+import LoadingBtn from '../components/LoadingBtn';
+import { API_ADDRESS, STATUS_TYPES } from '../constants';
 import { initializeGame } from '../game/Index';
-import { Loot, useDefender, useLoot } from '../hooks';
+import { Loot, useDefender, useLoot, useStakes, useUnstake } from '../hooks';
+import { sendTx, handleTxStatus } from '../utils';
 
 type State = {
   owner: string;
-  defenderId: string | 0,
-  weaponId: 0,
-  armorId: 0,
-  bootsId: 0,
+  defenderId: string | 0;
+  weaponId: 0;
+  armorId: 0;
+  bootsId: 0;
 
-  gemsAmount: 0,
+  gemsAmount: 0;
 };
 
 const DEFAULT_LOOT: Loot = {
@@ -27,45 +32,73 @@ const DEFAULT_LOOT: Loot = {
   weapon: 0,
   armor: 0,
   boots: 0,
-}
+};
 
-const triggerRewardAllocation = async (account: string, defenderId: string | number) => {
+const triggerRewardAllocation = async (account: string | undefined) => {
   toast.success('You won, GG !');
 
   const res = await fetch(`${API_ADDRESS}/v1/game/${account}/allocateRewards`, { method: 'POST' });
   if (res.status !== 200) toast.error('Failed to allocate rewards, emergency withdrawal needed');
-
-  window.location.href = `/NFT/${defenderId}`;
 };
 
 export default function Play() {
+  const navigate = useNavigate();
+  const { account } = useEthers();
   const { state } = useLocation() as { state: State };
-  const defender = useDefender(state.defenderId);
-  const weapon = useLoot(state.weaponId);
+  const stakes = useStakes(account && account);
+  const weaponId = (state && state.weaponId) || (state && state.defenderId);
+  const defender = useDefender(stakes && +stakes.tokenId); //?state.defenderId
+  const weapon = useLoot(stakes && +stakes.weaponId);
+  const { state: unstakeState, send: sendUnstake } = useUnstake();
   const [init, setInit] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isAllocatingRewards, setIsAllocatingRewards] = useState(false);
+  const [STATES, setSTATES] = useState<Array<TransactionStatus>>([unstakeState]);
+  const STATUS = STATES.map((state) => state.status as string);
+  const isPending = STATUS.map((status) => status === STATUS_TYPES.PENDING || status === STATUS_TYPES.MINING);
 
-  console.log(isAllocatingRewards);
+  const handleStateChange = (STATES: Array<TransactionStatus>, index: number) => {
+    const newSTATES = [...STATES] as [TransactionStatus];
+    newSTATES[index].status = STATUS_TYPES.NONE as TransactionState;
+    setSTATES(newSTATES);
+  };
+
+  useEffect(() => {
+    setSTATES([unstakeState]);
+  }, [unstakeState]);
+
+  useEffect(() => {
+    const successHandler = () => {
+      setTimeout(async () => {
+        navigate(`/NFT/user/${account}`, {
+          replace: false,
+        });
+      }, 5000);
+    };
+    handleTxStatus(STATES, STATUS, handleStateChange, successHandler);
+  }, [STATES]);
+
+  const unstake = async () => {
+    sendUnstake();
+  };
 
   const onGameOver = async () => {
     if (isGameOver) {
       return;
     }
-    
     setIsGameOver(true);
     setIsAllocatingRewards(true);
-    await triggerRewardAllocation(state.owner, state.defenderId);
+    await triggerRewardAllocation(account);
     setIsAllocatingRewards(false);
   };
 
   useEffect(() => {
-    if (init) {
+    if (init || stakes?.isClaimable) {
       return;
     }
 
     console.log(defender, weapon);
-    if (!defender || (state.weaponId && !weapon)) {
+    if (!defender || (weaponId && !weapon)) {
       return;
     }
 
@@ -73,22 +106,75 @@ export default function Play() {
   }, [defender, weapon]);
 
   useEffect(() => {
-    if (!init) {
+    if (!init || stakes?.isClaimable) {
       return;
     }
 
-    if (!defender || (state.weaponId && !weapon)) {
+    if (!defender || (weaponId && !weapon)) {
       return;
     }
 
     initializeGame('game', { onGameOver, defender, weapon: weapon ?? DEFAULT_LOOT });
-  }, [init])
+  }, [init]);
+
+  if (stakes?.isClaimable || isPending[0]) {
+    return (
+      <div className="container text-center mb-5">
+        <div className="col-4 offset-4 mt-5">
+          <h1 className="mb-5">Claim your rewards 🎉</h1>
+          <ul className="list-group text-start">
+            <li className="list-group-item">
+              <b>
+                Rewarded Exp -{' '}
+                {(stakes && stakes.rewardedExpAmount.toNumber()) || (
+                  <div className="ms-2 spinner-border spinner-border-sm text-success" role="status">
+                    <span className="sr-only">Loading...</span>
+                  </div>
+                )}
+              </b>
+            </li>
+            <li className="list-group-item">
+              <b>
+                Rewarded Gems -{' '}
+                {(stakes && ethers.utils.formatEther(stakes.rewardedGemsAmount)) || (
+                  <div className="ms-2 spinner-border spinner-border-sm text-success" role="status">
+                    <span className="sr-only">Loading...</span>
+                  </div>
+                )}
+              </b>
+            </li>
+            <li className="list-group-item">
+              <b>
+                Loot Reward -{' '}
+                {(stakes && stakes.wasRewardLoot ? '✅' : '❌') || (
+                  <div className="ms-2 spinner-border spinner-border-sm text-success" role="status">
+                    <span className="sr-only">Loading...</span>
+                  </div>
+                )}
+              </b>
+            </li>
+          </ul>
+          <div className="mt-2">
+            {isPending[0] ? (
+              <LoadingBtn text={'Claiming...'} type="success" width="100%" />
+            ) : (
+              <button onClick={() => sendTx(unstake)} className="btn btn-lg btn-success w-100 ">
+                Claim
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!account) return <Error title="Game not found, check your collection" />;
 
   return (
     <>
       <h2 className="text-center mt-5 mb-5">Defend Some Dungeons</h2>
       {isAllocatingRewards ? (
-        <div className='text-center'>
+        <div className="text-center">
           Allocating Rewards
           <div className="ms-2 spinner-border spinner-border-sm text-success" role="status">
             <span className="sr-only">Loading...</span>
