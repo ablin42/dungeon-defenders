@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-  height: 80vh;
   padding-top: 15vh;
   text-align: center;
 `;
