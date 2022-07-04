@@ -51,6 +51,7 @@ export default function Play() {
   const weapon = useLoot(stakes && +stakes.weaponId);
   const { state: unstakeState, send: sendUnstake } = useUnstake();
   const { state: emergencyState, send: sendEmergency } = useEmergency();
+  const [isLoading, setIsLoading] = useState(true);
   const [init, setInit] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isAllocatingRewards, setIsAllocatingRewards] = useState(false);
@@ -68,6 +69,12 @@ export default function Play() {
     newSTATES[index].status = STATUS_TYPES.NONE as TransactionState;
     setSTATES(newSTATES);
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000 * 1);
+  }, []);
 
   useEffect(() => {
     setSTATES([unstakeState, emergencyState]);
@@ -194,7 +201,7 @@ export default function Play() {
     );
   }
 
-  if (!account || !stakes || (stakes && !stakes.isInitialized))
+  if (!isLoading && (!account || !stakes || (stakes && !stakes.isInitialized)))
     return <Error title="Game not found, check your collection" url={!account ? '/' : `/NFT/user/${account}`} />;
 
   return (
@@ -204,6 +211,13 @@ export default function Play() {
         <div className="text-center">
           Allocating Rewards
           <div className="ms-2 spinner-border spinner-border-sm text-success" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>
+        </div>
+      ) : null}
+      {isLoading ? (
+        <div className="text-center">
+          <div className="ms-2 spinner-border spinner-border-sm" role="status">
             <span className="sr-only">Loading...</span>
           </div>
         </div>
