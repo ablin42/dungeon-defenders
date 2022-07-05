@@ -259,7 +259,10 @@ contract LootFactory is ContractUtils {
     /// @dev Called when minting
     /// @param _name Name of the loot to create
     /// @return _tokenId ID of the created loot
-    function createRandomLoot(bytes32 _name) public returns (uint256 _tokenId) {
+    function createRandomLoot(bytes32 _name)
+        internal
+        returns (uint256 _tokenId)
+    {
         _tokenId = _createLoot(_name);
     }
 }

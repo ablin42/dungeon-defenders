@@ -6,7 +6,6 @@ import "./DefenderUtils.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
 
 interface ILoot {
     struct Loot {
@@ -32,14 +31,11 @@ interface ILoot {
 /// @title DungeonDefenders Main Defender Contract
 /// @author rkhadder & 0xharb
 /// @notice Requires LOOT (ERC721) to be deployed
-contract DungeonDefenders is
-    ERC721,
-    ERC721URIStorage,
-    DefenderUtils,
-    AccessControl
-{
+contract DungeonDefenders is ERC721, ERC721URIStorage, DefenderUtils {
     ILoot public lootToken;
     uint256 public MINT_PRICE = 0.01 ether;
+
+    event Withdraw(address to, uint256 amount);
 
     constructor(ILoot _lootToken) ERC721("DungeonDefenders", "DDS") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -72,7 +68,7 @@ contract DungeonDefenders is
 
         (bool success, ) = _to.call{value: amount}("");
         require(success, "Failed to send Ether");
-        // TODO emit event
+        emit Withdraw(_to, amount);
     }
 
     /// @notice Equip a loot token to a defender
@@ -139,6 +135,18 @@ contract DungeonDefenders is
         override(ERC721, ERC721URIStorage)
     {
         super._burn(tokenId);
+    }
+
+    /// @notice The following function is an override required by Solidity.
+    /// @param interfaceId ID of the interface we're checking support for
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC721, AccessControl)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 
     /// @notice The following function is an override required by Solidity.
@@ -272,17 +280,5 @@ contract DungeonDefenders is
         );
 
         return output;
-    }
-
-    /// @notice The following function is an override required by Solidity.
-    /// @param interfaceId ID of the defender to burn
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(ERC721, AccessControl)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
     }
 }

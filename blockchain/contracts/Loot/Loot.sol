@@ -6,23 +6,29 @@ import "./LootFactory.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
 /// @title Loot Contract for DungeonDefenders
 /// @author rkhadder & 0xharb
-contract DungeonLoot is ERC721, ERC721URIStorage, LootFactory {
+contract DungeonLoot is ERC721, ERC721URIStorage, LootFactory, AccessControl {
+    bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
+
     /// @notice Mint the loot with ID#0
     /// @dev tokenId == 0 is used to indicate no loot
     constructor() ERC721("DungeonLoot", "DLOOT") {
+        // Grant the OPERATOR role to a specified account (here deployer)
+        _setupRole(OPERATOR_ROLE, msg.sender);
+        // Grant the ADMIN role to deployer (shouldnt be the same as OPERATOR)
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _createEmpty();
         _safeMint(address(this), 0);
     }
 
-    // TODO restrict based on operator role
     /// @notice Mint loot with the given name
     /// @notice Caller must have the OPERATOR role
     /// @param to Address to mint to
     /// @param name Name of the loot
-    function safeMint(address to, bytes32 name) public {
+    function safeMint(address to, bytes32 name) public onlyRole(OPERATOR_ROLE) {
         uint256 tokenId = createRandomLoot(name);
         _safeMint(to, tokenId);
     }
@@ -35,6 +41,18 @@ contract DungeonLoot is ERC721, ERC721URIStorage, LootFactory {
         override(ERC721, ERC721URIStorage)
     {
         super._burn(tokenId);
+    }
+
+    /// @notice The following function is an override required by Solidity.
+    /// @param interfaceId ID of the interface we're checking support for
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC721, AccessControl)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 
     /// @notice The following function is an override required by Solidity.

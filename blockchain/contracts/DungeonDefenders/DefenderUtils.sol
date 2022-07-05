@@ -25,13 +25,15 @@ contract DefenderUtils is DefenderFactory {
         7000 // level 10
     ];
 
-    // TODO permissions (called by unstake)
     /// @notice Updates the defender's experience
     /// @notice Updates level if needed
     /// @notice Caller must have the OPERATOR role
     /// @param _tokenId ID of the defender to update
     /// @param _expToGain Amount of xp to give to the defender
-    function gainExperience(uint256 _tokenId, uint256 _expToGain) external {
+    function gainExperience(uint256 _tokenId, uint256 _expToGain)
+        external
+        onlyRole(OPERATOR_ROLE)
+    {
         require(
             defenders[_tokenId].level < 10,
             "Defender is already max level"
@@ -79,12 +81,14 @@ contract DefenderUtils is DefenderFactory {
         ) {}
     }
 
-    // TODO permissions (called by unstake)
     /// @notice Updates the defender's wins & losses
     /// @notice Caller must have the OPERATOR role
     /// @param _tokenId ID of the defender to update
     /// @param _won Boolean indicating if the defender won or not
-    function updateWinTracker(uint256 _tokenId, bool _won) external {
+    function updateWinTracker(uint256 _tokenId, bool _won)
+        external
+        onlyRole(OPERATOR_ROLE)
+    {
         if (_won) {
             defenders[_tokenId].dungeonWins++;
         } else {

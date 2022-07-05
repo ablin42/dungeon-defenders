@@ -4,11 +4,13 @@ pragma solidity ^0.8.0;
 import "../ContractUtils.sol";
 
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
 /// @title Defender Factory for DungeonDefenders
 /// @author rkhadder & 0xharb
 /// @notice Used by DefenderUtils.sol
-contract DefenderFactory is ContractUtils {
+contract DefenderFactory is ContractUtils, AccessControl {
+    bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
     using Counters for Counters.Counter;
 
     event NewDefenderGenerated(uint256 defenderId, bytes32 name);
@@ -137,13 +139,12 @@ contract DefenderFactory is ContractUtils {
         return uint8(_minValue + (rand % (_maxValue - _minValue)));
     }
 
-    // TODO public ?
     /// @notice Calls _createDefender to create a new defender
     /// @dev Called when minting
     /// @param _name name of the Defender to create
     /// @return _tokenId ID of the created defender
     function createRandomDefender(bytes32 _name)
-        public
+        internal
         returns (uint256 _tokenId)
     {
         _tokenId = _createDefender(_name);
