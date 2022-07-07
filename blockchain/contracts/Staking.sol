@@ -2,15 +2,16 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-// import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./DungeonDefenders/DefenderInterface.sol";
 import "./Loot/LootInterface.sol";
 
-contract Staking is IERC721Receiver, Ownable {
-    // TODO natspec
+/// @title Staking Contract for DungeonDefenders
+/// @author rkhadder & 0xharb
+/// @notice Requires Gems (ERC20), LOOT (ERC721), and Defender (ERC721) to be deployed
+contract Staking is IERC721Receiver, AccessControl {
+    bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
     DefenderInterface public characterToken;
     LootInterface public lootToken;
     IERC20 public gemsToken;
@@ -75,21 +76,38 @@ contract Staking is IERC721Receiver, Ownable {
         LootInterface _lootToken,
         IERC20 _gemsToken
     ) {
+        // Grant the OPERATOR role to a specified account (here deployer)
+        _setupRole(OPERATOR_ROLE, msg.sender);
+        // Grant the ADMIN role to deployer (shouldnt be the same as OPERATOR)
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         characterToken = _characterToken;
         lootToken = _lootToken;
         gemsToken = _gemsToken;
     }
 
+    /// @notice Check if _staker is staking
+    /// @param _staker The address of the staker
+    /// @return true if staking for this address has been initialized
     function isStaking(address _staker) public view returns (bool) {
         return stakes[_staker].isInitialized;
     }
 
-    // Useful for the contract to self check its gems balance
+    /// @notice Check Gems balance for _staker
+    /// @dev Useful for the contract to self check balance
+    /// @param _staker The address of the staker
+    /// @return Gems balance for _staker
     function gemsBalance(address _staker) public view returns (uint256) {
         return gemsToken.balanceOf(_staker);
     }
 
-    // Might need to implement a reentrancy guard here to avoid double staking
+    /// @notice Stake your Defender + Loot + Gems
+    /// @notice You must have at least 100 gems to stake
+    /// @notice One defender staked at a time per address
+    /// @param _defenderId Defender to use
+    /// @param _weaponId lootId to use for the weapon
+    /// @param _armorId lootId to use for the armor
+    /// @param _bootsId lootId to use for the boots
+    /// @param gemsAmount Amount of gems paid for staking
     function stake(
         uint256 _defenderId,
         uint256 _weaponId,
@@ -148,7 +166,8 @@ contract Staking is IERC721Receiver, Ownable {
         );
     }
 
-    // Pure unstaking logic
+    /// @notice Untake your Defender + Loot + Gems
+    /// @dev Internal function to handle pure unstaking logic
     function _unstake() internal {
         uint256 rewardedAmount = stakes[msg.sender].rewardedGemsAmount;
         uint256 rewardedExp = stakes[msg.sender].rewardedExpAmount;
@@ -190,7 +209,9 @@ contract Staking is IERC721Receiver, Ownable {
         );
     }
 
-    // Might need reentrancy guard here too
+    /// @notice Unstake your Defender + Loot + Gems
+    /// @notice Must be claimable
+    /// @dev Requires allocateRewards to be called first
     function unstake() external {
         require(
             stakes[msg.sender].isClaimable,
@@ -199,7 +220,11 @@ contract Staking is IERC721Receiver, Ownable {
         _unstake();
     }
 
-    // Withdraw your funds after 30mn if the game didn't close due to an unexpected issue
+    /// @notice Unstake your Defender + Loot + Gems
+    /// @notice Must be initialized
+    /// @notice Must be minimum 30 minutes after staking
+    /// @notice Does not grant rewards
+    /// @dev Withdraw function if allocateRewards failed to be called by OPERATOR
     function emergencyWithdraw() external {
         require(
             stakes[msg.sender].isInitialized,
@@ -212,13 +237,19 @@ contract Staking is IERC721Receiver, Ownable {
         _unstake();
     }
 
-    // Close the game and allocate rewards
+    /// @notice Allocated Rewards for a staker
+    /// @notice Caller must have the OPERATOR role
+    /// @dev Called by the server
+    /// @param gemsAmount Gems amount to be rewarded
+    /// @param expAmount Experience amount to grant to the defender
+    /// @param player Staker address
+    /// @param shouldRewardLoot Mints loot on unstaking if true
     function allocateRewards(
         uint256 gemsAmount,
         uint256 expAmount,
         address player,
         bool shouldRewardLoot
-    ) external onlyOwner {
+    ) external onlyRole(OPERATOR_ROLE) {
         require(
             isStaking(player),
             "Not staking: player needs to stake before allocating rewards"
@@ -233,7 +264,7 @@ contract Staking is IERC721Receiver, Ownable {
         stakes[player].wasRewardLoot = shouldRewardLoot;
     }
 
-    // https://docs.openzeppelin.com/contracts/3.x/api/token/erc721#IERC721Receiver
+    /// @notice https://docs.openzeppelin.com/contracts/3.x/api/token/erc721#IERC721Receiver
     function onERC721Received(
         address,
         address,

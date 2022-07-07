@@ -4,9 +4,13 @@ pragma solidity ^0.8.0;
 import "../ContractUtils.sol";
 
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract DefenderFactory is ContractUtils, Ownable {
+/// @title Defender Factory for DungeonDefenders
+/// @author rkhadder & 0xharb
+/// @notice Used by DefenderUtils.sol
+contract DefenderFactory is ContractUtils, AccessControl {
+    bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
     using Counters for Counters.Counter;
 
     event NewDefenderGenerated(uint256 defenderId, bytes32 name);
@@ -46,7 +50,10 @@ contract DefenderFactory is ContractUtils, Ownable {
     Defender[] public defenders;
     Aesthetics[] public aesthetics;
 
-    // Needed to read the loot id in slots from the front-end
+    /// @notice Fetch the aesthetics slots for the given defender
+    /// @dev Used to get the different equiped loot IDs
+    /// @param defenderId ID of the Defender to read the slots from
+    /// @return slots The slots of the defender
     function getSlots(uint256 defenderId)
         public
         view
@@ -55,6 +62,9 @@ contract DefenderFactory is ContractUtils, Ownable {
         return aesthetics[defenderId].slots;
     }
 
+    /// @notice Responsible for creating a new defender with newly generated attributes
+    /// @param _name name of the Defender to create the value for
+    /// @return _tokenId ID of the created defender
     function _createDefender(bytes32 _name) internal returns (uint256) {
         uint256 tokenId = _tokenIdCounter.current();
         defenders.push(
@@ -107,6 +117,14 @@ contract DefenderFactory is ContractUtils, Ownable {
         return tokenId;
     }
 
+    /// @notice Generates a random uint value in the given bounds
+    /// @dev Used in _createDefender to generate initial attributes
+    /// @param _name name of the Defender to generate the value for
+    /// @param _tokenId ID of the Defender to generate the value for
+    /// @param _key Key of the attribute we're generating for
+    /// @param _minValue Minimum value to generate
+    /// @param _maxValue Maximum value to generate
+    /// @return The generated random value
     function _generateRandomValueInBounds(
         bytes32 _name,
         uint256 _tokenId,
@@ -120,8 +138,12 @@ contract DefenderFactory is ContractUtils, Ownable {
         return uint8(_minValue + (rand % (_maxValue - _minValue)));
     }
 
+    /// @notice Calls _createDefender to create a new defender
+    /// @dev Called when minting
+    /// @param _name name of the Defender to create
+    /// @return _tokenId ID of the created defender
     function createRandomDefender(bytes32 _name)
-        public
+        internal
         returns (uint256 _tokenId)
     {
         _tokenId = _createDefender(_name);

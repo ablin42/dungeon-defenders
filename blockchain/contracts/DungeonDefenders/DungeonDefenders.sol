@@ -28,10 +28,17 @@ interface ILoot {
     function ownerOf(uint256 tokenId) external view returns (address owner);
 }
 
+/// @title DungeonDefenders Main Defender Contract
+/// @author rkhadder & 0xharb
+/// @notice Requires LOOT (ERC721) to be deployed
 contract DungeonDefenders is ERC721, ERC721URIStorage, DefenderUtils {
     ILoot public lootToken;
+    uint256 public MINT_PRICE = 0.01 ether;
+
+    event Withdraw(address to, uint256 amount);
 
     constructor(ILoot _lootToken) ERC721("DungeonDefenders", "DDS") {
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         lootToken = _lootToken;
     }
 
@@ -40,13 +47,89 @@ contract DungeonDefenders is ERC721, ERC721URIStorage, DefenderUtils {
     //     return "https://ourapp.vercel.app/api";
     // }
 
-    function safeMint(address to, bytes32 name) public {
+    /// @notice Mint a defender with the given name
+    /// @notice Require to pay a fee of 0.01 ether to mint a defender
+    /// @param to Address to mint to
+    /// @param name Name of the defender
+    function safeMint(address to, bytes32 name) public payable {
+        require(
+            msg.value >= MINT_PRICE,
+            "Error: You must pay 0.01 ether to mint a defender"
+        );
         uint256 tokenId = createRandomDefender(name);
         _safeMint(to, tokenId);
     }
 
-    // The following functions are overrides required by Solidity.
+    /// @notice Withdraw all Ether from this contract
+    /// @notice Requires DEFAULT_ADMIN_ROLE
+    /// @param _to Address to send the Ether to
+    function withdraw(address payable _to) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        uint256 amount = address(this).balance;
 
+        (bool success, ) = _to.call{value: amount}("");
+        require(success, "Failed to send Ether");
+        emit Withdraw(_to, amount);
+    }
+
+    /// @notice Equip a loot token to a defender
+    /// @notice Need to own both the corresponding loot & defender
+    /// @dev Only equips the slots that are not 0
+    /// @param _defenderId ID of the Defender to equip the loot on
+    /// @param _lootId ID of the loot token to be equiped
+    function equipLoot(uint256 _defenderId, uint256 _lootId) public {
+        require(ownerOf(_defenderId) == msg.sender, "Must own defender");
+        require(lootToken.ownerOf(_lootId) == msg.sender, "Must own loot");
+        ILoot.Loot memory loot = lootToken.loot(_lootId);
+
+        if (loot.background > 0) {
+            aesthetics[_defenderId].background = loot.background;
+            aesthetics[_defenderId].slots[AES_BACKGROUND_IDX] = _lootId;
+        }
+        if (loot.weapon > 0) {
+            aesthetics[_defenderId].weapon = loot.weapon;
+            aesthetics[_defenderId].slots[AES_WEAPON_IDX] = _lootId;
+        }
+        if (loot.armor > 0) {
+            aesthetics[_defenderId].armor = loot.armor;
+            aesthetics[_defenderId].slots[AES_ARMOR_IDX] = _lootId;
+        }
+        if (loot.boots > 0) {
+            aesthetics[_defenderId].boots = loot.boots;
+            aesthetics[_defenderId].slots[AES_BOOTS_IDX] = _lootId;
+        }
+    }
+
+    /// @notice Unequip a loot token from a defender
+    /// @notice Need to own both the corresponding loot & defender
+    /// @dev Only unequips the slots that are not 0
+    /// @param _defenderId ID of the Defender to unequip the loot off
+    /// @param _lootId ID of the loot token to be unequiped
+    function unequipLoot(uint256 _defenderId, uint256 _lootId) public {
+        require(ownerOf(_defenderId) == msg.sender, "Must own defender");
+        require(lootToken.ownerOf(_lootId) == msg.sender, "Must own loot");
+        ILoot.Loot memory loot = lootToken.loot(_lootId);
+
+        if (loot.background > 0) {
+            aesthetics[_defenderId].background = 0;
+            aesthetics[_defenderId].slots[AES_BACKGROUND_IDX] = 0;
+        }
+        if (loot.weapon > 0) {
+            aesthetics[_defenderId].weapon = 0;
+            aesthetics[_defenderId].slots[AES_WEAPON_IDX] = 0;
+        }
+        if (loot.armor > 0) {
+            aesthetics[_defenderId].armor = 0;
+            aesthetics[_defenderId].slots[AES_ARMOR_IDX] = 0;
+        }
+        if (loot.boots > 0) {
+            aesthetics[_defenderId].boots = 0;
+            aesthetics[_defenderId].slots[AES_BOOTS_IDX] = 0;
+        }
+    }
+
+    /// @notice The following function is an override required by Solidity.
+    /// @notice Burn a defender with the given tokenId
+    /// @param tokenId ID of the defender to burn
     function _burn(uint256 tokenId)
         internal
         override(ERC721, ERC721URIStorage)
@@ -54,6 +137,22 @@ contract DungeonDefenders is ERC721, ERC721URIStorage, DefenderUtils {
         super._burn(tokenId);
     }
 
+    /// @notice The following function is an override required by Solidity.
+    /// @param interfaceId ID of the interface we're checking support for
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC721, AccessControl)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+
+    /// @notice The following function is an override required by Solidity.
+    /// @notice Returns the tokenURI of a given tokenId
+    /// @dev Used to display the tokenId's SVG
+    /// @param tokenId ID of the defender to get the tokenURI of
     function tokenURI(uint256 tokenId)
         public
         view
@@ -181,64 +280,5 @@ contract DungeonDefenders is ERC721, ERC721URIStorage, DefenderUtils {
         );
 
         return output;
-    }
-
-    function equipLoot(uint256 _defenderId, uint256 _lootId) public {
-        require(
-            ownerOf(_defenderId) == msg.sender,
-            "Must own defender"
-        );
-        require(
-            lootToken.ownerOf(_lootId) == msg.sender,
-            "Must own loot"
-        );
-        ILoot.Loot memory loot = lootToken.loot(_lootId);
-
-        if (loot.background > 0) {
-            aesthetics[_defenderId].background = loot.background;
-            aesthetics[_defenderId].slots[AES_BACKGROUND_IDX] = _lootId;
-        }
-        if (loot.weapon > 0) {
-            aesthetics[_defenderId].weapon = loot.weapon;
-            aesthetics[_defenderId].slots[AES_WEAPON_IDX] = _lootId;
-        }
-        if (loot.armor > 0) {
-            aesthetics[_defenderId].armor = loot.armor;
-            aesthetics[_defenderId].slots[AES_ARMOR_IDX] = _lootId;
-        }
-        if (loot.boots > 0) {
-            aesthetics[_defenderId].boots = loot.boots;
-            aesthetics[_defenderId].slots[AES_BOOTS_IDX] = _lootId;
-        }
-    }
-
-    function unequipLoot(uint256 _defenderId, uint256 _lootId) public
-    {
-        require(
-            ownerOf(_defenderId) == msg.sender,
-            "Must own defender"
-        );
-        require(
-            lootToken.ownerOf(_lootId) == msg.sender,
-            "Must own loot"
-        );
-        ILoot.Loot memory loot = lootToken.loot(_lootId);
-
-        if (loot.background > 0) {
-            aesthetics[_defenderId].background = 0;
-            aesthetics[_defenderId].slots[AES_BACKGROUND_IDX] = 0;
-        }
-        if (loot.weapon > 0) {
-            aesthetics[_defenderId].weapon = 0;
-            aesthetics[_defenderId].slots[AES_WEAPON_IDX] = 0;
-        }
-        if (loot.armor > 0) {
-            aesthetics[_defenderId].armor = 0;
-            aesthetics[_defenderId].slots[AES_ARMOR_IDX] = 0;
-        }
-        if (loot.boots > 0) {
-            aesthetics[_defenderId].boots = 0;
-            aesthetics[_defenderId].slots[AES_BOOTS_IDX] = 0;
-        }
     }
 }
