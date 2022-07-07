@@ -8,6 +8,10 @@ const Wrapper = styled.div`
   text-align: center;
 `;
 
+const StyledErrorCode = styled.h1`
+  font-size: 4.5rem;
+`;
+
 interface ErrorProps {
   title?: string;
   btnText?: string;
@@ -24,13 +28,9 @@ const Error = ({
   <>
     <Wrapper>
       <h1>{title}</h1>
-      <h1 className="mb-5" style={{ fontSize: '4.5rem' }}>
-        {error}
-      </h1>
+      <StyledErrorCode className="mb-5">{error}</StyledErrorCode>
       <Link to={url}>
-        <button className="btn btn-primary btn-lg mb-4" style={{ width: 'auto' }}>
-          {btnText}
-        </button>
+        <button className="btn btn-primary btn-lg mb-4 w-auto">{btnText}</button>
       </Link>
     </Wrapper>
   </>

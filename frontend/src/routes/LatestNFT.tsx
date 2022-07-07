@@ -35,7 +35,7 @@ export default function LatestNFT() {
           ))}
         </div>
       ) : (
-        <div className="text-center" style={{ height: '65vh', display: 'flex', justifyContent: 'center' }}>
+        <div className="text-center">
           <h1>Whoops, looks like no defender has been minted yet</h1>
         </div>
       )}

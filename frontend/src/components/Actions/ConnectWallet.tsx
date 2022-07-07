@@ -13,7 +13,7 @@ function ConnectWallet() {
     <div>
       {account ? (
         <>
-          <button type="button" className="btn btn-outline-primary" style={{ width: 'initial' }}>
+          <button type="button" className="btn btn-outline-primary">
             {account.slice(0, 6)}...
             {account.slice(account.length - 4, account.length)}
           </button>
