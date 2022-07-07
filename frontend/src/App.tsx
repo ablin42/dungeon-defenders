@@ -2,10 +2,15 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import styled from 'styled-components';
 
 // *INTERNALS*
 import Header from './components/Header';
 import Footer from './components/Footer';
+
+const StyledOutlet = styled.div`
+  flex: 1 0 auto;
+`;
 
 const App = () => {
   return (
@@ -26,7 +31,10 @@ const App = () => {
           },
         }}
       />
-      <Outlet />
+      <StyledOutlet>
+        <Outlet />
+      </StyledOutlet>
+
       <Footer />
     </>
   );

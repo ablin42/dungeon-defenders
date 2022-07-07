@@ -8,6 +8,16 @@ html,
   -moz-osx-font-smoothing: grayscale;
   background-color: #181a1b;
   color: #d1cdc7;
+  height: 100%;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+.outlet {
+  flex: 1 0 auto;
 }
 
 code {

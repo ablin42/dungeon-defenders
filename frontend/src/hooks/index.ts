@@ -297,6 +297,11 @@ export function useUnstake() {
   return { state, send };
 }
 
+export function useEmergency() {
+  const { state, send } = useContractFunction(STAKEContract, 'emergencyWithdraw', {});
+  return { state, send };
+}
+
 // Check if user has an NFT staked
 export function useIsStaked(userAddress: string) {
   const { value, error } =

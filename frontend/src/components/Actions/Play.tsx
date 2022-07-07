@@ -2,13 +2,12 @@
 import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import { TransactionState, TransactionStatus } from '@usedapp/core';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { STAKE_CONTRACT_ADDRESS } from 'dungeon-defenders-contracts';
 
 // *INTERNALS*
 import {
   useStake,
-  useUnstake,
   useApprove,
   useAllowance,
   useAllowanceGEMS,
@@ -37,7 +36,6 @@ const STATE_INDEX = {
   APPROVENFT: 0,
   APPROVEGEMS: 1,
   STAKE: 2,
-  UNSTAKE: 3,
 };
 
 const FormUtil = ({ value, onChange, children }: FormProps) => {
@@ -66,7 +64,6 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
   const { state: approveNFTState, send: sendApproveNFT } = useApprove();
   const { state: approveGEMSState, send: sendApproveGEMS } = useApproveGEMS();
   const { state: stakeState, send: sendStake } = useStake();
-  const { state: unstakeState, send: sendUnstake } = useUnstake();
   const stakes = userAddress && useStakes(userAddress);
   const NFTallowance = useAllowance(userAddress);
   const GEMSallowance = useAllowanceGEMS(userAddress, STAKE_CONTRACT_ADDRESS);
@@ -75,12 +72,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
   const claimable = staked && stakes && stakes.isClaimable;
   // *STATE*
   const [gemsAmount, setGemsAmount] = useState('100');
-  const [STATES, setSTATES] = useState<Array<TransactionStatus>>([
-    approveNFTState,
-    approveGEMSState,
-    stakeState,
-    unstakeState,
-  ]);
+  const [STATES, setSTATES] = useState<Array<TransactionStatus>>([approveNFTState, approveGEMSState, stakeState]);
   const STATUS = STATES.map((state) => state.status as string);
   const isPending = STATUS.map((status) => status === STATUS_TYPES.PENDING || status === STATUS_TYPES.MINING);
 
@@ -91,8 +83,8 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
   };
 
   useEffect(() => {
-    setSTATES([approveNFTState, approveGEMSState, stakeState, unstakeState]);
-  }, [approveNFTState, approveGEMSState, stakeState, unstakeState]);
+    setSTATES([approveNFTState, approveGEMSState, stakeState]);
+  }, [approveNFTState, approveGEMSState, stakeState]);
 
   useEffect(() => {
     const successHandler = (index: number) => {
@@ -126,11 +118,8 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
     const formattedGemsAmount = ethers.utils.parseEther(gemsAmount);
     sendStake(tokenId, equipedLoot[0], equipedLoot[1], equipedLoot[2], formattedGemsAmount);
   };
-  const unstake = async () => {
-    sendUnstake();
-  };
 
-  if (isPending[STATE_INDEX.APPROVENFT] || isPending[STATE_INDEX.APPROVEGEMS] || isPending[STATE_INDEX.UNSTAKE])
+  if (isPending[STATE_INDEX.APPROVENFT] || isPending[STATE_INDEX.APPROVEGEMS])
     return <LoadingBtn type="success" width="100%" />;
   // To handle loading state with no button (loading up the page for the 1st time)
   if (NFTallowance === undefined && GEMSallowance === undefined && staked === undefined)
@@ -163,27 +152,9 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
       ) : null}
       {NFTallowance && GEMSallowance && staked && tokenId == stakedId ? (
         <>
-          {!claimable ? (
-            <>
-              <span className="muted-text">Game not finished yet</span>
-              <br />
-            </>
-          ) : (
-            <ul className="list-group text-start m-1 mb-3">
-              <li className="list-group-item">
-                <b>Rewarded Exp - {stakes.rewardedExpAmount.toNumber()}</b>
-              </li>
-              <li className="list-group-item">
-                <b>Rewarded Gems - {ethers.utils.formatEther(stakes.rewardedGemsAmount)}</b>
-              </li>
-              <li className="list-group-item">
-                <b>Loot Reward - {stakes.wasRewardLoot ? '✅' : '❌'}</b>
-              </li>
-            </ul>
-          )}
-          <button onClick={() => sendTx(unstake)} className="btn btn-lg btn-success w-100" disabled={!claimable}>
-            Claim
-          </button>
+          <Link to={`/Play`}>
+            <button className="btn btn-lg btn-info w-100">{claimable ? 'Claim pending 🎉' : 'Game in progress'}</button>
+          </Link>
         </>
       ) : null}
     </>
