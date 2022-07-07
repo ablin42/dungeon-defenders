@@ -50,7 +50,7 @@ contract DefenderFactory is ContractUtils, AccessControl {
     Defender[] public defenders;
     Aesthetics[] public aesthetics;
 
-    /// @notice Fetch the slots for the given defender
+    /// @notice Fetch the aesthetics slots for the given defender
     /// @dev Used to get the different equiped loot IDs
     /// @param defenderId ID of the Defender to read the slots from
     /// @return slots The slots of the defender
@@ -62,8 +62,7 @@ contract DefenderFactory is ContractUtils, AccessControl {
         return aesthetics[defenderId].slots;
     }
 
-    /// @notice Generates a random uint value in the given bounds
-    /// @dev Responsible for creating a new defender with newly generated attributes
+    /// @notice Responsible for creating a new defender with newly generated attributes
     /// @param _name name of the Defender to create the value for
     /// @return _tokenId ID of the created defender
     function _createDefender(bytes32 _name) internal returns (uint256) {

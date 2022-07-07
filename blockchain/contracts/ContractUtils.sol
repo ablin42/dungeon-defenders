@@ -8,8 +8,8 @@ contract ContractUtils {
     /// @param _name name of the Defender to generate the value for
     /// @param _tokenId ID of the Defender to generate the value for
     /// @param _key Key of the attribute we're generating for
-    /// @param _minValue Minimum value to generate
-    /// @param _maxValue Maximum value to generate
+    /// @param _minValue Minimum (inclusive) value to generate
+    /// @param _maxValue Maximum (exclusive) value to generate
     /// @return The generated random value
     function _generateRandomUintValueInBounds(
         bytes32 _name,
@@ -28,8 +28,8 @@ contract ContractUtils {
     /// @param _name name of the Defender to generate the value for
     /// @param _tokenId ID of the Defender to generate the value for
     /// @param _key Key of the attribute we're generating for
-    /// @param _minValue Minimum value to generate
-    /// @param _maxValue Maximum value to generate
+    /// @param _minValue Minimum (inclusive) value to generate
+    /// @param _maxValue Maximum (exclusive) value to generate
     /// @return The generated random value
     function _generateRandomIntValueInBounds(
         bytes32 _name,
