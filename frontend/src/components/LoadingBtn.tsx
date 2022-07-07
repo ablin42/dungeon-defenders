@@ -1,5 +1,6 @@
 // *EXTERNALS*
 import React from 'react';
+import Button from './Button';
 
 interface BtnProps {
   type?: string;
@@ -9,10 +10,10 @@ interface BtnProps {
 
 const LoadingBtn = ({ type = 'primary', text = 'Tx Pending...', width }: BtnProps) => {
   return (
-    <button className={`btn btn-lg btn-${type}`} style={{ width: width ? width : 'initial' }}>
+    <Button btnType={type} width={width}>
       <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
       <span className="sr-only">{text}</span>
-    </button>
+    </Button>
   );
 };
 

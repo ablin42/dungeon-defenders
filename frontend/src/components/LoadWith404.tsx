@@ -10,13 +10,8 @@ interface LoadProps {
 
 const LoadWith404 = ({ isLoading }: LoadProps) => {
   return isLoading ? (
-    <div className="text-center" style={{ height: '65vh', display: 'flex', justifyContent: 'center' }}>
-      <span
-        style={{ alignSelf: 'center' }}
-        className="spinner-border spinner-border-sm"
-        role="status"
-        aria-hidden="true"
-      ></span>
+    <div className="text-center">
+      <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
     </div>
   ) : (
     <Error />

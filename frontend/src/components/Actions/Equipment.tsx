@@ -131,7 +131,7 @@ const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId, onEquipmentUpd
             const { title, id } = loot;
             return (
               <li key={loot.title} className="list-group-item">
-                <div className="row" style={{ alignItems: 'center' }}>
+                <div className="row align-items-center">
                   <div className="col-4">
                     <b>
                       {title}

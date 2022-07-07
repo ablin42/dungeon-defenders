@@ -46,7 +46,7 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
         </h5>
         {/* <p className="card-text">{description}</p> */}
         <div className="d-flex justify-content-between align-items-center">
-          <div style={{ textAlign: 'left' }}>
+          <div className="text-start">
             {attributes.map((attribute: NFTAttribute, index: number) => {
               const { trait_type, value } = attribute;
               return (
