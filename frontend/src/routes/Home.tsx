@@ -8,7 +8,7 @@ import Loot from '../components/Actions/MintLoot';
 import Faucet from '../components/Actions/Faucet';
 import LatestNFT from './LatestNFT';
 
-const App = () => {
+const Home = () => {
   const { account } = useEthers();
   return (
     <div className="text-center mt-5 mb-5">
@@ -32,4 +32,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Home;

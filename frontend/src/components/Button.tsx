@@ -9,12 +9,13 @@ const StyledBtn = styled.button<BtnProps>`
 interface BtnProps extends React.ComponentProps<'button'> {
   btnType?: string;
   width?: string;
+  size?: 'sm' | 'md' | 'lg';
   children?: React.ReactNode;
 }
 
-const Button: React.FunctionComponent<BtnProps> = ({ btnType = 'primary', width, children }) => {
+const Button: React.FunctionComponent<BtnProps> = ({ btnType = 'primary', size = 'lg', width, children }) => {
   return (
-    <StyledBtn className={`btn btn-lg btn-${btnType}`} width={width}>
+    <StyledBtn className={`btn btn-${size} btn-${btnType}`} width={width}>
       {children}
     </StyledBtn>
   );
