@@ -240,20 +240,6 @@ export function useOwnerOf(tokenId: string | number) {
   return value?.[0];
 }
 
-// ? NFT contract should handle items that *could* be needed to level up
-// TODO Level up NFT
-// export function useLevelUp() {
-//   const { state, send } = useContractFunction(NFTContract, 'levelUp', {});
-//   return { state, send };
-// }
-
-// TODO Evolve the NFT
-// // ? NFT contract should handle items that *could* be needed to evolve
-// export function useEvolve() {
-//   const { state, send } = useContractFunction(NFTContract, 'evolve', {});
-//   return { state, send };
-// }
-
 // *GEMS HOOKS*
 // Approve GEMS to be used by our STAKING contract
 export function useApproveGEMS() {
