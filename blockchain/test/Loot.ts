@@ -13,17 +13,19 @@ describe("Loot", function () {
     });
 
     it("Generates a random loot number", async () => {
+      const ARRAY = [0, 0, 0, 0];
       let name = "LootName";
       let nameByte32 = ethers.utils.formatBytes32String(name);
 
-      let tx = await contract._createLoot(nameByte32);
-      await tx.wait();
-      for (let i = 0; i < 10; i++) {
+      let result = await contract.callStatic._createLoot(nameByte32);
+      ARRAY[+result] = ARRAY[+result] + 1;
+      for (let i = 0; i < 1000; i++) {
         name = Math.random().toString().substring(0, 12);
         nameByte32 = ethers.utils.formatBytes32String(name);
-        tx = await contract._createLoot(nameByte32);
-        await tx.wait();
+        result = await contract.callStatic._createLoot(nameByte32);
+        ARRAY[+result] = ARRAY[+result] + 1;
       }
+      console.log(ARRAY);
     });
   });
 });

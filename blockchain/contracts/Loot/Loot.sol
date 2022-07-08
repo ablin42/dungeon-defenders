@@ -16,9 +16,8 @@ contract DungeonLoot is ERC721, ERC721URIStorage, LootFactory, AccessControl {
     /// @notice Mint the loot with ID#0
     /// @dev tokenId == 0 is used to indicate no loot
     constructor() ERC721("DungeonLoot", "DLOOT") {
-        // Grant the OPERATOR role to a specified account (here deployer)
+        // Role responsible for minting loot (given to Staking contract)
         _setupRole(OPERATOR_ROLE, msg.sender);
-        // Grant the ADMIN role to deployer (shouldnt be the same as OPERATOR)
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _createEmpty();
         _safeMint(address(this), 0);

@@ -76,9 +76,8 @@ contract Staking is IERC721Receiver, AccessControl {
         LootInterface _lootToken,
         IERC20 _gemsToken
     ) {
-        // Grant the OPERATOR role to a specified account (here deployer)
+        // Role responsible for allocating rewards (used by server)
         _setupRole(OPERATOR_ROLE, msg.sender);
-        // Grant the ADMIN role to deployer (shouldnt be the same as OPERATOR)
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         characterToken = _characterToken;
         lootToken = _lootToken;
