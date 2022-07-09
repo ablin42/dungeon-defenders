@@ -52,25 +52,28 @@ contract LootFactory is ContractUtils {
 
     /// @notice Create loot with randomly generated values
     /// @dev Called by createRandomLoot
-    /// @dev TODO left here
     /// @param _name Name of the loot
     /// @return The ID of the loot created
     function _createLoot(bytes32 _name) internal returns (uint256) {
         uint256 tokenId = _tokenIdCounter.current();
 
-        loot.push(_createWeapon(_name, tokenId));
+        uint8 lootType = _generateRandomUintValueInBounds(
+            _name,
+            tokenId,
+            "LOOT_TYPE",
+            0,
+            8
+        );
 
-        // TODO; lootType is only rolling 0, 1, 2 for some reason
-        // uint8 lootType = _generateRandomUintValueInBounds(_name, tokenId, "LOOT_TYPE", 0, 12);
-        // if (lootType == 0) {
-        //     loot.push(_createBackground(_name, tokenId));
-        // } else if (lootType == 1) {
-        //     loot.push(_createBoots(_name, tokenId));
-        // } else if (lootType == 2) {
-        //     loot.push(_createArmor(_name, tokenId));
-        // } else {
-        //     loot.push(_createWeapon(_name, tokenId));
-        // }
+        if (lootType == 0) {
+            loot.push(_createBackground(_name, tokenId));
+        } else if (lootType == 1) {
+            loot.push(_createBoots(_name, tokenId));
+        } else if (lootType == 2) {
+            loot.push(_createArmor(_name, tokenId));
+        } else {
+            loot.push(_createWeapon(_name, tokenId));
+        }
 
         _tokenIdCounter.increment();
         emit NewLootGenerated(tokenId, _name);

@@ -38,6 +38,8 @@ contract DungeonDefenders is ERC721, ERC721URIStorage, DefenderUtils {
     event Withdraw(address to, uint256 amount);
 
     constructor(ILoot _lootToken) ERC721("DungeonDefenders", "DDS") {
+        // Role responsible giving xp & counting win/losses, given to staking contract
+        _setupRole(OPERATOR_ROLE, msg.sender);
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         lootToken = _lootToken;
     }

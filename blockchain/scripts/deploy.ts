@@ -11,12 +11,12 @@ import {
   LOOT_ABI,
   LOOT_BYTECODE,
   STAKE_ABI,
-  STAKE_BYTECODE
-} from '../index';
+  STAKE_BYTECODE,
+} from "../index";
 
 import { Contract, Signer } from "ethers";
 
-import {promises as fs} from 'fs';
+import { promises as fs } from "fs";
 import { Gems } from "../typechain";
 
 async function deploy(signer: Signer) {
@@ -57,7 +57,7 @@ async function deploy(signer: Signer) {
   // await Promise.all([deployToken(), deployLoot()]);
 
   // *Deploy Faucet*
-  console.log("Deploying FAUCET contract")
+  console.log("Deploying FAUCET contract");
   const FaucetFactory = new ethers.ContractFactory(
     FAUCET_ABI,
     FAUCET_BYTECODE,
@@ -100,73 +100,107 @@ async function deploy(signer: Signer) {
   console.log(`Staking Contract deployed at ${stakingContract.address}`);
 
   return {
-    gemsContract, 
+    gemsContract,
     faucetContract,
     lootContract,
     defenderContract,
-    stakingContract
-  }
+    stakingContract,
+  };
 }
 
-async function setup({ 
+async function setup({
   gemsContract,
   faucetContract,
-  stakingContract
-} : {
-  gemsContract: Gems,
-  faucetContract: Contract,
-  stakingContract: Contract
+  stakingContract,
+  defenderContract,
+  lootContract,
+}: {
+  gemsContract: Gems;
+  faucetContract: Contract;
+  stakingContract: Contract;
+  lootContract: Contract;
+  defenderContract: Contract;
 }) {
-gemsContract.transfer(
-  stakingContract.address,
-  ethers.utils.parseEther("2000000")
-);
-gemsContract.transfer(
-  faucetContract.address,
-  ethers.utils.parseEther("2000000")
-);
+  const ALLOCATING_ADDRESS = "0xA5Bee0D628445024f8278974BdD2d26c4a140f76";
+
+  gemsContract.transfer(
+    stakingContract.address,
+    ethers.utils.parseEther("2000000")
+  );
+  gemsContract.transfer(
+    faucetContract.address,
+    ethers.utils.parseEther("2000000")
+  );
+  defenderContract.grantRole(
+    await defenderContract.OPERATOR_ROLE(),
+    stakingContract.address
+  );
+  lootContract.grantRole(
+    await lootContract.OPERATOR_ROLE(),
+    stakingContract.address
+  );
+  stakingContract.grantRole(
+    await stakingContract.OPERATOR_ROLE(),
+    ALLOCATING_ADDRESS
+  );
 }
 
 async function updatePackage({
-  gemsContract, 
+  gemsContract,
   faucetContract,
   lootContract,
   defenderContract,
-  stakingContract
-} : {
-  gemsContract: Contract, 
-  faucetContract: Contract,
-  lootContract: Contract,
-  defenderContract: Contract,
-  stakingContract: Contract
+  stakingContract,
+}: {
+  gemsContract: Contract;
+  faucetContract: Contract;
+  lootContract: Contract;
+  defenderContract: Contract;
+  stakingContract: Contract;
 }) {
-  const file = await fs.readFile('index.ts', { encoding: 'utf8' });
-  const lines = file.split('\n');
+  const file = await fs.readFile("index.ts", { encoding: "utf8" });
+  const lines = file.split("\n");
   const lastIdx = lines.length - 1;
-  lines[lastIdx-4] = `export const GEMS_CONTRACT_ADDRESS = '${gemsContract.address}';`;
-  lines[lastIdx-3] = `export const FAUCET_CONTRACT_ADDRESS = '${faucetContract.address}';`;
-  lines[lastIdx-2] = `export const LOOT_CONTRACT_ADDRESS = '${lootContract.address}';`;
-  lines[lastIdx-1] = `export const DEFENDER_CONTRACT_ADDRESS = '${defenderContract.address}';`;
-  lines[lastIdx] = `export const STAKE_CONTRACT_ADDRESS = '${stakingContract.address}';`;
-  await fs.writeFile('index.ts', lines.join('\n'), {encoding: 'utf8'});
+  lines[
+    lastIdx - 4
+  ] = `export const GEMS_CONTRACT_ADDRESS = '${gemsContract.address}';`;
+  lines[
+    lastIdx - 3
+  ] = `export const FAUCET_CONTRACT_ADDRESS = '${faucetContract.address}';`;
+  lines[
+    lastIdx - 2
+  ] = `export const LOOT_CONTRACT_ADDRESS = '${lootContract.address}';`;
+  lines[
+    lastIdx - 1
+  ] = `export const DEFENDER_CONTRACT_ADDRESS = '${defenderContract.address}';`;
+  lines[
+    lastIdx
+  ] = `export const STAKE_CONTRACT_ADDRESS = '${stakingContract.address}';`;
+  await fs.writeFile("index.ts", lines.join("\n"), { encoding: "utf8" });
 
-  const packageJsonStr = await fs.readFile('package.json', { encoding: 'utf8' })
+  const packageJsonStr = await fs.readFile("package.json", {
+    encoding: "utf8",
+  });
   const packageJson = JSON.parse(packageJsonStr);
-  const version = packageJson.version.split('.');
+  const version = packageJson.version.split(".");
   version[2] = (parseInt(version[2]) + 1).toString();
-  packageJson.version = version.join('.');
-  await fs.writeFile('package.json', JSON.stringify(packageJson, undefined, 2), { encoding: 'utf8' });
+  packageJson.version = version.join(".");
+  await fs.writeFile(
+    "package.json",
+    JSON.stringify(packageJson, undefined, 2),
+    { encoding: "utf8" }
+  );
 }
 
 async function main() {
   // const { signer } = await connectToWallet();
   const [signer] = await ethers.getSigners();
   const {
-    gemsContract, 
+    gemsContract,
     faucetContract,
     lootContract,
     defenderContract,
-    stakingContract
+    stakingContract,
   } = await deploy(signer);
 
   console.log(`GEMS_CONTRACT_ADDRESS = '${gemsContract.address}'`);
@@ -176,17 +210,19 @@ async function main() {
   console.log(`STAKE_CONTRACT_ADDRESS = '${stakingContract.address}'`);
 
   await updatePackage({
-    gemsContract, 
+    gemsContract,
     faucetContract,
     lootContract,
     defenderContract,
-    stakingContract
+    stakingContract,
   });
 
   await setup({
-    gemsContract, 
+    gemsContract,
     stakingContract,
     faucetContract,
+    lootContract,
+    defenderContract,
   });
 }
 
