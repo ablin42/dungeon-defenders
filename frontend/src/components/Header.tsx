@@ -7,6 +7,7 @@ import styled from 'styled-components';
 // *INTERNALS*
 import ConnectWallet from './Actions/ConnectWallet';
 import { useGemsBalance, useStakes } from '../hooks';
+import Button from './Button';
 
 const Wrapper = styled.div`
   display: flex;
@@ -49,6 +50,11 @@ const Header = () => {
               </>
             )}
             <ConnectWallet />
+            <Link to={`/About`} className="ms-3">
+              <Button width="75px" size="sm" btnType="outline-primary">
+                About
+              </Button>
+            </Link>
           </Wrapper>
         </div>
       </div>

@@ -14,6 +14,7 @@ type ActionProps = {
   userAddress: string;
 };
 
+// TODO this could be deleted, only the staking contract should be able to mint, keeping it for debug purposes (for now)
 const Loot: React.FC<ActionProps> = ({ userAddress }) => {
   const navigate = useNavigate();
   const [isMinting, setIsMinting] = useState(false);
@@ -64,7 +65,7 @@ const Loot: React.FC<ActionProps> = ({ userAddress }) => {
 
   return (
     <div className="col-8 offset-2 mt-4">
-      <label htmlFor="gemsAmount">{'Your Loot Name'}</label>
+      <label htmlFor="gemsAmount">{'Your Loot Name (Demo)'}</label>
       <div className="input-group text-start mt-2">
         <input
           type="text"

@@ -15,6 +15,7 @@ import SingleNFT from './routes/SingleNFT';
 import Error from './components/Error';
 import Play from './routes/Play';
 import SingleLOOT from './routes/SingleLOOT';
+import About from './routes/About';
 
 const config = {
   readOnlyChainId: 5,
@@ -30,6 +31,7 @@ root.render(
       <Routes>
         <Route path="/" element={<App />}>
           <Route path="/" element={<Home />} />
+          <Route path="/About" element={<About />} />
           <Route path="/Play" element={<Play />} />
           <Route path="/NFT/user/:userAddress" element={<UserNFT />} />
           <Route path="/NFT/:nftId" element={<SingleNFT />} />
