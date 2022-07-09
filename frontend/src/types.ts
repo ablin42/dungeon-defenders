@@ -12,4 +12,5 @@ export interface NFT {
   image: string;
   external_url: string;
   attributes: NFTAttribute[];
+  owner?: string;
 }

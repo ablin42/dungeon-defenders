@@ -26,12 +26,11 @@ export default function LatestNFT() {
 
   return (
     <div className="container">
-      <h2 className="text-center mt-5 mb-5">Our Newly Born Defenders</h2>
+      <h2 className="text-center mt-5 mb-5">Newly Born Defenders</h2>
       {latestNFT && latestNFT.length > 0 ? (
         <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
           {latestNFT.map((NFT: NFT) => (
-            // TODO owner 0x, could maybe fetch real owner
-            <NFTCard key={NFT.name} NFT={NFT} owner="0x" />
+            <NFTCard key={NFT.name} NFT={NFT} owner={NFT.owner || '0x'} />
           ))}
         </div>
       ) : (
