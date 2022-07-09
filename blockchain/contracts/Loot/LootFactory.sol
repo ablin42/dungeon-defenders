@@ -62,7 +62,7 @@ contract LootFactory is ContractUtils {
             tokenId,
             "LOOT_TYPE",
             0,
-            4
+            8
         );
 
         if (lootType == 0) {
