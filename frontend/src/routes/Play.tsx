@@ -45,9 +45,9 @@ export default function Play() {
   const navigate = useNavigate();
   const { account } = useEthers();
   const { state } = useLocation() as { state: State };
-  const stakes = useStakes(account && account);
+  const stakes = useStakes(account);
   const weaponId = (state && state.weaponId) || (state && state.defenderId);
-  const defender = useDefender(stakes && +stakes.tokenId); //?state.defenderId
+  const defender = useDefender(stakes && stakes.tokenId.toNumber()); //?state.defenderId
   const weapon = useLoot(stakes && +stakes.weaponId);
   const { state: unstakeState, send: sendUnstake } = useUnstake();
   const { state: emergencyState, send: sendEmergency } = useEmergency();
@@ -113,7 +113,6 @@ export default function Play() {
       return;
     }
 
-    console.log(defender, weapon);
     if (!defender || (weaponId && !weapon)) {
       return;
     }

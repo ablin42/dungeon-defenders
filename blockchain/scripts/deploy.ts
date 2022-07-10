@@ -19,6 +19,8 @@ import { Contract, Signer } from "ethers";
 import { promises as fs } from "fs";
 import { Gems } from "../typechain";
 
+import { setup } from './setup';
+
 async function deploy(signer: Signer) {
   // *Deploy Gems*
   const TokenFactory = new ethers.ContractFactory(
@@ -106,43 +108,6 @@ async function deploy(signer: Signer) {
     defenderContract,
     stakingContract,
   };
-}
-
-async function setup({
-  gemsContract,
-  faucetContract,
-  stakingContract,
-  defenderContract,
-  lootContract,
-}: {
-  gemsContract: Gems;
-  faucetContract: Contract;
-  stakingContract: Contract;
-  lootContract: Contract;
-  defenderContract: Contract;
-}) {
-  const ALLOCATING_ADDRESS = "0xA5Bee0D628445024f8278974BdD2d26c4a140f76";
-
-  gemsContract.transfer(
-    stakingContract.address,
-    ethers.utils.parseEther("2000000")
-  );
-  gemsContract.transfer(
-    faucetContract.address,
-    ethers.utils.parseEther("2000000")
-  );
-  defenderContract.grantRole(
-    await defenderContract.OPERATOR_ROLE(),
-    stakingContract.address
-  );
-  lootContract.grantRole(
-    await lootContract.OPERATOR_ROLE(),
-    stakingContract.address
-  );
-  stakingContract.grantRole(
-    await stakingContract.OPERATOR_ROLE(),
-    ALLOCATING_ADDRESS
-  );
 }
 
 async function updatePackage({

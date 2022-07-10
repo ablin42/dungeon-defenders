@@ -8,6 +8,7 @@ import Play from './Actions/Play';
 import Equipment from './Actions/Equipment';
 import { useStakes, useSlots } from '../hooks';
 import { NFTAttribute, NFT } from '../types';
+import { API_ADDRESS } from '../constants';
 
 interface Props {
   NFT: NFT;
@@ -19,23 +20,45 @@ const BADGE_TYPE = ['primary', 'primary', 'success', 'success', 'success', 'succ
 
 // TODO should make as pure as possible
 const NFTCard = ({ NFT, owner, isLoot }: Props) => {
-  const { name, tokenId, image, attributes } = NFT;
+  const { name, tokenId, image: nftImage, attributes } = NFT;
+  const [image, setImage] = useState(nftImage);
   const actualTokenId = tokenId || +name.replace(/^\D+/g, ''); // Trick to bypass the issue of tokenId not being set in the NFT object
   const { account } = useEthers();
   const stakes = account && useStakes(account);
-  const slots = !isLoot && useSlots(tokenId);
+  const slots = !isLoot && useSlots(actualTokenId);
   const [equipedLoot, setEquipedLoot] = useState(slots ? [slots[1], slots[2], slots[3]] : [0, 0, 0]);
+  const [fetching, setFetching] = useState(false);
   const userStaking = stakes && +stakes.timestamp > 0;
   const stakedId = stakes && +stakes.tokenId;
   const isOwner = account === owner;
   const isUserStakedToken = userStaking && actualTokenId == stakedId;
 
+  const getImage = () => {
+    if (actualTokenId === undefined || isLoot) {
+      return;
+    }
+
+    if (fetching) {
+      return;
+    }
+
+    setFetching(true);
+    fetch(`${API_ADDRESS}/v1/nft/${actualTokenId}/render`).then(async res => setImage(URL.createObjectURL(await res.blob()))).finally(() => setFetching(false));
+  }
+
   useEffect(() => {
+    getImage();
+  }, [actualTokenId])
+
+  console.log(slots);
+  useEffect(() => {
+    console.log(slots);
     if (slots && slots !== equipedLoot) setEquipedLoot(slots);
   }, [slots.toString()]);
 
   const onEquipmentUpdated = (updatedSlots: number[]) => {
     setEquipedLoot(updatedSlots);
+    getImage();
   };
 
   const getMetadataDisplay = () => {

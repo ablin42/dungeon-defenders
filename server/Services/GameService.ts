@@ -26,7 +26,7 @@ export function connectToStakingContract(funcName: string) {
         signer
     ) as StakingContract;
 
-    return { provider, wallet, signer, contract}
+    return { provider, wallet, signer, contract }
 }
 
 export async function allocateRewards(address: string) {
@@ -34,7 +34,7 @@ export async function allocateRewards(address: string) {
     if (!connectResult) {
         return;
     }
-    const {contract} = connectResult;
+    const { contract } = connectResult;
 
     const stake = await contract.stakes(address);
     if (!stake.isInitialized) {
@@ -45,7 +45,8 @@ export async function allocateRewards(address: string) {
     const gemReward = Math.floor(100 + Math.random() * 100);
     const gemRewardBN = ethers.utils.parseEther(gemReward.toString());;
     const expReward = Math.floor(35 + Math.random() * 65);
-    const shouldRewardLoot = Math.random() < 0.33;
+    const shouldRewardLootOdds = Math.random();
+    const shouldRewardLoot = shouldRewardLootOdds < 0.4;
     const tx = await contract.allocateRewards(gemRewardBN, expReward, address, shouldRewardLoot);
     await tx.wait();
 }

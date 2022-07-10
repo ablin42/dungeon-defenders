@@ -90,7 +90,7 @@ const About = () => {
           <div className="col-lg-4">
             <h3>Ramsey</h3>
             <img src="https://i.imgur.com/ppKyvY7.png" />
-            <p className="text-muted">Best Teammate Ever (Put your desc here + links..)</p>
+            <p className="text-muted">Builder</p>
             <div>
               <a className="m-2" target="_blank" rel="noreferrer" href="https://github.com/rkhadder">
                 <FontAwesomeIcon icon={faGithub} fontSize={25} color="#456cd1" />

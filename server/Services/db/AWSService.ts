@@ -3,7 +3,7 @@ import { AWS_REGION } from "../../Config/Config";
 import { logError } from "../../Config/Logger";
 import { DatabaseInterface } from "./DatabaseInterface";
 
-config.update({region: AWS_REGION})
+config.update({ region: AWS_REGION })
 const db = new DynamoDB.DocumentClient();
 
 const LOOT_TABLE_NAME = "dungeondefenders-loot";
@@ -33,7 +33,7 @@ async function getLootToMint() {
         IndexName: TOKEN_ID_BLOCK_NUMBER_INDEX,
         Limit: 20,
     }).promise();
-    
+
     return (results.Items ?? []).reduce((map, item) => {
         map[item.tokenId] = item.blockNumber;
         return map;
@@ -58,16 +58,16 @@ async function updateLootOwner(tokenId: string, owner: string) {
     }
 }
 
-async function getLootOwner(tokenId: string) : Promise<string | undefined> {
+async function getLootOwner(tokenId: string): Promise<string | undefined> {
     const results = await db
         .query({
             TableName: LOOT_TABLE_NAME,
             KeyConditionExpression: "#tokenId = :tokenId",
             ExpressionAttributeNames: {
-              "#tokenId": "tokenId"
+                "#tokenId": "tokenId"
             },
             ExpressionAttributeValues: {
-              ":tokenId": tokenId
+                ":tokenId": tokenId
             }
         }).promise();
 
@@ -78,15 +78,15 @@ async function getLootOwner(tokenId: string) : Promise<string | undefined> {
     return results.Items[0].tokenId;
 }
 
-async function getLootCollection(address: string) : Promise<string[] | undefined> {
+async function getLootCollection(address: string): Promise<string[] | undefined> {
     const results = await db
         .query({
             TableName: LOOT_TABLE_NAME,
             IndexName: OWNER_ADDRESS_INDEX,
-            ScanIndexForward: false,  
+            ScanIndexForward: false,
             KeyConditionExpression: "ownerAddress = :owner",
             ExpressionAttributeValues: {
-              ":owner": address
+                ":owner": address
             }
         }).promise();
 
@@ -118,7 +118,7 @@ async function getNFTToMint() {
         IndexName: TOKEN_ID_BLOCK_NUMBER_INDEX,
         Limit: 20,
     }).promise();
-    
+
     return (results.Items ?? []).reduce((map, item) => {
         map[item.tokenId] = item.blockNumber;
         return map;
@@ -143,16 +143,16 @@ async function updateNFTOwner(tokenId: string, owner: string) {
     }
 }
 
-async function getNFTOwner(tokenId: string) : Promise<string | undefined> {
+async function getNFTOwner(tokenId: string): Promise<string | undefined> {
     const results = await db
         .query({
             TableName: DEFENDER_TABLE_NAME,
             KeyConditionExpression: "#tokenId = :tokenId",
             ExpressionAttributeNames: {
-              "#tokenId": "tokenId"
+                "#tokenId": "tokenId"
             },
             ExpressionAttributeValues: {
-              ":tokenId": tokenId
+                ":tokenId": tokenId
             }
         }).promise();
 
@@ -163,15 +163,15 @@ async function getNFTOwner(tokenId: string) : Promise<string | undefined> {
     return results.Items[0].tokenId;
 }
 
-async function getNFTCollection(address: string) : Promise<string[] | undefined> {
+async function getNFTCollection(address: string): Promise<string[] | undefined> {
     const results = await db
         .query({
             TableName: DEFENDER_TABLE_NAME,
-            ScanIndexForward: false,  
+            ScanIndexForward: false,
             IndexName: OWNER_ADDRESS_INDEX,
             KeyConditionExpression: "ownerAddress = :owner",
             ExpressionAttributeValues: {
-              ":owner": address
+                ":owner": address
             }
         }).promise();
 
@@ -189,7 +189,7 @@ const databaseConection: DatabaseInterface = {
     updateLootOwner,
     getLootOwner,
     getLootCollection,
-    
+
     // NFT
     updateNFTMintTime,
     getNFTToMint,

@@ -1,6 +1,6 @@
 {
   "name": "dungeon-defenders-contracts",
-  "version": "0.1.20",
+  "version": "0.1.23",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "private": true,
@@ -11,8 +11,9 @@
     "module:build": "npx tsc",
     "module:updateDependents": "cd ../frontend && npm update dungeon-defenders-contracts && cd ../server && npm update dungeon-defenders-contracts",
     "deploy": "npx hardhat run ./scripts/deploy.ts --network goerli",
+    "setup": "npx hardhat run ./scripts/setup.ts --network goerli",
     "verify": "npx hardhat run ./scripts/verify.ts --network goerli",
-    "deployAndVerify": "npm run deply && npm run verify",
+    "deployAndVerify": "npm run deploy && npm run verify",
     "deployVerifyModule": "npm run deploy && npm run verify && npm run module",
     "transferGems": "ts-node --files ./scripts/transferGems.ts",
     "deploy:loot": "ts-node --files ./scripts/Loot/deploy.ts",
