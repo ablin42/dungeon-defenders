@@ -3,9 +3,9 @@ import { logInfo } from "../../Config/Logger";
 import { getNFT, renderNFT, getNFTCollection, getLatestNFTs } from "../../Services/NFTService";
 
 const router = express.Router();
-router.post('/:id/render', async (req, res) => {
-    logInfo(`Generating NFT`);
-    const renderedNFT = await renderNFT(req.params.id);
+router.get('/:id/render', async (req, res) => {
+    logInfo(`Rendering NFT`);
+    const renderedNFT = await renderNFT(parseInt(req.params.id));
 
     res.writeHead(200, {
         "Content-Type": "image/jpeg",
@@ -18,7 +18,7 @@ router.get('/latest/:numToGet', async (req, res) => {
     const numToGet = parseInt(req.params.numToGet);
     logInfo(`Getting latest=${numToGet} NFTs`);
     const NFTs = await getLatestNFTs(numToGet);
-    
+
     return res.json(NFTs);
 })
 router.get('/:id', async (req, res) => {

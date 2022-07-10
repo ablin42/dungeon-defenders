@@ -55,7 +55,7 @@ const Mint: React.FC<ActionProps> = ({ userAddress }) => {
 
   const mint = async () => {
     if (isMinting) return;
-    sendMint(userAddress, ethers.utils.formatBytes32String(name));
+    sendMint(userAddress, ethers.utils.formatBytes32String(name), { value: ethers.utils.parseEther('0.01') });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

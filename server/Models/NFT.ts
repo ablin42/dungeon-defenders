@@ -16,8 +16,7 @@ export interface NFT {
 
 // A component used to generate an NFT 
 export interface NFTComponent {
-    imgPath: string,
-    attribute: NFTAttribute
+    imgPath: string
 }
 
 // A generated NFT

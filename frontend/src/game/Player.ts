@@ -16,17 +16,16 @@ export class Weapon {
     isAttacking = false;
 
     constructor(localPos: Vector2, _origin: Vector2, player: Player) {
-        this.localPos =  localPos.mul(UNIT_SCALE);
+        this.localPos = localPos.mul(UNIT_SCALE);
         this.player = player;
     }
 
-    static preload(scene : Phaser.Scene) {
+    static preload(scene: Phaser.Scene) {
         scene.load.image('weapon', getPublicAssetUrl('GoldenLongSword.png'));
     }
 
-    create(scene : Phaser.Scene, weaponType: number, layer: Phaser.GameObjects.Layer) {
+    create(scene: Phaser.Scene, weaponType: number, layer: Phaser.GameObjects.Layer) {
         this.asset = WEAPONS[weaponType];
-        console.log(weaponType, this.asset)
         this.sprite = scene.add.image(320, 320, this.asset.key);
         this.sprite.setOrigin((this.asset.center.x - 4) / this.asset.frameSize.x, this.asset.center.y / this.asset.frameSize.y);
         this.sprite.scale = UNIT_SCALE;
@@ -41,7 +40,7 @@ export class Weapon {
             duration: 100,
             ease: 'Linear',
             onUpdate: (t) => {
-                this.isAttacking = t.getValue() !== 140;                
+                this.isAttacking = t.getValue() !== 140;
                 this.sprite.setRotation(degToRad(-90 + t.getValue() * (this.player.sprite.flipX ? -1 : 1)))
             }
         });
@@ -50,7 +49,7 @@ export class Weapon {
         layer.add(this.sprite);
     }
 
-    update(scene : Phaser.Scene, cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys) {
+    update(scene: Phaser.Scene, cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys) {
         if (!this.isAttacking) {
             this.sprite.setRotation(this.player.sprite.flipX ? degToRad(this.FLIP_BASE_ROT) : degToRad(this.BASE_ROT));
         }
@@ -83,23 +82,22 @@ export class Player {
 
     getSprite() { return this.sprite; }
 
-    static preload(scene : Phaser.Scene) {
-        scene.load.spritesheet('player', getPublicAssetUrl('RedKnight.png'), {frameWidth: 16, frameHeight: 28});
+    static preload(scene: Phaser.Scene) {
+        scene.load.spritesheet('player', getPublicAssetUrl('RedKnight.png'), { frameWidth: 16, frameHeight: 28 });
         Weapon.preload(scene);
     }
 
-    create(scene : Phaser.Scene, characterType: number, weaponType: number, layer: Phaser.GameObjects.Layer, x: number, y: number) {
+    create(scene: Phaser.Scene, characterType: number, weaponType: number, layer: Phaser.GameObjects.Layer, x: number, y: number) {
         const gameAsset = CHARACTERS[characterType];
-        console.log(gameAsset);
         scene.anims.create({
             key: 'playerIdle',
-            frames: scene.anims.generateFrameNumbers(gameAsset.key, { start: 0, end: 1}),
+            frames: scene.anims.generateFrameNumbers(gameAsset.key, { start: 0, end: 1 }),
             frameRate: 6,
             repeat: -1
         })
         scene.anims.create({
             key: 'playerWalking',
-            frames: scene.anims.generateFrameNumbers(gameAsset.key, { start: 4, end: 7}),
+            frames: scene.anims.generateFrameNumbers(gameAsset.key, { start: 4, end: 7 }),
             frameRate: 8,
             repeat: -1
         })
@@ -116,9 +114,9 @@ export class Player {
         this.weapon.create(scene, weaponType, layer);
     }
 
-    update(scene : Phaser.Scene, cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys) {
+    update(scene: Phaser.Scene, cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys) {
         if (cursorKeys.right.isDown) {
-            this.vx =this.speed;
+            this.vx = this.speed;
             this.sprite.setFlipX(false);
         } else if (cursorKeys.left.isDown) {
             this.vx = -this.speed;
@@ -126,7 +124,7 @@ export class Player {
         } else {
             this.vx = 0;
         }
-        
+
         if (cursorKeys.down.isDown) {
             this.vy = this.speed;
         } else if (cursorKeys.up.isDown) {

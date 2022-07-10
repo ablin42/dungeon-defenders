@@ -54,10 +54,10 @@ export function useUnequip() {
 }
 
 // Fetch loot id in slots
-export function useSlots(tokenId: string | number) {
+export function useSlots(tokenId: string | number | undefined) {
   const { value, error } =
     useCall(
-      tokenId && {
+      tokenId !== undefined && {
         contract: NFTContract,
         method: 'getSlots',
         args: [tokenId],
@@ -71,15 +71,16 @@ export function useSlots(tokenId: string | number) {
     console.error(`Error fetching slots for Defender #${tokenId}`, error.message);
     return [0, 0, 0];
   }
+
   const slots = [+value?.slots[1], +value?.slots[2], +value?.slots[3]];
   return slots;
 }
 
 // Fetch loot id in slots
-export function useAesthetics(tokenId: string | number) {
+export function useAesthetics(tokenId: string | number | undefined) {
   const { value, error } =
     useCall(
-      tokenId && {
+      tokenId !== undefined && {
         contract: NFTContract,
         method: 'aesthetics',
         args: [tokenId],
@@ -108,13 +109,11 @@ export type Defender = {
 };
 export function useDefender(tokenId: string | number | undefined) {
   const { value, error } =
-    useCall(
-      tokenId && {
-        contract: NFTContract,
-        method: 'defenders',
-        args: [tokenId],
-      },
-    ) ?? {};
+    useCall(tokenId !== undefined && {
+      contract: NFTContract,
+      method: 'defenders',
+      args: [tokenId],
+    }) ?? {};
 
   // ? Circumventing a bug that probably happened due to an NFT
   // ?  being minted before server listener for events, and then picked it up
@@ -143,7 +142,7 @@ export type Loot = {
 export function useLoot(tokenId: string | number | undefined) {
   const { value, error } =
     useCall(
-      tokenId && {
+      tokenId !== undefined && {
         contract: LOOTContract,
         method: 'loot',
         args: [tokenId],
@@ -205,7 +204,7 @@ export function useAllowance(userAddress: string) {
 export function useTokenURI(tokenId: string | number) {
   const { value, error } =
     useCall(
-      tokenId && {
+      tokenId !== undefined && {
         contract: NFTContract,
         method: 'tokenURI',
         args: [tokenId],
@@ -257,11 +256,11 @@ export function useAllowanceGEMS(userAddress: string, contract: string) {
   const { value, error } =
     useCall(
       userAddress &&
-        contract && {
-          contract: GEMSContract,
-          method: 'allowance',
-          args: [userAddress, contract],
-        },
+      contract && {
+        contract: GEMSContract,
+        method: 'allowance',
+        args: [userAddress, contract],
+      },
     ) ?? {};
   const allowance = value ? parseInt(ethers.utils.formatEther(value[0])) : undefined;
 
