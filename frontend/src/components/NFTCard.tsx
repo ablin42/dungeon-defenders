@@ -43,16 +43,16 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
     }
 
     setFetching(true);
-    fetch(`${API_ADDRESS}/v1/nft/${actualTokenId}/render`).then(async res => setImage(URL.createObjectURL(await res.blob()))).finally(() => setFetching(false));
-  }
+    fetch(`${API_ADDRESS}/v1/nft/${actualTokenId}/render`)
+      .then(async (res) => setImage(URL.createObjectURL(await res.blob())))
+      .finally(() => setFetching(false));
+  };
 
   useEffect(() => {
     getImage();
-  }, [actualTokenId])
+  }, [actualTokenId]);
 
-  console.log(slots);
   useEffect(() => {
-    console.log(slots);
     if (slots && slots !== equipedLoot) setEquipedLoot(slots);
   }, [slots.toString()]);
 
@@ -96,7 +96,16 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
   return (
     <div className="col">
       <div className="card shadow-sm">
-        <img className="card-img-top" src={image} alt="Card cap" />
+        <div className="flip-card">
+          <div className="flip-card-inner">
+            <div className="flip-card-front">
+              <img className="card-img-top" src={image} alt="Rendered NFT" />
+            </div>
+            <div className="flip-card-back">
+              <img className="card-img-top" src={nftImage} alt="Svg NFT" />
+            </div>
+          </div>
+        </div>
         {getMetadataDisplay()}
       </div>
     </div>
