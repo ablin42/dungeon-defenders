@@ -26,7 +26,7 @@ export default function SingleNFT() {
   return (
     <div className="text-center mt-5 mb-5">
       <h2 className="mb-2">Oh, Great Defender !</h2>
-      <div className="container col-4">
+      <div className="container col-3">
         {URI ? <NFTCard NFT={NFTObject} owner={owner} /> : <LoadWith404 isLoading={isLoading} />}
       </div>
     </div>

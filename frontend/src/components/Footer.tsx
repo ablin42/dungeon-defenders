@@ -19,12 +19,12 @@ const Footer = () => {
           Made with ❤️ by
           <StyledLink target="_blank" rel="noreferrer" href="https://github.com/rkhadder">
             {' rkhadder '}
-            <FontAwesomeIcon icon={faGithub} fontSize={25} color="#456cd1" />
+            <FontAwesomeIcon className="fa-icon" icon={faGithub} fontSize={25} />
           </StyledLink>
           {' & '}
           <StyledLink target="_blank" rel="noreferrer" href="https://github.com/ablin42">
             {'0xharb '}
-            <FontAwesomeIcon icon={faGithub} fontSize={25} color="#456cd1" />
+            <FontAwesomeIcon className="fa-icon" icon={faGithub} fontSize={25} />
           </StyledLink>
         </p>
       </div>

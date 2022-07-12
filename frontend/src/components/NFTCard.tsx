@@ -16,7 +16,18 @@ interface Props {
   isLoot?: boolean;
 }
 
-const BADGE_TYPE = ['primary', 'primary', 'success', 'success', 'success', 'success', 'info', 'info', 'info', 'info'];
+const BADGE_TYPE = [
+  'primary',
+  'primary',
+  'secondary',
+  'secondary',
+  'secondary',
+  'secondary',
+  'info',
+  'info',
+  'info',
+  'info',
+];
 
 // TODO should make as pure as possible
 const NFTCard = ({ NFT, owner, isLoot }: Props) => {
@@ -34,25 +45,19 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
   const isUserStakedToken = userStaking && actualTokenId == stakedId;
 
   const getImage = () => {
-    if (actualTokenId === undefined || isLoot) {
-      return;
-    }
-
-    if (fetching) {
-      return;
-    }
+    if (fetching || actualTokenId === undefined || isLoot) return;
 
     setFetching(true);
-    fetch(`${API_ADDRESS}/v1/nft/${actualTokenId}/render`).then(async res => setImage(URL.createObjectURL(await res.blob()))).finally(() => setFetching(false));
-  }
+    fetch(`${API_ADDRESS}/v1/nft/${actualTokenId}/render`)
+      .then(async (res) => setImage(URL.createObjectURL(await res.blob())))
+      .finally(() => setFetching(false));
+  };
 
   useEffect(() => {
     getImage();
-  }, [actualTokenId])
+  }, [actualTokenId]);
 
-  console.log(slots);
   useEffect(() => {
-    console.log(slots);
     if (slots && slots !== equipedLoot) setEquipedLoot(slots);
   }, [slots.toString()]);
 
@@ -67,7 +72,6 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
         <h5 className="card-title text-start ms-1">
           <Link to={`/NFT/${actualTokenId}`}>{name}</Link>
         </h5>
-        {/* <p className="card-text">{description}</p> */}
         <div className="d-flex justify-content-between align-items-center">
           <div className="text-start">
             {attributes.map((attribute: NFTAttribute, index: number) => {
@@ -96,7 +100,16 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
   return (
     <div className="col">
       <div className="card shadow-sm">
-        <img className="card-img-top" src={image} alt="Card cap" />
+        <div className="flip-card">
+          <div className="flip-card-inner">
+            <div className="flip-card-front">
+              <img className="card-img-top" src={image} alt="Rendered NFT" />
+            </div>
+            <div className="flip-card-back">
+              <img className="card-img-top" src={nftImage} alt="Svg NFT" />
+            </div>
+          </div>
+        </div>
         {getMetadataDisplay()}
       </div>
     </div>

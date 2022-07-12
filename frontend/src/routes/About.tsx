@@ -68,17 +68,17 @@ const About = () => {
             <p className="text-muted">Fullstack Dev / JS lover / Web3 enjoyoooor</p>
             <div>
               <a className="m-2" target="_blank" rel="noreferrer" href="https://github.com/ablin42">
-                <FontAwesomeIcon icon={faGithub} fontSize={25} color="#456cd1" />
+                <FontAwesomeIcon className="fa-icon" icon={faGithub} fontSize={25}  />
               </a>
               <a className="m-2" target="_blank" rel="noreferrer" href="https://twitter.com/0xharb">
-                <FontAwesomeIcon icon={faTwitter} fontSize={25} color="#456cd1" />
+                <FontAwesomeIcon className="fa-icon" icon={faTwitter} fontSize={25}  />
               </a>
               <a className="m-2 d-inline-block" href="#">
                 <FontAwesomeIcon
+                  className="fa-icon"
                   icon={faEthereum}
                   fontSize={25}
                   onClick={() => handleClipboard(HARB_DONATION_ADDRESS)}
-                  color="#456cd1"
                 />
                 <div className="tooltipSpecial" id="harb">
                   <span className="tooltiptextSpecial">Copied to clipboard!</span>
@@ -93,14 +93,14 @@ const About = () => {
             <p className="text-muted">Builder</p>
             <div>
               <a className="m-2" target="_blank" rel="noreferrer" href="https://github.com/rkhadder">
-                <FontAwesomeIcon icon={faGithub} fontSize={25} color="#456cd1" />
+                <FontAwesomeIcon className="fa-icon" icon={faGithub} fontSize={25}  />
               </a>
               <a className="m-2 d-inline-block" href="#">
                 <FontAwesomeIcon
+                  className="fa-icon"
                   icon={faEthereum}
                   fontSize={25}
                   onClick={() => handleClipboard(RAMSEY_DONATION_ADDRESS)}
-                  color="#456cd1"
                 />
                 <div className="tooltipSpecial" id="ramsey">
                   <span className="tooltiptextSpecial">Copied to clipboard!</span>
