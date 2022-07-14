@@ -165,7 +165,7 @@ contract DungeonDefenders is ERC721, ERC721URIStorage, DefenderUtils {
 
         parts[
             0
-        ] = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" /><text x="10" y="20" class="base">';
+        ] = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="#101010" /><text x="10" y="20" class="base">';
 
         parts[1] = bytes32ToString(defenders[tokenId].name);
 

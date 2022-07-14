@@ -64,14 +64,14 @@ const About = () => {
         <div className="row mb-5">
           <div className="col-lg-4 offset-2">
             <h3>0xharb</h3>
-            <img src="https://i.imgur.com/pwSuocH.png" />
+            <img src="/0xharb.png" />
             <p className="text-muted">Fullstack Dev / JS lover / Web3 enjoyoooor</p>
             <div>
               <a className="m-2" target="_blank" rel="noreferrer" href="https://github.com/ablin42">
-                <FontAwesomeIcon className="fa-icon" icon={faGithub} fontSize={25}  />
+                <FontAwesomeIcon className="fa-icon" icon={faGithub} fontSize={25} />
               </a>
               <a className="m-2" target="_blank" rel="noreferrer" href="https://twitter.com/0xharb">
-                <FontAwesomeIcon className="fa-icon" icon={faTwitter} fontSize={25}  />
+                <FontAwesomeIcon className="fa-icon" icon={faTwitter} fontSize={25} />
               </a>
               <a className="m-2 d-inline-block" href="#">
                 <FontAwesomeIcon
@@ -89,11 +89,11 @@ const About = () => {
 
           <div className="col-lg-4">
             <h3>Ramsey</h3>
-            <img src="https://i.imgur.com/ppKyvY7.png" />
+            <img src="/ramsey.png" />
             <p className="text-muted">Builder</p>
             <div>
               <a className="m-2" target="_blank" rel="noreferrer" href="https://github.com/rkhadder">
-                <FontAwesomeIcon className="fa-icon" icon={faGithub} fontSize={25}  />
+                <FontAwesomeIcon className="fa-icon" icon={faGithub} fontSize={25} />
               </a>
               <a className="m-2 d-inline-block" href="#">
                 <FontAwesomeIcon

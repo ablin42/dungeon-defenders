@@ -45,10 +45,13 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
   const isUserStakedToken = userStaking && actualTokenId == stakedId;
 
   const getImage = () => {
-    if (fetching || actualTokenId === undefined || isLoot) return;
+    if (fetching || actualTokenId === undefined) return;
 
     setFetching(true);
-    fetch(`${API_ADDRESS}/v1/nft/${actualTokenId}/render`)
+    const toFetch = isLoot
+      ? `${API_ADDRESS}/v1/loot/${actualTokenId}/render`
+      : `${API_ADDRESS}/v1/nft/${actualTokenId}/render`;
+    fetch(toFetch)
       .then(async (res) => setImage(URL.createObjectURL(await res.blob())))
       .finally(() => setFetching(false));
   };

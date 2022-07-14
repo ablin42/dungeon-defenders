@@ -1,14 +1,25 @@
 import express, { Router } from "express";
 import { logInfo } from "../../Config/Logger";
-import { getLatestLoots, getLootCollection } from "../../Services/LootService";
+import { getLatestLoots, getLootCollection, renderLoot } from "../../Services/LootService";
 
 const router = express.Router();
 
+router.get('/:id/render', async (req, res) => {
+    logInfo(`Rendering NFT`);
+    const renderedLoot = await renderLoot(parseInt(req.params.id));
+
+    res.writeHead(200, {
+        "Content-Type": "image/jpeg",
+        "Content-Length": renderedLoot.length
+    });
+
+    return res.end(renderedLoot);
+})
 router.get('/latest/:numToGet', async (req, res) => {
     const numToGet = parseInt(req.params.numToGet);
     logInfo(`Getting latest=${numToGet} NFTs`);
     const NFTs = await getLatestLoots(numToGet);
-    
+
     return res.json(NFTs);
 })
 

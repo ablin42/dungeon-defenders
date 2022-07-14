@@ -1,35 +1,47 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
 
-$theme-colors: (
-  'primary': #560bad,
-  'secondary': #7209b7,
-  'info': #3f37c9,
-  'warning': #7209b7,
-  'danger': #f72585,
-  'success': #1d7a65,
-);
-
-@import '../node_modules/bootstrap/scss/bootstrap';
-
 html {
-  --main: #08ad5f;
-  --main-light: #0ade7a;
-  --light-shade: #d1cdc7;
-  --lighter-shade: white;
+  --main-dark: #1e6262;
+  --main: #2d767f;
+  --main-light: #b4f1f1;
+  --light-shade: #efeeed;
+  --lighter-shade: #f9f9f9;
+  --lightest-shade: #ffffff;
+  --grey: #232628;
   --dark-shade: #1c1e1f;
   --darker-shade: #181a1b;
+  --darkest-shade: #101010;
 }
 
 html[data-theme='dark'] {
-  //   background: url('./bg/diagmonds.png');
-
-  --main: #08ad5f;
-  --main-light: #0ade7a;
-  --dark-shade: #d1cdc7;
-  --darker-shade: white;
+  --main-dark: #1e6262;
+  --main: #2d767f;
+  --main-light: #b4f1f1;
+  --dark-shade: #efeeed;
+  --darker-shade: #f9f9f9;
+  --darkest-shade: #ffffff;
+  --grey: #e3e3e3;
   --light-shade: #1c1e1f;
   --lighter-shade: #181a1b;
+  --lightest-shade: #101010;
 }
+
+$theme-colors: (
+  //   'primary': #560bad,
+  //   'secondary': #7209b7,
+  //   'info': #3f37c9,
+  //   'warning': #7209b7,
+  //   'danger': #f72585,
+  //   'success': #1d7a65,
+  'primary': #2d767f,
+  'secondary': #b4f1f1,
+  'info': #ecfffb,
+  'warning': #facf5a,
+  'danger': #ff5959,
+  'success': #2cb978
+);
+
+@import '../node_modules/bootstrap/scss/bootstrap';
 
 body,
 html,
@@ -46,12 +58,12 @@ html,
 
 a,
 .fa-icon {
-  color: $primary; //TODO not working
+  color: var(--main);
 }
 
 a:hover,
 .fa-icon:hover {
-  color: $secondary;
+  color: var(--main-light);
 }
 
 #root {
@@ -76,9 +88,9 @@ a {
 }
 
 .card {
-  background-color: rgb(24, 26, 27);
+  background-color: var(--darker-shade);
   border-color: rgba(140, 130, 115, 0.13);
-  color: #c8c3bc;
+  color: var(--light-shade);
 }
 
 .bg-dark {
@@ -89,14 +101,18 @@ a {
   width: 250px;
 }
 
+.navbar-brand {
+  color: var(--main) !important;
+}
+
 /* just for demo purposes */
 .btn {
   width: 175px;
 }
 
 .list-group-item {
-  color: #ebebeb !important;
-  background-color: #101010 !important;
+  color: var(--light-shade) !important;
+  background-color: var(--darkest-shade) !important;
 }
 
 .small-btn {
@@ -115,7 +131,7 @@ a {
 
 .accordion-button {
   border: none;
-  color: #e3e3e3 !important;
+  color: var(--light-shade) !important;
   font-weight: bold;
   background-color: var(--darker-shade) !important;
 }
@@ -131,10 +147,13 @@ a {
 
 .table > :not(caption) > * > * {
   border-bottom-width: 0px;
+  color: var(--light-shade);
+  background-color: var(--darker-shade);
 }
 
 .table-striped > tbody > tr:nth-of-type(odd) > * {
-  --bs-table-accent-bg: #232628;
+  --bs-table-accent-bg: var(--grey);
+  color: var(--light-shade);
 }
 
 /* TOOLTIP */
@@ -148,8 +167,8 @@ a {
 
 .tooltipSpecial .tooltiptextSpecial {
   width: 120px;
-  background-color: white;
-  color: $primary;
+  background-color: var(--light-shade);
+  color: var(--main);
   font-weight: bold;
   text-align: center;
   padding: 5px 0;
@@ -170,7 +189,7 @@ a {
   margin-top: -5px;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
-  border-bottom: 10px solid white;
+  border-bottom: 10px solid var(--light-shade);
 }
 
 .tooltip-visible {
@@ -258,7 +277,7 @@ a {
     margin: 15px;
     width: 52px;
     height: 27px;
-    background: #2b2b2b;
+    background: var(--darkest-shade);
     float: left;
     border-radius: 100px;
     position: relative;
@@ -271,7 +290,7 @@ a {
     left: 3px;
     width: 20px;
     height: 20px;
-    background: #fff;
+    background: var(--light-shade);
     border-radius: 90px;
     transition: 0.3s;
   }

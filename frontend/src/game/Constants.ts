@@ -6,21 +6,20 @@ export const UNIT_SIZE = 48;
 export const HALF_UNIT_SIZE = UNIT_SIZE / 2;
 export const UNIT_SCALE = UNIT_SIZE / 16;
 
-
-export const GAME_CONFIG : Phaser.Types.Core.GameConfig = {
-    type: Phaser.AUTO,
-    width: 640,
-    height: 640,
-    pixelArt: true,
-    backgroundColor: '#181a1b',
-    physics: {
-        default: 'arcade',
-        arcade: {
-            //debug: true,
-        }
+export const GAME_CONFIG: Phaser.Types.Core.GameConfig = {
+  type: Phaser.AUTO,
+  width: 640,
+  height: 640,
+  pixelArt: true,
+  backgroundColor: '#181a1b', // Might need to figure out how to make this work with light/dark theming
+  physics: {
+    default: 'arcade',
+    arcade: {
+      //debug: true,
     },
-    plugins: {	
-		global: [ NineSlicePlugin.Plugin.DefaultCfg ]
-	},
-    scene: [MainMenuScene, GameScene]
+  },
+  plugins: {
+    global: [NineSlicePlugin.Plugin.DefaultCfg],
+  },
+  scene: [MainMenuScene, GameScene],
 };
