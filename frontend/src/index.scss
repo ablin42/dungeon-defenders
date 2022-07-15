@@ -1,48 +1,53 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
 
 html {
-  --main-dark: #1e6262;
+  --main-dark: #204141;
   --main: #2d767f;
-  --main-light: #b4f1f1;
-  --light-shade: #efeeed;
+  --main-light: #4c9a9a;
+  --light-shade: #f2f2f2;
   --lighter-shade: #f9f9f9;
   --lightest-shade: #ffffff;
   --grey: #232628;
   --dark-shade: #1c1e1f;
   --darker-shade: #181a1b;
   --darkest-shade: #101010;
+
+  .container-decorated {
+    background-color: var(--darker-shade);
+    background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23204141' fill-opacity='0.15'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
 }
 
 html[data-theme='dark'] {
-  --main-dark: #1e6262;
+  --main-dark: #204141;
   --main: #2d767f;
-  --main-light: #b4f1f1;
-  --dark-shade: #efeeed;
+  --main-light: #4c9a9a;
+  --dark-shade: #f2f2f2;
   --darker-shade: #f9f9f9;
   --darkest-shade: #ffffff;
   --grey: #e3e3e3;
   --light-shade: #1c1e1f;
   --lighter-shade: #181a1b;
   --lightest-shade: #101010;
+
+  .container-decorated {
+    background-color: var(--darker-shade);
+    background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232d767f' fill-opacity='0.15'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
 }
 
 $theme-colors: (
-  //   'primary': #560bad,
-  //   'secondary': #7209b7,
-  //   'info': #3f37c9,
-  //   'warning': #7209b7,
-  //   'danger': #f72585,
-  //   'success': #1d7a65,
   'primary': #2d767f,
-  'secondary': #b4f1f1,
-  'info': #ecfffb,
+  'secondary': #204141,
+  'info': #4c9a9a,
   'warning': #facf5a,
   'danger': #ff5959,
-  'success': #2cb978
+  'success': #2cb978,
 );
 
 @import '../node_modules/bootstrap/scss/bootstrap';
 
+/* GENERAL */
 body,
 html,
 #root {
@@ -56,23 +61,9 @@ html,
   height: 100%;
 }
 
-a,
-.fa-icon {
-  color: var(--main);
-}
-
-a:hover,
-.fa-icon:hover {
-  color: var(--main-light);
-}
-
 #root {
   display: flex;
   flex-direction: column;
-}
-
-.outlet {
-  flex: 1 0 auto;
 }
 
 code {
@@ -83,8 +74,40 @@ a {
   text-decoration: none;
 }
 
-.card-text {
-  font-size: 14px;
+a,
+.fa-icon {
+  color: var(--main);
+}
+
+a:hover,
+.fa-icon:hover {
+  color: var(--main-light);
+}
+
+.outlet {
+  flex: 1 0 auto;
+}
+
+/* GENERAL BOOTSTRAP OVERRIDING */
+
+.navbar-brand {
+  color: var(--main) !important;
+}
+
+.bg-dark {
+  background-color: var(--dark-shade) !important;
+}
+
+/* just for demo purposes */
+.btn {
+  width: 175px;
+}
+.btn-info {
+  // not using vars cause we need to keep this white in both mode
+  color: #f2f2f2;
+}
+.small-btn {
+  width: 110px !important;
 }
 
 .card {
@@ -93,30 +116,17 @@ a {
   color: var(--light-shade);
 }
 
-.bg-dark {
-  background-color: var(--dark-shade) !important;
-}
-
 .card .text-muted {
   width: 250px;
 }
 
-.navbar-brand {
-  color: var(--main) !important;
-}
-
-/* just for demo purposes */
-.btn {
-  width: 175px;
+.card-text {
+  font-size: 14px;
 }
 
 .list-group-item {
   color: var(--light-shade) !important;
   background-color: var(--darkest-shade) !important;
-}
-
-.small-btn {
-  width: 110px !important;
 }
 
 /* ACCORDION */

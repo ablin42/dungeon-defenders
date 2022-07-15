@@ -17,17 +17,33 @@ interface Props {
 }
 
 const BADGE_TYPE = [
+  'secondary',
+  'secondary',
   'primary',
   'primary',
-  'secondary',
-  'secondary',
-  'secondary',
-  'secondary',
+  'primary',
+  'primary',
   'info',
   'info',
   'info',
   'info',
 ];
+
+function getTraitText(trait: string, value: string | number) {
+  const TRAIT_TEXT = {
+    ['Name']: `${value}` || 'Unnamed',
+    ['Level']: `Level ${value}`,
+    ['Health']: `${value} HP`,
+    ['Speed']: `${value} SPD`,
+    ['Strength']: `${value} STR`,
+    ['Defense']: `${value} DEF`,
+    ['Dungeons Defended']: `Defended ${value} Dungeon(s)`,
+    ['Dungeons Attempted']: `Attempted ${value} Dungeon(s)`,
+  };
+
+  // f*ck typescript lol
+  return TRAIT_TEXT[trait as keyof unknown];
+}
 
 // TODO should make as pure as possible
 const NFTCard = ({ NFT, owner, isLoot }: Props) => {
@@ -81,7 +97,7 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
               const { trait_type, value } = attribute;
               return (
                 <span key={trait_type} className={`badge bg-${BADGE_TYPE[index]} m-1`}>
-                  {trait_type}: {value}
+                  {getTraitText(trait_type, value)}
                 </span>
               );
             })}

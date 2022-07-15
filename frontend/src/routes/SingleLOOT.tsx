@@ -26,8 +26,10 @@ export default function SingleLOOT() {
   return (
     <div className="text-center mt-5 mb-5">
       <h2 className="mb-2">Hrmm.. Juicy loot</h2>
-      <div className="container col-3">
-        {URI ? <NFTCard NFT={LOOTObject} owner={owner} isLoot /> : <LoadWith404 isLoading={isLoading} />}
+      <div className="container container-decorated col-5 p-5">
+        <div className="col-8 offset-2">
+          {URI ? <NFTCard NFT={LOOTObject} owner={owner} isLoot /> : <LoadWith404 isLoading={isLoading} />}
+        </div>
       </div>
     </div>
   );
