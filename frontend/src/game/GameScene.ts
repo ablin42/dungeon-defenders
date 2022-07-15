@@ -7,6 +7,7 @@ import { TreasureChest } from './TreasureChest';
 import { Vector2 } from './utils';
 import { GameConfig } from './Index';
 import { loadAssets } from './GameAssets';
+import { Enemy } from './Enemy';
 
 const DUNGEON_SIZE = 3;
 const NUM_OF_ROOMS = 5;
@@ -25,6 +26,7 @@ export class GameScene extends Phaser.Scene {
   enemyPhysicGroup!: Phaser.Physics.Arcade.Group;
 
   player: Player;
+  enemies: Enemy[];
   treasureChest: TreasureChest;
 
   prevIsDown: boolean;
@@ -37,6 +39,7 @@ export class GameScene extends Phaser.Scene {
   constructor() {
     super('Game');
     this.player = new Player();
+    this.enemies = [];
     this.treasureChest = new TreasureChest();
     this.prevIsDown = false;
   }
@@ -181,6 +184,7 @@ export class GameScene extends Phaser.Scene {
 
     const map = simpleDungeonGenerator(DUNGEON_SIZE, NUM_OF_ROOMS);
 
+    Enemy.create(this);
 
     for (let y = 0; y < DUNGEON_SIZE; y++) {
       for (let x = 0; x < DUNGEON_SIZE; x++) {
@@ -195,9 +199,12 @@ export class GameScene extends Phaser.Scene {
             roomSize = SPAWN_ROOM_SIZE;
             this.player.create(this, defender.characterType, weapon.weapon, this.gameLayer, pos.x, pos.y);
             break;
-          case RoomType.ENEMY_ROOM:
+          case RoomType.ENEMY_ROOM: {
             roomSize = ENEMY_ROOM_SIZE;
+            const idx = this.enemies.push(new Enemy()) - 1;
+            this.enemies[idx].create(this, this.gameLayer, pos);
             break;
+          }
           case RoomType.BOSS_ROOM:
             roomSize = BOSS_ROOM_SIZE;
             this.treasureChest.create(this, this.gameLayer, pos.x, pos.y, onGameOver);
@@ -212,9 +219,16 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.overlap(this.player.sprite, this.treasureChest.sprite, () => {
       this.treasureChest.open();
     });
+    this.enemies.forEach(e => {
+      this.physics.add.collider(e.sprite, this.staticPhysicGroup);
+      this.physics.add.collider(this.player.weapon.physicsObj, e.sprite, () => {
+        e.onHit(new Vector2(this.player.sprite.x, this.player.sprite.y))
+      })
+    })
   }
 
   update() {
     this.player.update(this, this.cursorKeys);
+    this.enemies.forEach(e => e.update(this))
   }
 }

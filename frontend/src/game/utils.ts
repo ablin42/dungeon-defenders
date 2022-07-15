@@ -7,8 +7,8 @@ export function degToRad(deg: number) {
 }
 
 export function fill2DArray(size: number, fill: () => any) {
-    return Array.from({length: size}, () =>
-    Array.from({length: size}, fill));
+    return Array.from({ length: size }, () =>
+        Array.from({ length: size }, fill));
 }
 
 export class Vector2 {
@@ -16,7 +16,7 @@ export class Vector2 {
 
     x: number;
     y: number;
-    constructor (x: number, y: number) {
+    constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
     }
@@ -34,14 +34,32 @@ export class Vector2 {
 
         return this;
     }
-    
+
     magnitudeSqrd() {
         return this.x * this.x + this.y * this.y;
     }
 
+    magnitude() {
+        return Math.sqrt(this.magnitudeSqrd());
+    }
+
+    normalized() {
+        const magnitude = this.magnitude()
+        return new Vector2(this.x / magnitude, this.y / magnitude);
+    }
+
+    static add(v1: Vector2, v2: Vector2) {
+        return new Vector2(v1.x + v2.x, v1.y + v2.y);
+    }
     add(delta: Vector2) {
         this.x += delta.x;
         this.y += delta.y;
+        return this;
+    }
+
+    sub(delta: Vector2) {
+        this.x -= delta.x;
+        this.y -= delta.y;
         return this;
     }
 }
@@ -57,10 +75,10 @@ export class Line {
 
     collide(line: Line): boolean {
         // https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
-        const d = ((this.p1.x - this.p2.x)*(line.p1.y - line.p2.y) - (this.p1.y - this.p2.y)*(line.p1.x - line.p2.x));
-        const u1 = ((this.p1.x - line.p1.x)*(line.p1.y - line.p2.y) - (this.p1.y - line.p1.y)*(line.p1.x - line.p2.x)) / d;
-        const u2 = ((this.p1.x - line.p1.x)*(this.p1.y - this.p2.y) - (this.p1.y - line.p1.y)*(this.p1.x - this.p2.x)) / d;
-        
+        const d = ((this.p1.x - this.p2.x) * (line.p1.y - line.p2.y) - (this.p1.y - this.p2.y) * (line.p1.x - line.p2.x));
+        const u1 = ((this.p1.x - line.p1.x) * (line.p1.y - line.p2.y) - (this.p1.y - line.p1.y) * (line.p1.x - line.p2.x)) / d;
+        const u2 = ((this.p1.x - line.p1.x) * (this.p1.y - this.p2.y) - (this.p1.y - line.p1.y) * (this.p1.x - this.p2.x)) / d;
+
         return u1 > 0 && u1 < 1 && u2 > 0 && u2 < 1;
     }
 
@@ -104,15 +122,15 @@ export class Rectangle {
         this.right = new Line(this.tr, this.br);
         this.bottom = new Line(this.bl, this.br);
         this.left = new Line(this.tl, this.bl);
-        
+
         this.c = new Vector2(this.tl.x + this.width / 2, this.tl.y - this.height / 2);
     }
 
     collide(line: Line): boolean {
         return line.collide(this.top) ||
-                line.collide(this.right) ||
-                line.collide(this.bottom) ||
-                line.collide(this.left);
+            line.collide(this.right) ||
+            line.collide(this.bottom) ||
+            line.collide(this.left);
     }
 
     overlap(rect: Rectangle): boolean {
@@ -128,7 +146,7 @@ export class Rectangle {
 
         return true;
     }
-    
+
     transform(delta: Vector2) {
         this._init(this.tl.add(delta), this.width, this.height);
     }

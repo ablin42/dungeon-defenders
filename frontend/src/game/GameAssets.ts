@@ -9,7 +9,7 @@ export type GameAsset = {
     isCharacter: boolean
 }
 
-const KNIGHT_RED : GameAsset = {
+const KNIGHT_RED: GameAsset = {
     key: 'RedKnight',
     frameSize: new Vector2(16, 28),
     center: Vector2.zero,
@@ -18,7 +18,7 @@ const KNIGHT_RED : GameAsset = {
     isCharacter: true
 };
 
-const KNIGHT_ORANGE : GameAsset = {
+const KNIGHT_ORANGE: GameAsset = {
     key: 'OrangeKnight',
     frameSize: new Vector2(16, 28),
     center: Vector2.zero,
@@ -27,7 +27,7 @@ const KNIGHT_ORANGE : GameAsset = {
     isCharacter: true
 };
 
-const ELF_MAN : GameAsset = {
+const ELF_MAN: GameAsset = {
     key: 'ElfMan',
     frameSize: new Vector2(16, 28),
     center: Vector2.zero,
@@ -36,7 +36,7 @@ const ELF_MAN : GameAsset = {
     isCharacter: true
 };
 
-const ELF_WOMAN : GameAsset = {
+const ELF_WOMAN: GameAsset = {
     key: 'ElfWoman',
     frameSize: new Vector2(16, 28),
     center: Vector2.zero,
@@ -45,7 +45,7 @@ const ELF_WOMAN : GameAsset = {
     isCharacter: true
 };
 
-const DINO_GREEN : GameAsset = {
+const DINO_GREEN: GameAsset = {
     key: 'GreenDino',
     frameSize: new Vector2(16, 28),
     center: Vector2.zero,
@@ -54,7 +54,7 @@ const DINO_GREEN : GameAsset = {
     isCharacter: true
 };
 
-const DINO_BLUE : GameAsset = {
+const DINO_BLUE: GameAsset = {
     key: 'BlueDino',
     frameSize: new Vector2(16, 28),
     center: Vector2.zero,
@@ -65,7 +65,18 @@ const DINO_BLUE : GameAsset = {
 
 export const CHARACTERS: GameAsset[] = [ELF_MAN, ELF_WOMAN, KNIGHT_RED, KNIGHT_ORANGE, DINO_BLUE, DINO_GREEN];
 
-const RUSTY_SWORD : GameAsset = {
+const ORC_WARRIOR: GameAsset = {
+    key: 'OrcWarrior',
+    frameSize: new Vector2(16, 20),
+    center: Vector2.zero,
+    colliderOffset: new Vector2(4, 4),
+    colliderSize: new Vector2(10, 16),
+    isCharacter: true
+};
+
+export const ENEMIES: GameAsset[] = [ORC_WARRIOR];
+
+const RUSTY_SWORD: GameAsset = {
     key: 'weapon_rusty_sword',
     frameSize: new Vector2(21, 10),
     center: new Vector2(3, 5),
@@ -73,7 +84,7 @@ const RUSTY_SWORD : GameAsset = {
     colliderSize: Vector2.zero,
     isCharacter: false
 };
-const SAW_SWORD : GameAsset = {
+const SAW_SWORD: GameAsset = {
     key: 'weapon_saw_sword',
     frameSize: new Vector2(21, 10),
     center: new Vector2(3, 5),
@@ -81,7 +92,7 @@ const SAW_SWORD : GameAsset = {
     colliderSize: Vector2.zero,
     isCharacter: false
 };
-const ANIME_SWORD : GameAsset = {
+const ANIME_SWORD: GameAsset = {
     key: 'weapon_anime_sword',
     frameSize: new Vector2(30, 12),
     center: new Vector2(6, 5),
@@ -89,7 +100,7 @@ const ANIME_SWORD : GameAsset = {
     colliderSize: Vector2.zero,
     isCharacter: false
 };
-const DUEL_SWORD : GameAsset = {
+const DUEL_SWORD: GameAsset = {
     key: 'weapon_duel_sword',
     frameSize: new Vector2(30, 9),
     center: new Vector2(5, 3),
@@ -97,7 +108,7 @@ const DUEL_SWORD : GameAsset = {
     colliderSize: Vector2.zero,
     isCharacter: false
 };
-const AXE : GameAsset = {
+const AXE: GameAsset = {
     key: 'weapon_axe',
     frameSize: new Vector2(21, 9),
     center: new Vector2(4, 2),
@@ -105,7 +116,7 @@ const AXE : GameAsset = {
     colliderSize: Vector2.zero,
     isCharacter: false
 };
-const KATANA : GameAsset = {
+const KATANA: GameAsset = {
     key: 'weapon_katana',
     frameSize: new Vector2(29, 6),
     center: new Vector2(6, 3),
@@ -113,7 +124,7 @@ const KATANA : GameAsset = {
     colliderSize: Vector2.zero,
     isCharacter: false
 };
-const BATON_WITH_SPIKES : GameAsset = {
+const BATON_WITH_SPIKES: GameAsset = {
     key: 'weapon_baton_with_spikes',
     frameSize: new Vector2(22, 10),
     center: new Vector2(5, 5),
@@ -121,7 +132,7 @@ const BATON_WITH_SPIKES : GameAsset = {
     colliderSize: Vector2.zero,
     isCharacter: false
 };
-const CLEAVER : GameAsset = {
+const CLEAVER: GameAsset = {
     key: 'weapon_cleaver',
     frameSize: new Vector2(19, 8),
     center: new Vector2(4, 1),
@@ -129,7 +140,7 @@ const CLEAVER : GameAsset = {
     colliderSize: Vector2.zero,
     isCharacter: false
 };
-const HAMMER : GameAsset = {
+const HAMMER: GameAsset = {
     key: 'weapon_hammer',
     frameSize: new Vector2(24, 10),
     center: new Vector2(4, 4),
@@ -137,7 +148,7 @@ const HAMMER : GameAsset = {
     colliderSize: Vector2.zero,
     isCharacter: false
 };
-const MACE : GameAsset = {
+const MACE: GameAsset = {
     key: 'weapon_mace',
     frameSize: new Vector2(24, 10),
     center: new Vector2(4, 4),
@@ -145,7 +156,7 @@ const MACE : GameAsset = {
     colliderSize: Vector2.zero,
     isCharacter: false
 };
-const GOLDEN_SWORD : GameAsset = {
+const GOLDEN_SWORD: GameAsset = {
     key: 'weapon_golden_sword',
     frameSize: new Vector2(22, 10),
     center: new Vector2(5, 5),
@@ -153,7 +164,7 @@ const GOLDEN_SWORD : GameAsset = {
     colliderSize: Vector2.zero,
     isCharacter: false
 };
-const KNIGHT_SWORD : GameAsset = {
+const KNIGHT_SWORD: GameAsset = {
     key: 'weapon_knight_sword',
     frameSize: new Vector2(29, 10),
     center: new Vector2(6, 4),
@@ -161,7 +172,7 @@ const KNIGHT_SWORD : GameAsset = {
     colliderSize: Vector2.zero,
     isCharacter: false
 };
-const LAVISH_SWORD : GameAsset = {
+const LAVISH_SWORD: GameAsset = {
     key: 'weapon_lavish_sword',
     frameSize: new Vector2(30, 10),
     center: new Vector2(7, 4),
@@ -170,9 +181,10 @@ const LAVISH_SWORD : GameAsset = {
     isCharacter: false
 };
 
-export const WEAPONS : GameAsset[] = [RUSTY_SWORD, HAMMER, DUEL_SWORD, KATANA, SAW_SWORD, AXE, CLEAVER, MACE, BATON_WITH_SPIKES, KNIGHT_SWORD, ANIME_SWORD, GOLDEN_SWORD, LAVISH_SWORD];
+export const WEAPONS: GameAsset[] = [RUSTY_SWORD, HAMMER, DUEL_SWORD, KATANA, SAW_SWORD, AXE, CLEAVER, MACE, BATON_WITH_SPIKES, KNIGHT_SWORD, ANIME_SWORD, GOLDEN_SWORD, LAVISH_SWORD];
 
 export function loadAssets(scene: Phaser.Scene) {
-    CHARACTERS.forEach(x => scene.load.spritesheet(x.key, getPublicAssetUrl(`characters/${x.key}.png`), {frameWidth: x.frameSize.x, frameHeight: x.frameSize.y}));
-    WEAPONS.forEach(x => scene.load.spritesheet(x.key, getPublicAssetUrl(`weapon/${x.key}.png`), {frameWidth: x.frameSize.x, frameHeight: x.frameSize.y}));
+    CHARACTERS.forEach(x => scene.load.spritesheet(x.key, getPublicAssetUrl(`characters/${x.key}.png`), { frameWidth: x.frameSize.x, frameHeight: x.frameSize.y }));
+    ENEMIES.forEach(x => scene.load.spritesheet(x.key, getPublicAssetUrl(`enemies/${x.key}.png`), { frameWidth: x.frameSize.x, frameHeight: x.frameSize.y }));
+    WEAPONS.forEach(x => scene.load.spritesheet(x.key, getPublicAssetUrl(`weapon/${x.key}.png`), { frameWidth: x.frameSize.x, frameHeight: x.frameSize.y }));
 }
