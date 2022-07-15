@@ -50,9 +50,7 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
     getImage();
   }, [actualTokenId])
 
-  console.log(slots);
   useEffect(() => {
-    console.log(slots);
     if (slots && slots !== equipedLoot) setEquipedLoot(slots);
   }, [slots.toString()]);
 
