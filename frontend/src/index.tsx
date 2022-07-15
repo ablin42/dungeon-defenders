@@ -1,7 +1,7 @@
 // *EXTERNALS*
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { DAppProvider } from '@usedapp/core';
+import { ChainId, DAppProvider, Goerli } from '@usedapp/core';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // *INTERNALS*
@@ -16,12 +16,15 @@ import Error from './components/Error';
 import Play from './routes/Play';
 import SingleLOOT from './routes/SingleLOOT';
 import About from './routes/About';
+import Admin from './routes/Admin';
 
 const config = {
-  readOnlyChainId: 5,
+  readOnlyChainId: ChainId.Goerli,
   readOnlyUrls: {
-    [5]: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+    [ChainId.Goerli]: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+    //getDefaultProvider('goerli'),
   },
+  networks: [Goerli],
 };
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
@@ -33,6 +36,7 @@ root.render(
           <Route path="/" element={<Home />} />
           <Route path="/About" element={<About />} />
           <Route path="/Play" element={<Play />} />
+          <Route path="/Admin" element={<Admin />} />
           <Route path="/NFT/user/:userAddress" element={<UserNFT />} />
           <Route path="/NFT/:nftId" element={<SingleNFT />} />
           <Route path="/LOOT/:lootId" element={<SingleLOOT />} />

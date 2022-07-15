@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { TransactionState, TransactionStatus } from '@usedapp/core';
 import { Link, useNavigate } from 'react-router-dom';
 import { STAKE_CONTRACT_ADDRESS } from 'dungeon-defenders-contracts';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGem } from '@fortawesome/free-solid-svg-icons';
 
 // *INTERNALS*
 import {
@@ -41,7 +43,9 @@ const STATE_INDEX = {
 const FormUtil = ({ value, onChange, children }: FormProps) => {
   return (
     <div className="form-group text-start ms-1 me-1">
-      <label htmlFor="gemsAmount">Gems Amount (min. 100)</label>
+      <label htmlFor="gemsAmount">
+        Amount (min. 100 <FontAwesomeIcon className="fa-icon fa-white" icon={faGem} fontSize={15} />)
+      </label>
       <div className="input-group">
         <input
           type="number"
@@ -120,7 +124,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
   };
 
   if (isPending[STATE_INDEX.APPROVENFT] || isPending[STATE_INDEX.APPROVEGEMS])
-    return <LoadingBtn type="success" width="100%" />;
+    return <LoadingBtn type="primary" width="100%" />;
   // To handle loading state with no button (loading up the page for the 1st time)
   if (NFTallowance === undefined && GEMSallowance === undefined && staked === undefined)
     return <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>;
@@ -128,23 +132,23 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
   return (
     <>
       {!NFTallowance && (
-        <button onClick={() => sendTx(approveNFT)} className="btn btn-lg btn-success w-100">
-          Approve NFTs
+        <button onClick={() => sendTx(approveNFT)} className="btn btn-lg btn-primary w-100">
+          Approve DEFENDERS
         </button>
       )}
       {!GEMSallowance && NFTallowance && (
-        <button onClick={() => sendTx(approveGEMS)} className="btn btn-lg btn-success w-100">
-          Approve GEMS
+        <button onClick={() => sendTx(approveGEMS)} className="btn btn-lg btn-primary w-100">
+          Approve <FontAwesomeIcon className="fa-icon fa-white" icon={faGem} fontSize={15} />
         </button>
       )}
       {NFTallowance && GEMSallowance && !staked ? (
         isPending[STATE_INDEX.STAKE] ? (
           <FormUtil value={gemsAmount} onChange={setGemsAmount}>
-            <LoadingBtn type="success" />
+            <LoadingBtn type="primary" width="175px" />
           </FormUtil>
         ) : (
           <FormUtil value={gemsAmount} onChange={setGemsAmount}>
-            <button onClick={() => sendTx(stake)} className="btn btn-lg btn-success">
+            <button onClick={() => sendTx(stake)} className="btn btn-lg btn-primary">
               Stake &amp; Play
             </button>
           </FormUtil>
@@ -153,7 +157,18 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot }) => {
       {NFTallowance && GEMSallowance && staked && tokenId == stakedId ? (
         <>
           <Link to={`/Play`}>
-            <button className="btn btn-lg btn-info w-100">{claimable ? 'Claim pending 🎉' : 'Game in progress'}</button>
+            <button className="btn btn-lg btn-info w-100">
+              {claimable ? (
+                'Claim pending 🎉'
+              ) : (
+                <>
+                  {'Game in progress '}
+                  <div className="ms-2 spinner-border spinner-border-sm text-light" role="status">
+                    <span className="sr-only">Loading...</span>
+                  </div>
+                </>
+              )}
+            </button>
           </Link>
         </>
       ) : null}

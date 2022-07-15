@@ -88,11 +88,12 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
   const getMetadataDisplay = () => {
     return (
       <div className="card-body">
-        <h5 className="card-title text-start ms-1">
+        <h5 className="card-title text-start">
           <Link to={`/NFT/${actualTokenId}`}>{name}</Link>
         </h5>
         <div className="d-flex justify-content-between align-items-center">
-          <div className="text-start">
+          {!isLoot ? <div className="mb-3" /> : null}
+          <div className="text-start card-badges">
             {attributes.map((attribute: NFTAttribute, index: number) => {
               const { trait_type, value } = attribute;
               return (
@@ -107,7 +108,7 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
           {account && !isLoot && slots && (isOwner || isUserStakedToken) && (
             <>
               <Equipment userAddress={account} tokenId={actualTokenId} onEquipmentUpdated={onEquipmentUpdated} />
-              <div className="mb-3" />
+              <div className="mt-2" />
               <Play userAddress={account} tokenId={actualTokenId} equipedLoot={slots} />
             </>
           )}

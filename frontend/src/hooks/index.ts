@@ -1,6 +1,6 @@
 // *EXTERNALS*
 import { BigNumber, ethers } from 'ethers';
-import { useContractFunction, useCall } from '@usedapp/core';
+import { useContractFunction, useCall, ChainId } from '@usedapp/core';
 import { Contract } from '@ethersproject/contracts';
 import {
   DEFENDER_ABI,
@@ -28,6 +28,9 @@ const STAKEContract = new ethers.Contract(STAKE_CONTRACT_ADDRESS, STAKEContractI
 const GEMSContract = new ethers.Contract(GEMS_CONTRACT_ADDRESS, GEMSContractInterface);
 const LOOTContract = new ethers.Contract(LOOT_CONTRACT_ADDRESS, LOOTContractInterface);
 const FAUCETContract = new ethers.Contract(FAUCET_CONTRACT_ADDRESS, FAUCETContractInterface);
+
+//! don't forget to update
+const options = { chainId: ChainId.Goerli };
 
 // *NFT HOOKS*
 export function useMint() {
@@ -62,6 +65,7 @@ export function useSlots(tokenId: string | number | undefined) {
         method: 'getSlots',
         args: [tokenId],
       },
+      options,
     ) ?? {};
 
   // ? Circumventing a bug that probably happened due to an NFT
@@ -85,6 +89,7 @@ export function useAesthetics(tokenId: string | number | undefined) {
         method: 'aesthetics',
         args: [tokenId],
       },
+      options,
     ) ?? {};
 
   // ? Circumventing a bug that probably happened due to an NFT
@@ -109,11 +114,14 @@ export type Defender = {
 };
 export function useDefender(tokenId: string | number | undefined) {
   const { value, error } =
-    useCall(tokenId !== undefined && {
-      contract: NFTContract,
-      method: 'defenders',
-      args: [tokenId],
-    }) ?? {};
+    useCall(
+      tokenId !== undefined && {
+        contract: NFTContract,
+        method: 'defenders',
+        args: [tokenId],
+      },
+      options,
+    ) ?? {};
 
   // ? Circumventing a bug that probably happened due to an NFT
   // ?  being minted before server listener for events, and then picked it up
@@ -147,6 +155,7 @@ export function useLoot(tokenId: string | number | undefined) {
         method: 'loot',
         args: [tokenId],
       },
+      options,
     ) ?? {};
 
   // ? Circumventing a bug that probably happened due to an NFT
@@ -169,6 +178,7 @@ export function useGemsBalance(address?: string) {
         method: 'balanceOf',
         args: [address],
       },
+      options,
     ) ?? {};
 
   // ? Circumventing a bug that probably happened due to an NFT
@@ -191,6 +201,7 @@ export function useAllowance(userAddress: string) {
         method: 'isApprovedForAll',
         args: [userAddress, STAKE_CONTRACT_ADDRESS],
       },
+      options,
     ) ?? {};
 
   if (error) {
@@ -209,6 +220,7 @@ export function useTokenURI(tokenId: string | number) {
         method: 'tokenURI',
         args: [tokenId],
       },
+      options,
     ) ?? {};
 
   if (error) {
@@ -229,6 +241,7 @@ export function useOwnerOf(tokenId: string | number) {
         method: 'ownerOf',
         args: [tokenId],
       },
+      options,
     ) ?? {};
 
   if (error) {
@@ -256,11 +269,12 @@ export function useAllowanceGEMS(userAddress: string, contract: string) {
   const { value, error } =
     useCall(
       userAddress &&
-      contract && {
-        contract: GEMSContract,
-        method: 'allowance',
-        args: [userAddress, contract],
-      },
+        contract && {
+          contract: GEMSContract,
+          method: 'allowance',
+          args: [userAddress, contract],
+        },
+      options,
     ) ?? {};
   const allowance = value ? parseInt(ethers.utils.formatEther(value[0])) : undefined;
 
@@ -296,6 +310,7 @@ export function useIsStaked(userAddress: string) {
         method: 'isStaking',
         args: [userAddress],
       },
+      options,
     ) ?? {};
 
   if (error) {
@@ -328,6 +343,7 @@ export function useStakes(userAddress: string | undefined) {
         method: 'stakes',
         args: [userAddress],
       },
+      options,
     ) ?? {};
 
   if (error) {
@@ -360,6 +376,7 @@ export function useAllowanceLoot(userAddress: string) {
         method: 'isApprovedForAll',
         args: [userAddress, STAKE_CONTRACT_ADDRESS],
       },
+      options,
     ) ?? {};
 
   if (error) {
@@ -377,6 +394,7 @@ export function useTokenURILoot(tokenId: string | number) {
         method: 'tokenURI',
         args: [tokenId],
       },
+      options,
     ) ?? {};
 
   if (error) {
@@ -397,6 +415,7 @@ export function useOwnerOfLoot(tokenId: string | number) {
         method: 'ownerOf',
         args: [tokenId],
       },
+      options,
     ) ?? {};
 
   if (error) {
@@ -429,11 +448,14 @@ export function useWithdraw() {
 // Get Owner of faucet
 export function useOwnerOfFaucet() {
   const { value, error } =
-    useCall({
-      contract: FAUCETContract,
-      method: 'owner',
-      args: [],
-    }) ?? {};
+    useCall(
+      {
+        contract: FAUCETContract,
+        method: 'owner',
+        args: [],
+      },
+      options,
+    ) ?? {};
 
   if (error) {
     console.error(`Error fetching Owner of Faucet`, error.message);

@@ -36,17 +36,19 @@ export default function UserNFT() {
 
   return (
     <div className="container">
-      <h2 className="text-center mt-5 mb-5">Your Great Defenders</h2>
-      {userNFT && userNFT.length > 0 && userAddress ? (
-        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-          {userNFT.map((NFT: NFT) => (
-            <NFTCard key={NFT.name} NFT={NFT} owner={userAddress} />
-          ))}
-        </div>
-      ) : (
-        <LoadWith404 isLoading={isLoading} />
-      )}
-      <UserLoot />
+      <div className="container-decorated mt-5">
+        <h2 className="mb-2">Defenders</h2>
+        {userNFT && userNFT.length > 0 && userAddress ? (
+          <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            {userNFT.map((NFT: NFT) => (
+              <NFTCard key={NFT.name} NFT={NFT} owner={userAddress} />
+            ))}
+          </div>
+        ) : (
+          <LoadWith404 title="User has no Defender yet" error="" btnText="Mint One Here" isLoading={isLoading} />
+        )}
+        <UserLoot />
+      </div>
     </div>
   );
 }

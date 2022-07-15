@@ -64,25 +64,22 @@ const Loot: React.FC<ActionProps> = ({ userAddress }) => {
   };
 
   return (
-    <div className="col-8 offset-2 mt-4">
-      <label htmlFor="gemsAmount">{'Your Loot Name (Demo)'}</label>
-      <div className="input-group text-start mt-2">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Lootbaggies"
-          aria-label="defender name"
-          onChange={(e) => handleChange(e)}
-          value={name}
-        />
-        {isMinting ? (
-          <LoadingBtn text={'Minting...'} />
-        ) : (
-          <button onClick={() => sendTx(mint)} className="btn btn-lg btn-primary">
-            Mint Loot
-          </button>
-        )}
-      </div>
+    <div className="input-group text-start mt-2 mb-2">
+      <input
+        type="text"
+        className="form-control"
+        placeholder="Lootbaggies"
+        aria-label="defender name"
+        onChange={(e) => handleChange(e)}
+        value={name}
+      />
+      {isMinting ? (
+        <LoadingBtn text={'Minting...'} />
+      ) : (
+        <button onClick={() => sendTx(mint)} className="btn btn-lg btn-primary">
+          Mint Loot
+        </button>
+      )}
     </div>
   );
 };

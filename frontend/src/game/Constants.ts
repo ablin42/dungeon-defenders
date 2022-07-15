@@ -11,7 +11,10 @@ export const GAME_CONFIG: Phaser.Types.Core.GameConfig = {
   width: 640,
   height: 640,
   pixelArt: true,
-  backgroundColor: '#181a1b', // Might need to figure out how to make this work with light/dark theming
+  backgroundColor: '#1a1a1a', // Might need to figure out how to make this work with light/dark theming
+  // render: {
+  //   transparent: true,
+  // },
   physics: {
     default: 'arcade',
     arcade: {

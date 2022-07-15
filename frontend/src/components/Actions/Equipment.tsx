@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { TransactionState, TransactionStatus } from '@usedapp/core';
 import { STAKE_CONTRACT_ADDRESS } from 'dungeon-defenders-contracts';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCirclePlus, faCircleMinus, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 
 // *INTERNALS*
 import { useEquip, useUnequip, useSlots, useApproveLoot, useAllowanceLoot, useAesthetics } from '../../hooks/index';
@@ -125,8 +127,14 @@ const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId, onEquipmentUpd
   const getLootList = () => {
     return (
       <>
-        <div className="text-start mt-3 ms-1">Loot Equiped</div>
-        <ul className="list-group text-start m-1">
+        {/* <div className="text-start mt-3 ms-1">Loot Equiped</div> */}
+        <ul className="list-group text-start mt-3">
+          {/* <li className="list-group-item">
+            <div className="row align-items-center">
+              <div className="col-4">Item ID</div>
+              <div className="col-8">Loot ID</div>
+            </div>
+          </li> */}
           {LOOT_LIST.map((loot) => {
             const { title, id } = loot;
             return (
@@ -135,7 +143,7 @@ const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId, onEquipmentUpd
                   <div className="col-4">
                     <b>
                       {title}
-                      {aesthetics[id]}
+                      {/* {aesthetics[id]} */}
                     </b>
                   </div>
                   <div className="col-8">
@@ -151,14 +159,14 @@ const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId, onEquipmentUpd
                           onClick={() => sendTx(() => equip(loots[id]))}
                           className="btn btn-lg btn-primary small-btn"
                         >
-                          Equip
+                          <FontAwesomeIcon className="fa-icon fa-white" icon={faPlus} fontSize={22} />
                         </button>
                       ) : (
                         <button
                           onClick={() => sendTx(() => unequip(loots[id]))}
-                          className="btn btn-lg btn-primary small-btn"
+                          className="btn btn-lg btn-secondary small-btn"
                         >
-                          Unequip
+                          <FontAwesomeIcon className="fa-icon fa-white" icon={faMinus} fontSize={22} />
                         </button>
                       )}
                     </FormUtil>
@@ -179,7 +187,7 @@ const Equipment: React.FC<ActionProps> = ({ userAddress, tokenId, onEquipmentUpd
       ) : isPending[STATE_INDEX.APPROVE] ? (
         <LoadingBtn type="primary" width="100%" />
       ) : (
-        <button onClick={() => sendTx(approve)} className="btn btn-lg btn-primary w-100 mt-3">
+        <button onClick={() => sendTx(approve)} className="btn btn-lg btn-primary w-100">
           Approve LOOT
         </button>
       )}

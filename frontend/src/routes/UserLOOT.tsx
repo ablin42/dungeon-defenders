@@ -34,8 +34,8 @@ export default function UserLoot() {
   }, []);
 
   return (
-    <div className="container">
-      <h2 className="text-center mt-5 mb-5">Your Awesome Loot</h2>
+    <>
+      <h2 className="mt-5 mb-2">Collection</h2>
       {userLOOT && userLOOT.length > 0 && userAddress ? (
         <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
           {userLOOT.map((NFT: NFT) => (
@@ -43,8 +43,8 @@ export default function UserLoot() {
           ))}
         </div>
       ) : (
-        <LoadWith404 isLoading={isLoading} />
+        <LoadWith404 title="User has no Loot yet" error="" btnText="" isLoading={isLoading} />
       )}
-    </div>
+    </>
   );
 }

@@ -1,6 +1,8 @@
 // *EXTERNALS*
 import React from 'react';
 import { STAKE_CONTRACT_ADDRESS } from 'dungeon-defenders-contracts';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGem } from '@fortawesome/free-solid-svg-icons';
 
 // *INTERNALS*
 import { useApproveGEMS } from '../../hooks/index';
@@ -15,7 +17,7 @@ const ApproveGEMS = () => {
 
   return (
     <button onClick={() => approve()} className="btn btn-lg btn-primary">
-      Approve GEMS
+      Approve <FontAwesomeIcon className="fa-icon fa-white" icon={faGem} fontSize={15} />
     </button>
   );
 };
