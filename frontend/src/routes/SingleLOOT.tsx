@@ -4,9 +4,9 @@ import { useParams } from 'react-router-dom';
 import { Buffer } from 'buffer';
 
 // *INTERNALS*
-import NFTCard from '../components/NFTCard';
 import { useOwnerOfLoot, useTokenURILoot } from '../hooks/index';
 import LoadWith404 from '../components/LoadWith404';
+import CardWrapper from '../components/CardWrapper';
 
 export default function SingleLOOT() {
   const params = useParams();
@@ -27,7 +27,7 @@ export default function SingleLOOT() {
     <div className="text-center mt-4 mb-5">
       <div className="container container-decorated col-4" style={{ minHeight: '600px' }}>
         <div className="col-8 offset-2">
-          {URI ? <NFTCard NFT={LOOTObject} owner={owner} isLoot /> : <LoadWith404 isLoading={isLoading} />}
+          {URI ? <CardWrapper NFT={LOOTObject} owner={owner} isLoot /> : <LoadWith404 isLoading={isLoading} />}
         </div>
       </div>
     </div>

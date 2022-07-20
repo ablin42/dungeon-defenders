@@ -1,18 +1,29 @@
 // *EXTERNALS*
-import React, { useEffect, useState } from 'react';
+import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
-import { useEthers } from '@usedapp/core';
 
 // *INTERNALS*
 import Play from './Actions/Play';
 import Equipment from './Actions/Equipment';
-import { useStakes, useSlots } from '../hooks';
 import { NFTAttribute, NFT } from '../types';
-import { API_ADDRESS } from '../constants';
+import styled from 'styled-components';
 
+const LoadingWrapper = styled.div`
+  position: absolute;
+  top: 45%;
+  left: 50%;
+`;
+
+//TODO unsafe types
 interface Props {
   NFT: NFT;
-  owner: string;
+  isOwner: boolean;
+  isUserStakedToken: string | boolean | undefined;
+  tokenId: string | number;
+  onEquipmentUpdated: (updatedSlots: number[]) => void;
+  slots: number[] | false;
+  account: string | undefined;
+  renderedImage: string;
   isLoot?: boolean;
 }
 
@@ -45,51 +56,24 @@ function getTraitText(trait: string, value: string | number) {
   return TRAIT_TEXT[trait as keyof unknown];
 }
 
-// TODO should make as pure as possible
-const NFTCard = ({ NFT, owner, isLoot }: Props) => {
-  const { name, tokenId, image: nftImage, attributes } = NFT;
-  const [image, setImage] = useState(nftImage);
-  const actualTokenId = tokenId || +name.replace(/^\D+/g, ''); // Trick to bypass the issue of tokenId not being set in the NFT object
-  const { account } = useEthers();
-  const stakes = account && useStakes(account);
-  const slots = !isLoot && useSlots(actualTokenId);
-  const [equipedLoot, setEquipedLoot] = useState(slots ? [slots[1], slots[2], slots[3]] : [0, 0, 0]);
-  const [fetching, setFetching] = useState(false);
-  const userStaking = stakes && +stakes.timestamp > 0;
-  const stakedId = stakes && +stakes.tokenId;
-  const isOwner = account === owner;
-  const isUserStakedToken = userStaking && actualTokenId == stakedId;
-
-  const getImage = () => {
-    if (fetching || actualTokenId === undefined) return;
-
-    setFetching(true);
-    const toFetch = isLoot
-      ? `${API_ADDRESS}/v1/loot/${actualTokenId}/render`
-      : `${API_ADDRESS}/v1/nft/${actualTokenId}/render`;
-    fetch(toFetch)
-      .then(async (res) => setImage(URL.createObjectURL(await res.blob())))
-      .finally(() => setFetching(false));
-  };
-
-  useEffect(() => {
-    getImage();
-  }, [actualTokenId]);
-
-  useEffect(() => {
-    if (slots && slots !== equipedLoot) setEquipedLoot(slots);
-  }, [slots.toString()]);
-
-  const onEquipmentUpdated = (updatedSlots: number[]) => {
-    setEquipedLoot(updatedSlots);
-    getImage();
-  };
+const NFTCard = ({
+  NFT,
+  isLoot,
+  isOwner,
+  isUserStakedToken,
+  tokenId,
+  onEquipmentUpdated,
+  slots,
+  account,
+  renderedImage,
+}: Props) => {
+  const { name, image: nftImage, attributes } = NFT;
 
   const getMetadataDisplay = () => {
     return (
       <div className="card-body">
         <h5 className="card-title text-start">
-          <Link to={`/NFT/${actualTokenId}`}>{name}</Link>
+          <Link to={`/NFT/${tokenId}`}>{name}</Link>
         </h5>
         <div className="d-flex justify-content-between align-items-center">
           {!isLoot ? <div className="mb-3" /> : null}
@@ -107,9 +91,9 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
         <div>
           {account && !isLoot && slots && (isOwner || isUserStakedToken) && (
             <>
-              <Equipment userAddress={account} tokenId={actualTokenId} onEquipmentUpdated={onEquipmentUpdated} />
+              <Equipment userAddress={account} tokenId={tokenId} onEquipmentUpdated={onEquipmentUpdated} />
               <div className="mt-2" />
-              <Play userAddress={account} tokenId={actualTokenId} equipedLoot={slots} />
+              <Play userAddress={account} tokenId={tokenId} equipedLoot={slots} />
             </>
           )}
         </div>
@@ -123,7 +107,7 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
         <div className="flip-card">
           <div className="flip-card-inner">
             <div className="flip-card-front">
-              <img className="card-img-top" src={image} alt="Rendered NFT" />
+              <img className="card-img-top" src={renderedImage} alt="Rendered NFT" />
             </div>
             <div className="flip-card-back">
               <img className="card-img-top" src={nftImage} alt="Svg NFT" />
@@ -136,4 +120,4 @@ const NFTCard = ({ NFT, owner, isLoot }: Props) => {
   );
 };
 
-export default NFTCard;
+export default memo(NFTCard);

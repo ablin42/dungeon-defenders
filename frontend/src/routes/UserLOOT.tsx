@@ -4,9 +4,9 @@ import { useParams } from 'react-router-dom';
 
 // *INTERNALS*
 import { API_ADDRESS } from '../constants';
-import NFTCard from '../components/NFTCard';
 import type { NFT } from '../types';
 import LoadWith404 from '../components/LoadWith404';
+import CardWrapper from '../components/CardWrapper';
 
 const getUserLOOT = async (userAddress: string | undefined) => {
   const res = await fetch(`${API_ADDRESS}/v1/loot/wallet/${userAddress}`);
@@ -39,7 +39,7 @@ export default function UserLoot() {
       {userLOOT && userLOOT.length > 0 && userAddress ? (
         <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
           {userLOOT.map((NFT: NFT) => (
-            <NFTCard key={NFT.name} NFT={NFT} owner={userAddress} isLoot />
+            <CardWrapper key={NFT.name} NFT={NFT} owner={userAddress} isLoot />
           ))}
         </div>
       ) : (
