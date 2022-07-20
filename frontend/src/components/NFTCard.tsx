@@ -6,15 +6,7 @@ import { Link } from 'react-router-dom';
 import Play from './Actions/Play';
 import Equipment from './Actions/Equipment';
 import { NFTAttribute, NFT } from '../types';
-import styled from 'styled-components';
 
-const LoadingWrapper = styled.div`
-  position: absolute;
-  top: 45%;
-  left: 50%;
-`;
-
-//TODO unsafe types
 interface Props {
   NFT: NFT;
   isOwner: boolean;

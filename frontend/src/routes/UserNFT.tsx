@@ -1,6 +1,7 @@
 // *EXTERNALS*
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import useSWR from 'swr';
 
 // *INTERNALS*
 import { API_ADDRESS } from '../constants';
@@ -9,30 +10,12 @@ import UserLoot from './UserLOOT';
 import LoadWith404 from '../components/LoadWith404';
 import CardWrapper from '../components/CardWrapper';
 
-const getUserNFT = async (userAddress: string | undefined) => {
-  const res = await fetch(`${API_ADDRESS}/v1/nft/wallet/${userAddress}`);
-  if (res.status === 404) return null;
-  const NFTs = await res.json();
-
-  return NFTs;
-};
+const fetcher = (params: any) => fetch(params).then((res) => res.json());
 
 export default function UserNFT() {
   const params = useParams();
   const { userAddress } = params;
-  const [userNFT, setUserNFT] = useState<Array<NFT> | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setIsLoading(true);
-
-    const wrapper = async () => {
-      const result = await getUserNFT(userAddress);
-      setUserNFT(result);
-      setIsLoading(false);
-    };
-    wrapper();
-  }, []);
+  const { data: userNFT, error } = useSWR(`${API_ADDRESS}/v1/nft/wallet/${userAddress}`, fetcher);
 
   return (
     <div className="container">
@@ -45,7 +28,7 @@ export default function UserNFT() {
             ))}
           </div>
         ) : (
-          <LoadWith404 title="User has no Defender yet" error="" btnText="Mint One Here" isLoading={isLoading} />
+          <LoadWith404 title="User has no Defender yet" error="" btnText="Mint One Here" isLoading={!userNFT} />
         )}
         <UserLoot />
       </div>

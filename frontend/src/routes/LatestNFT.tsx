@@ -1,5 +1,5 @@
 // *EXTERNALS*
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useEthers } from '@usedapp/core';
 import useSWR from 'swr';
 

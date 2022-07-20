@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { TransactionState, TransactionStatus } from '@usedapp/core';
 import { STAKE_CONTRACT_ADDRESS } from 'dungeon-defenders-contracts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCirclePlus, faCircleMinus, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 
 // *INTERNALS*
 import { useEquip, useUnequip, useSlots, useApproveLoot, useAllowanceLoot, useAesthetics } from '../../hooks/index';

@@ -43,13 +43,14 @@ const triggerRewardAllocation = async (account: string | undefined) => {
   if (res.status !== 200) toast.error('Failed to allocate rewards, emergency withdrawal needed');
 };
 
+// TODO we should probably extract some logic, this is getting messy
 export default function Play() {
   const navigate = useNavigate();
   const { account } = useEthers();
   const { state } = useLocation() as { state: State };
   const stakes = useStakes(account);
   const weaponId = (state && state.weaponId) || (state && state.defenderId);
-  const defender = useDefender(stakes && stakes.tokenId.toNumber()); //?state.defenderId
+  const defender = useDefender(stakes && stakes.tokenId.toNumber());
   const weapon = useLoot(stakes && +stakes.weaponId);
   const { state: unstakeState, send: sendUnstake } = useUnstake();
   const { state: emergencyState, send: sendEmergency } = useEmergency();
@@ -75,7 +76,7 @@ export default function Play() {
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(false);
-    }, 1000 * 1);
+    }, 1250);
   }, []);
 
   useEffect(() => {
@@ -132,6 +133,7 @@ export default function Play() {
     initializeGame('game', { onGameOver, defender, weapon: weapon ?? DEFAULT_LOOT });
   }, [init]);
 
+  // TODO extract component
   if (stakes?.isClaimable || expired) {
     return (
       <div className="container col-4 offset-4 text-center pt-5">
@@ -205,6 +207,7 @@ export default function Play() {
     );
   }
 
+  // TODO loading overall for this component isnt great
   if (!isLoading && (!account || !stakes || (stakes && !stakes.isInitialized)))
     return (
       <Error title="Game not found, check your collection" error="" url={!account ? '/' : `/NFT/user/${account}`} />
