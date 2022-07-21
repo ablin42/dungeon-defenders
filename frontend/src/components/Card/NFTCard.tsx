@@ -3,9 +3,9 @@ import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 
 // *INTERNALS*
-import Play from './Actions/Play';
-import Equipment from './Actions/Equipment';
-import { NFTAttribute, NFT } from '../types';
+import Play from '../Actions/Play';
+import Equipment from '../Actions/Equipment';
+import { NFTAttribute, NFT } from '../../types';
 
 interface Props {
   NFT: NFT;
@@ -48,7 +48,7 @@ function getTraitText(trait: string, value: string | number) {
   return TRAIT_TEXT[trait as keyof unknown];
 }
 
-const SmallNFTCard = ({
+const NFTCard = ({
   NFT,
   isLoot,
   isOwner,
@@ -81,13 +81,8 @@ const SmallNFTCard = ({
           </div>
         </div>
         <div>
-          {account && !isLoot && slots && (isOwner || isUserStakedToken) && (
-            <>
-              <Equipment userAddress={account} tokenId={tokenId} onEquipmentUpdated={onEquipmentUpdated} />
-              <div className="mt-2" />
-              <Play userAddress={account} tokenId={tokenId} equipedLoot={slots} />
-            </>
-          )}
+          {!isLoot && <Equipment userAddress={account || ''} tokenId={tokenId} />}
+          {/* <Play userAddress={account} tokenId={tokenId} equipedLoot={slots} /> */}
         </div>
       </div>
     );
@@ -106,10 +101,10 @@ const SmallNFTCard = ({
             </div>
           </div>
         </div>
-        {/* {getMetadataDisplay()} */}
+        {getMetadataDisplay()}
       </div>
     </div>
   );
 };
 
-export default memo(SmallNFTCard);
+export default memo(NFTCard);

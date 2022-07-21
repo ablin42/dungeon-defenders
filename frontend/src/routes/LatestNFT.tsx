@@ -8,7 +8,7 @@ import { API_ADDRESS } from '../constants';
 import type { NFT } from '../types';
 import Mint from '../components/Actions/Mint';
 import ConnectWallet from '../components/Actions/ConnectWallet';
-import CardWrapper from '../components/CardWrapper';
+import CardWrapper from '../components/Card/CardWrapper';
 
 const fetcher = (params: any) => fetch(params).then((res) => res.json());
 

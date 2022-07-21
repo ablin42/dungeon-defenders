@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../index.css';
+import '../../index.css';
 
 function Toggler() {
   const [state, setState] = useState({ isDarkMode: false });

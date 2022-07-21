@@ -8,8 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGem } from '@fortawesome/free-solid-svg-icons';
 
 // *INTERNALS*
-import Error from '../components/Error';
-import LoadingBtn from '../components/LoadingBtn';
+import Error from '../components/Misc/Error';
+import LoadingBtn from '../components/Misc/LoadingBtn';
 import { API_ADDRESS, STATUS_TYPES } from '../constants';
 import { initializeGame } from '../game/Index';
 import { Loot, useDefender, useEmergency, useLoot, useStakes, useUnstake } from '../hooks';

@@ -349,3 +349,44 @@ a:hover,
     width: 45px;
   }
 }
+
+/* PREPARE MODAL */
+.prepare-modal {
+  background-color: #0c0c0c;
+  position: absolute;
+  padding: 20px 40px;
+  top: 52%;
+  left: 50%;
+  width: 75%;
+  height: 90%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  border-radius: 5px;
+}
+
+.loot-wrapper {
+  background-color: #101010;
+  display: flex;
+  padding: 10px;
+  height: fit-content;
+  min-height: 275px;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid transparent;
+  &:hover {
+    border-color: #2d767f;
+  }
+}
+
+.test {
+  .float-wrapper {
+    display: none;
+  }
+
+  &:hover {
+    .float-wrapper {
+      display: block;
+    }
+  }
+}

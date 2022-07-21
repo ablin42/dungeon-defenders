@@ -17,7 +17,7 @@ import {
   useApproveGEMS,
   useAllowanceGEMS,
 } from '../../hooks/index';
-import LoadingBtn from '../LoadingBtn';
+import LoadingBtn from '../Misc/LoadingBtn';
 import { sendTx, handleTxStatus } from '../../utils';
 
 interface ActionProps {

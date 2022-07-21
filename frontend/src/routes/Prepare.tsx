@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useEthers, TransactionState, TransactionStatus } from '@usedapp/core';
 import { Buffer } from 'buffer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShirt, faShoePrints, faGun } from '@fortawesome/free-solid-svg-icons';
+import { faShirt, faShoePrints, faGun, faCircleMinus, faCirclePlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 import useSWR from 'swr';
 import styled from 'styled-components';
 
@@ -12,31 +12,23 @@ import styled from 'styled-components';
 import { API_ADDRESS, STATUS_TYPES } from '../constants';
 import { useEquip, useUnequip, useTokenURI, useOwnerOf, useSlots } from '../hooks/index';
 import { sendTx, handleTxStatus } from '../utils';
-import CardWrapper from '../components/CardWrapper';
+import CardWrapper from '../components/Card/CardWrapper';
 import type { NFT } from '../types';
-import UserLoot from './UserLOOT';
 
-const LootWrapper = styled.div`
-  background-color: #101010;
-  display: flex;
-  padding: 10px;
-  height: fit-content;
-  min-height: 275px;
+const Wrapper = styled.div<any>`
+  border: 1px solid transparent;
+  position: relative;
   cursor: pointer;
-  justify-content: center;
-  align-items: center;
+  &:hover {
+    border-color: ${({ isEquiped }) => (isEquiped ? '#ff5959' : '#2cb978')};
+  }
 `;
 
-const Modal = styled.div`
-  background-color: #0c0c0c;
+const FloatWrapper = styled.div<any>`
   position: absolute;
-  padding: 20px 40px;
-  top: 50%;
-  left: 50%;
-  width: 75%;
-  height: 90%;
-  transform: translate(-50%, -50%);
-  z-index: 10;
+  z-index: 1;
+  right: ${({ right }) => right};
+  top: ${({ top }) => top};
 `;
 
 const fetcher = (params: any) => fetch(params).then((res) => res.json());
@@ -49,7 +41,6 @@ export default function Prepare() {
   const { account } = useEthers();
   const [open, setOpen] = useState<number | null>(null);
   const slots = useSlots(nftId);
-  const [equipedLoot, setEquipedLoot] = useState(slots ? [slots[1], slots[2], slots[3]] : [0, 0, 0]);
   const URI = useTokenURI(nftId || 0);
   const owner = useOwnerOf(nftId || 0);
   const NFTObject = URI ? JSON.parse(Buffer.from(URI, 'base64').toString()) : null;
@@ -57,7 +48,7 @@ export default function Prepare() {
   const { data: userLOOT, error } = useSWR(`${API_ADDRESS}/v1/loot/wallet/${owner}`, fetcher);
   const [STATES, setSTATES] = useState<Array<TransactionStatus>>([equipState, unequipState]);
   const STATUS = STATES.map((state) => state.status as string);
-  const isPending = STATUS.map((status) => status === STATUS_TYPES.PENDING || status === STATUS_TYPES.MINING);
+  //   const isPending = STATUS.map((status) => status === STATUS_TYPES.PENDING || status === STATUS_TYPES.MINING);
 
   const handleStateChange = (STATES: Array<TransactionStatus>, index: number) => {
     const newSTATES = [...STATES] as [TransactionStatus];
@@ -82,13 +73,13 @@ export default function Prepare() {
     setOpen(lootId);
   };
 
-  const equipLoot = (e: any, name: string) => {
+  const equipLoot = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, name: string) => {
     e.stopPropagation();
     const lootId = +name.substring(6);
     sendTx(() => sendEquip(nftId, lootId));
   };
 
-  const unequipLoot = (e: any, name: string) => {
+  const unequipLoot = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, name: string) => {
     e.stopPropagation();
     const lootId = +name.substring(6);
     sendTx(() => sendUnequip(nftId, lootId));
@@ -101,22 +92,30 @@ export default function Prepare() {
   */
 
   const checkLootType = (loot: NFT) => {
-    if (userLOOT) {
-      // Not proud of this one, there has to be a cleaner way but im tired
-      const weapon = loot.attributes[7].value;
-      const armor = loot.attributes[8].value;
-      const boots = loot.attributes[9].value;
-      if (weapon) return 0;
-      if (armor) return 1;
-      if (boots) return 2;
-      return null;
-    }
+    // Not proud of this one, there has to be a cleaner way but im tired
+    const weapon = loot.attributes[7].value;
+    const armor = loot.attributes[8].value;
+    const boots = loot.attributes[9].value;
+    if (weapon) return 0;
+    if (armor) return 1;
+    if (boots) return 2;
+    return null;
   };
 
   return (
     <>
       {open != null ? (
-        <Modal onClick={() => setOpen(null)}>
+        <div className="prepare-modal" onClick={() => setOpen(null)}>
+          <FloatWrapper className="whatever" top="10px" right="20px">
+            <FontAwesomeIcon
+              icon={faXmark}
+              fontSize={30}
+              color="#ff5959"
+              className="mr-3"
+              onClick={() => setOpen(null)}
+              style={{ cursor: 'pointer' }}
+            />
+          </FloatWrapper>
           <div className="row">
             {userLOOT &&
               userLOOT
@@ -129,11 +128,20 @@ export default function Prepare() {
                       slots[open] === +NFT.name.substring(6) ? unequipLoot(e, NFT.name) : equipLoot(e, NFT.name)
                     }
                   >
-                    <CardWrapper NFT={NFT} owner={owner} isLoot isSmall />
+                    <Wrapper className="modal-loot-wrapper" isEquiped={slots[open] === +NFT.name.substring(6)}>
+                      <FloatWrapper className="float-wrapper" top="10px" right="10px">
+                        {slots[open] === +NFT.name.substring(6) ? (
+                          <FontAwesomeIcon icon={faCircleMinus} fontSize={20} color="#ff5959" />
+                        ) : (
+                          <FontAwesomeIcon icon={faCirclePlus} fontSize={20} color="#2cb978" />
+                        )}
+                      </FloatWrapper>
+                      <CardWrapper NFT={NFT} owner={owner} isLoot isSmall />
+                    </Wrapper>
                   </div>
                 ))}
           </div>
-        </Modal>
+        </div>
       ) : null}
       {owner && account && owner !== account ? (
         <div className="text-center mt-4 mb-5">
@@ -150,29 +158,33 @@ export default function Prepare() {
               <div className="row">
                 <div className="col-4">{NFTObject && <CardWrapper NFT={NFTObject} owner={owner} />}</div>
                 <div className="row col-7 offset-1">
-                  <LootWrapper className="col-5" onClick={() => handleLootClick(0)}>
+                  <div className="col-5 loot-wrapper" onClick={() => handleLootClick(0)}>
                     {findLoot(slots[0]) >= 0 ? (
                       <CardWrapper NFT={userLOOT[findLoot(slots[0])]} owner={owner} isLoot isSmall />
                     ) : (
                       <FontAwesomeIcon icon={faGun} fontSize={75} color="#232628" />
                     )}
-                  </LootWrapper>
+                  </div>
 
-                  <LootWrapper className="col-5 offset-1" onClick={() => handleLootClick(1)}>
+                  <div className="col-5 offset-1 loot-wrapper" onClick={() => handleLootClick(1)}>
                     {findLoot(slots[1]) >= 0 ? (
                       <CardWrapper NFT={userLOOT[findLoot(slots[1])]} owner={owner} isLoot isSmall />
                     ) : (
                       <FontAwesomeIcon icon={faShirt} fontSize={75} color="#232628" />
                     )}
-                  </LootWrapper>
+                  </div>
 
-                  <LootWrapper className="col-5" onClick={() => handleLootClick(2)}>
+                  {/* <div className="col-5 loot-wrapper p-0">
+                    <button className="btn btn-primary btn-large">Play</button>
+                  </div> */}
+
+                  <div className="col-5 loot-wrapper" onClick={() => handleLootClick(2)}>
                     {findLoot(slots[2]) >= 0 ? (
                       <CardWrapper NFT={userLOOT[findLoot(slots[2])]} owner={owner} isLoot isSmall />
                     ) : (
                       <FontAwesomeIcon icon={faShoePrints} fontSize={75} color="#232628" />
                     )}
-                  </LootWrapper>
+                  </div>
                 </div>
               </div>
             </div>

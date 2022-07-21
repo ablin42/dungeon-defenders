@@ -7,7 +7,7 @@ import styled from 'styled-components';
 // *INTERNALS*
 import Header from './components/Header';
 import Footer from './components/Footer';
-import Toggler from './components/Toggler';
+import Toggler from './components/Misc/Toggler';
 
 const StyledOutlet = styled.div`
   flex: 1 0 auto;

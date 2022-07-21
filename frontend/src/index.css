@@ -12075,4 +12075,51 @@ a:hover,
 .toggle-container label:active:after {
   width: 45px;
 }
+
+/* PREPARE MODAL */
+.prepare-modal {
+  background-color: #0c0c0c;
+  position: absolute;
+  padding: 20px 40px;
+  top: 52%;
+  left: 50%;
+  width: 75%;
+  height: 90%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  z-index: 10;
+  border-radius: 5px;
+}
+
+.loot-wrapper {
+  background-color: #101010;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 10px;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  min-height: 275px;
+  cursor: pointer;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border: 1px solid transparent;
+}
+
+.loot-wrapper:hover {
+  border-color: #2d767f;
+}
+
+.test .float-wrapper {
+  display: none;
+}
+
+.test:hover .float-wrapper {
+  display: block;
+}
 /*# sourceMappingURL=index.css.map */

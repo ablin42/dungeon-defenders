@@ -4,22 +4,23 @@ import { useEthers } from '@usedapp/core';
 import useSWR from 'swr';
 
 // *INTERNALS*
-import { useStakes, useSlots } from '../hooks';
-import { NFT } from '../types';
-import { API_ADDRESS } from '../constants';
-import NFTCard from '../components/NFTCard';
-import SmallNFTCard from '../components/SmallNFTCard';
+import { useStakes, useSlots } from '../../hooks';
+import { NFT } from '../../types';
+import { API_ADDRESS } from '../../constants';
+import NFTCard from './NFTCard';
+import SmallNFTCard from './SmallNFTCard';
 
 interface Props {
   NFT: NFT;
   owner: string;
   isLoot?: boolean;
   isSmall?: boolean;
+  disabledFlip?: boolean;
 }
 
 const fetcher = (params: any) => fetch(params).then(async (res) => URL.createObjectURL(await res.blob()));
 
-const CardWrapper = ({ NFT, owner, isLoot, isSmall }: Props) => {
+const CardWrapper = ({ NFT, owner, isLoot, isSmall, disabledFlip }: Props) => {
   const { name, tokenId } = NFT;
   const actualTokenId = tokenId || +name.replace(/^\D+/g, ''); // Trick to bypass the issue of tokenId not being set in the NFT object
   const toFetch = isLoot
@@ -45,17 +46,7 @@ const CardWrapper = ({ NFT, owner, isLoot, isSmall }: Props) => {
 
   return image ? (
     isSmall ? (
-      <SmallNFTCard
-        NFT={NFT}
-        isOwner={isOwner}
-        isUserStakedToken={isUserStakedToken}
-        tokenId={actualTokenId}
-        onEquipmentUpdated={onEquipmentUpdated}
-        slots={slots}
-        isLoot={isLoot}
-        account={account}
-        renderedImage={image}
-      />
+      <SmallNFTCard NFT={NFT} renderedImage={image} disabledFlip={disabledFlip} />
     ) : (
       <NFTCard
         NFT={NFT}

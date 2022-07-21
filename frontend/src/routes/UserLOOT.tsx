@@ -6,8 +6,8 @@ import useSWR from 'swr';
 // *INTERNALS*
 import { API_ADDRESS } from '../constants';
 import type { NFT } from '../types';
-import LoadWith404 from '../components/LoadWith404';
-import CardWrapper from '../components/CardWrapper';
+import LoadWith404 from '../components/Misc/LoadWith404';
+import CardWrapper from '../components/Card/CardWrapper';
 
 const fetcher = (params: any) => fetch(params).then((res) => res.json());
 

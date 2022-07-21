@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { NETWORK_EXPLORER, STATUS_TYPES } from '../../constants';
 import { useMintLoot } from '../../hooks/index';
 import { sendTx } from '../../utils';
-import LoadingBtn from '../LoadingBtn';
+import LoadingBtn from '../Misc/LoadingBtn';
 
 type ActionProps = {
   userAddress: string;

@@ -12,7 +12,7 @@ import reportWebVitals from './reportWebVitals';
 import Home from './routes/Home';
 import UserNFT from './routes/UserNFT';
 import SingleNFT from './routes/SingleNFT';
-import Error from './components/Error';
+import Error from './components/Misc/Error';
 import Play from './routes/Play';
 import SingleLOOT from './routes/SingleLOOT';
 import About from './routes/About';

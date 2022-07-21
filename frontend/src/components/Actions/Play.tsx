@@ -18,7 +18,7 @@ import {
   useStakes,
 } from '../../hooks/index';
 import { STATUS_TYPES, GEMS_TOTAL_SUPPLY } from '../../constants';
-import LoadingBtn from '../LoadingBtn';
+import LoadingBtn from '../Misc/LoadingBtn';
 import { sendTx, handleTxStatus } from '../../utils';
 
 type ActionProps = {

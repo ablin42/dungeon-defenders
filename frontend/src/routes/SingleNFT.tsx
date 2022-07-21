@@ -5,7 +5,7 @@ import { Buffer } from 'buffer';
 
 // *INTERNALS*
 import { useTokenURI, useOwnerOf } from '../hooks/index';
-import CardWrapper from '../components/CardWrapper';
+import CardWrapper from '../components/Card/CardWrapper';
 
 export default function SingleNFT() {
   const params = useParams();
