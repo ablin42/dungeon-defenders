@@ -1,7 +1,7 @@
 // *EXTERNALS*
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useEthers } from '@usedapp/core';
+import { useEthers, TransactionState, TransactionStatus } from '@usedapp/core';
 import { Buffer } from 'buffer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShirt, faShoePrints, faGun } from '@fortawesome/free-solid-svg-icons';
@@ -9,19 +9,22 @@ import useSWR from 'swr';
 import styled from 'styled-components';
 
 // *INTERNALS*
-import { API_ADDRESS } from '../constants';
-import { useEquip, useTokenURI, useOwnerOf, useSlots } from '../hooks/index';
+import { API_ADDRESS, STATUS_TYPES } from '../constants';
+import { useEquip, useUnequip, useTokenURI, useOwnerOf, useSlots } from '../hooks/index';
+import { sendTx, handleTxStatus } from '../utils';
 import CardWrapper from '../components/CardWrapper';
 import type { NFT } from '../types';
+import UserLoot from './UserLOOT';
 
 const LootWrapper = styled.div`
   background-color: #101010;
   display: flex;
   padding: 10px;
   height: fit-content;
-  min-height: 350px;
-  margin-bottom: 25px;
+  min-height: 275px;
   cursor: pointer;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Modal = styled.div`
@@ -41,6 +44,7 @@ const fetcher = (params: any) => fetch(params).then((res) => res.json());
 export default function Prepare() {
   const params = useParams();
   const { state: equipState, send: sendEquip } = useEquip();
+  const { state: unequipState, send: sendUnequip } = useUnequip();
   const { nftId } = params;
   const { account } = useEthers();
   const [open, setOpen] = useState<number | null>(null);
@@ -51,32 +55,62 @@ export default function Prepare() {
   const NFTObject = URI ? JSON.parse(Buffer.from(URI, 'base64').toString()) : null;
   if (NFTObject) NFTObject.tokenId = nftId;
   const { data: userLOOT, error } = useSWR(`${API_ADDRESS}/v1/loot/wallet/${owner}`, fetcher);
+  const [STATES, setSTATES] = useState<Array<TransactionStatus>>([equipState, unequipState]);
+  const STATUS = STATES.map((state) => state.status as string);
+  const isPending = STATUS.map((status) => status === STATUS_TYPES.PENDING || status === STATUS_TYPES.MINING);
+
+  const handleStateChange = (STATES: Array<TransactionStatus>, index: number) => {
+    const newSTATES = [...STATES] as [TransactionStatus];
+    newSTATES[index].status = STATUS_TYPES.NONE as TransactionState;
+    setSTATES(newSTATES);
+  };
 
   useEffect(() => {
-    if (slots && slots !== equipedLoot) setEquipedLoot(slots);
-  }, [slots.toString()]);
+    setSTATES([equipState, unequipState]);
+  }, [equipState, unequipState]);
+
+  useEffect(() => {
+    handleTxStatus(STATES, STATUS, handleStateChange, () => setOpen(null));
+  }, [STATES]);
 
   const findLoot = (lootId: number) => {
     if (!userLOOT) return -1;
-    const index = userLOOT.findIndex((loot: NFT) => +loot.name.substring(6) === lootId);
-    return index;
+    return userLOOT.findIndex((loot: NFT) => +loot.name.substring(6) === lootId);
   };
 
   const handleLootClick = (lootId: number) => {
     setOpen(lootId);
   };
 
-  const selectLoot = (e: any, name: string) => {
+  const equipLoot = (e: any, name: string) => {
     e.stopPropagation();
     const lootId = +name.substring(6);
-    console.log('selecting loot:', nftId, lootId);
-    sendEquip(nftId, lootId);
-    // const index = findLoot(open);
-    // if (index === -1) return;
-    // const newEquipedLoot = [...equipedLoot];
-    // newEquipedLoot[0] = userLOOT[index].name;
-    // setEquipedLoot(newEquipedLoot);
-    // setOpen(null);
+    sendTx(() => sendEquip(nftId, lootId));
+  };
+
+  const unequipLoot = (e: any, name: string) => {
+    e.stopPropagation();
+    const lootId = +name.substring(6);
+    sendTx(() => sendUnequip(nftId, lootId));
+  };
+
+  // TODO
+  /*
+    pointer + hover/select loot
+    more intuitive UI 
+  */
+
+  const checkLootType = (loot: NFT) => {
+    if (userLOOT) {
+      // Not proud of this one, there has to be a cleaner way but im tired
+      const weapon = loot.attributes[7].value;
+      const armor = loot.attributes[8].value;
+      const boots = loot.attributes[9].value;
+      if (weapon) return 0;
+      if (armor) return 1;
+      if (boots) return 2;
+      return null;
+    }
   };
 
   return (
@@ -85,11 +119,19 @@ export default function Prepare() {
         <Modal onClick={() => setOpen(null)}>
           <div className="row">
             {userLOOT &&
-              userLOOT.map((NFT: NFT) => (
-                <div key={NFT.name} className="col-3" onClick={(e) => selectLoot(e, NFT.name)}>
-                  <CardWrapper NFT={NFT} owner={owner} isLoot isSmall />
-                </div>
-              ))}
+              userLOOT
+                .filter((item: NFT) => open === checkLootType(item))
+                .map((NFT: NFT) => (
+                  <div
+                    key={NFT.name}
+                    className="col-3"
+                    onClick={(e) =>
+                      slots[open] === +NFT.name.substring(6) ? unequipLoot(e, NFT.name) : equipLoot(e, NFT.name)
+                    }
+                  >
+                    <CardWrapper NFT={NFT} owner={owner} isLoot isSmall />
+                  </div>
+                ))}
           </div>
         </Modal>
       ) : null}
@@ -110,25 +152,25 @@ export default function Prepare() {
                 <div className="row col-7 offset-1">
                   <LootWrapper className="col-5" onClick={() => handleLootClick(0)}>
                     {findLoot(slots[0]) >= 0 ? (
-                      <CardWrapper NFT={userLOOT[findLoot(slots[0])]} owner={owner} isLoot />
+                      <CardWrapper NFT={userLOOT[findLoot(slots[0])]} owner={owner} isLoot isSmall />
                     ) : (
-                      <FontAwesomeIcon className="fa-icon fa-white" icon={faGun} fontSize={45} />
+                      <FontAwesomeIcon icon={faGun} fontSize={75} color="#232628" />
                     )}
                   </LootWrapper>
 
                   <LootWrapper className="col-5 offset-1" onClick={() => handleLootClick(1)}>
                     {findLoot(slots[1]) >= 0 ? (
-                      <CardWrapper NFT={userLOOT[findLoot(slots[1])]} owner={owner} isLoot />
+                      <CardWrapper NFT={userLOOT[findLoot(slots[1])]} owner={owner} isLoot isSmall />
                     ) : (
-                      <FontAwesomeIcon className="fa-icon fa-white" icon={faShirt} fontSize={45} />
+                      <FontAwesomeIcon icon={faShirt} fontSize={75} color="#232628" />
                     )}
                   </LootWrapper>
 
                   <LootWrapper className="col-5" onClick={() => handleLootClick(2)}>
                     {findLoot(slots[2]) >= 0 ? (
-                      <CardWrapper NFT={userLOOT[findLoot(slots[2])]} owner={owner} isLoot />
+                      <CardWrapper NFT={userLOOT[findLoot(slots[2])]} owner={owner} isLoot isSmall />
                     ) : (
-                      <FontAwesomeIcon className="fa-icon fa-white" icon={faShoePrints} fontSize={45} />
+                      <FontAwesomeIcon icon={faShoePrints} fontSize={75} color="#232628" />
                     )}
                   </LootWrapper>
                 </div>
