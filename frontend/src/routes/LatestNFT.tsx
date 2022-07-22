@@ -23,7 +23,7 @@ export default function LatestNFT() {
           <h2 className="text-start mb-2">Newly Born Defenders</h2>
           <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             {latestNFT.map((NFT: NFT) => (
-              <CardWrapper key={NFT.name} NFT={NFT} owner={NFT.owner || '0x'} />
+              <CardWrapper key={NFT.name} NFT={NFT} />
             ))}
           </div>
         </>

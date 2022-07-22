@@ -15,7 +15,7 @@ const SmallNFTCard = ({ NFT, renderedImage, disabledFlip }: Props) => {
 
   return (
     <div className="col">
-      <div className="card shadow-sm">
+      <div className="card shadow">
         {disabledFlip ? (
           <img className="card-img-top" src={renderedImage} alt="Rendered NFT" />
         ) : (

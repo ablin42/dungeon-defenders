@@ -11,13 +11,12 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Home from './routes/Home';
 import UserNFT from './routes/UserNFT';
-import SingleNFT from './routes/SingleNFT';
 import Error from './components/Misc/Error';
 import Play from './routes/Play';
 import SingleLOOT from './routes/SingleLOOT';
 import About from './routes/About';
 import Admin from './routes/Admin';
-import Prepare from './routes/Prepare';
+import Prepare from './routes/SingleNFT';
 
 const config = {
   readOnlyChainId: ChainId.Goerli,
@@ -36,11 +35,10 @@ root.render(
         <Route path="/" element={<App />}>
           <Route path="/" element={<Home />} />
           <Route path="/About" element={<About />} />
-          <Route path="/Preparation/:nftId" element={<Prepare />} />
           <Route path="/Play" element={<Play />} />
           <Route path="/Admin" element={<Admin />} />
           <Route path="/NFT/user/:userAddress" element={<UserNFT />} />
-          <Route path="/NFT/:nftId" element={<SingleNFT />} />
+          <Route path="/NFT/:nftId" element={<Prepare />} />
           <Route path="/LOOT/:lootId" element={<SingleLOOT />} />
 
           <Route path="*" element={<Error />} />

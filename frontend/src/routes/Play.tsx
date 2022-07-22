@@ -140,7 +140,7 @@ export default function Play() {
         <div className="container-decorated col-10 offset-1 p-5">
           <h1 className="mb-3">Claim your rewards 🎉</h1>
           <div className="col-10 offset-1">
-            <ul className="list-group text-start">
+            <ul className="list-group text-start shadow-sm">
               <li className="list-group-item list-reward">
                 <span>Rewarded XP</span>
                 <b>
@@ -232,7 +232,11 @@ export default function Play() {
             </div>
           </div>
         ) : null}
-        <div className="d-flex justify-content-center" id="game"></div>
+        <div
+          className="d-flex justify-content-center shadow"
+          id="game"
+          style={{ width: 'fit-content', margin: 'auto' }}
+        ></div>
       </div>
     </div>
   );
