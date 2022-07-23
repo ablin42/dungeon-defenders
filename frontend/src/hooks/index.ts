@@ -29,7 +29,7 @@ const GEMSContract = new ethers.Contract(GEMS_CONTRACT_ADDRESS, GEMSContractInte
 const LOOTContract = new ethers.Contract(LOOT_CONTRACT_ADDRESS, LOOTContractInterface);
 const FAUCETContract = new ethers.Contract(FAUCET_CONTRACT_ADDRESS, FAUCETContractInterface);
 
-//! don't forget to update
+// TODO don't forget to update
 const options = { chainId: ChainId.Goerli };
 
 // *NFT HOOKS*

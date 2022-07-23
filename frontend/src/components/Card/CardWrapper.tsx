@@ -13,23 +13,24 @@ interface Props {
   isLoot?: boolean;
   isSmall?: boolean;
   disabledFlip?: boolean;
+  onClick?: (e: any) => void;
 }
 
 const fetcher = (params: any) => fetch(params).then(async (res) => URL.createObjectURL(await res.blob()));
 
-const CardWrapper = ({ NFT, isLoot, isSmall, disabledFlip }: Props) => {
+const CardWrapper = ({ NFT, isLoot, isSmall, disabledFlip, onClick }: Props) => {
   const { name, tokenId } = NFT;
   const actualTokenId = tokenId || +name.replace(/^\D+/g, ''); // Trick to bypass the issue of tokenId not being set in the NFT object
   const toFetch = isLoot
     ? `${API_ADDRESS}/v1/loot/${actualTokenId}/render`
     : `${API_ADDRESS}/v1/nft/${actualTokenId}/render`;
-  const { data: image, error } = useSWR(toFetch, fetcher);
+  const { data: image } = useSWR(toFetch, fetcher);
 
   return image ? (
     isSmall ? (
       <SmallNFTCard NFT={NFT} renderedImage={image} disabledFlip={disabledFlip} />
     ) : (
-      <NFTCard NFT={NFT} tokenId={actualTokenId} isLoot={isLoot} renderedImage={image} />
+      <NFTCard NFT={NFT} tokenId={actualTokenId} isLoot={isLoot} renderedImage={image} onClick={onClick} />
     )
   ) : (
     <div className="text-center mt-5">

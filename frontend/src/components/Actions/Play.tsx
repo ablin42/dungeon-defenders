@@ -141,7 +141,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot, gemsAm
           Stake &amp; Play
         </button>
       ) : null}
-      {NFTallowance && LOOTAllowance && GEMSallowance && staked && tokenId == stakedId ? (
+      {NFTallowance && LOOTAllowance && GEMSallowance && staked ? (
         <>
           <Link to={`/Play`}>
             <button className="btn btn-lg btn-info w-100">

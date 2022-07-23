@@ -11,6 +11,7 @@ interface Props {
   tokenId: string | number;
   renderedImage: string;
   isLoot?: boolean;
+  onClick?: (e: any) => void;
 }
 
 const BADGE_TYPE = [
@@ -42,7 +43,7 @@ function getTraitText(trait: string, value: string | number) {
   return TRAIT_TEXT[trait as keyof unknown];
 }
 
-const NFTCard = ({ NFT, isLoot, tokenId, renderedImage }: Props) => {
+const NFTCard = ({ NFT, isLoot, tokenId, renderedImage, onClick }: Props) => {
   const { name, image: nftImage, attributes } = NFT;
 
   const getMetadataDisplay = () => {
@@ -79,18 +80,16 @@ const NFTCard = ({ NFT, isLoot, tokenId, renderedImage }: Props) => {
   return (
     <div className="col">
       <div className="card shadow">
-        <Link to={`/NFT/${tokenId}`}>
-          <div className="flip-card">
-            <div className="flip-card-inner">
-              <div className="flip-card-front">
-                <img className="card-img-top" src={renderedImage} alt="Rendered NFT" />
-              </div>
-              <div className="flip-card-back">
-                <img className="card-img-top" src={nftImage} alt="Svg NFT" />
-              </div>
+        <div className="flip-card" onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'initial' }}>
+          <div className="flip-card-inner">
+            <div className="flip-card-front">
+              <img className="card-img-top" src={renderedImage} alt="Rendered NFT" />
+            </div>
+            <div className="flip-card-back">
+              <img className="card-img-top" src={nftImage} alt="Svg NFT" />
             </div>
           </div>
-        </Link>
+        </div>
         {getMetadataDisplay()}
       </div>
     </div>

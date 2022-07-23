@@ -10,7 +10,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Home from './routes/Home';
-import UserNFT from './routes/UserNFT';
+import Collection from './routes/Collection';
 import Error from './components/Misc/Error';
 import Play from './routes/Play';
 import SingleLOOT from './routes/SingleLOOT';
@@ -37,7 +37,7 @@ root.render(
           <Route path="/About" element={<About />} />
           <Route path="/Play" element={<Play />} />
           <Route path="/Admin" element={<Admin />} />
-          <Route path="/NFT/user/:userAddress" element={<UserNFT />} />
+          <Route path="/Collection/:userAddress" element={<Collection />} />
           <Route path="/NFT/:nftId" element={<Prepare />} />
           <Route path="/LOOT/:lootId" element={<SingleLOOT />} />
 

@@ -14,7 +14,7 @@ type ActionProps = {
   userAddress: string;
 };
 
-// TODO this could be deleted, only the staking contract should be able to mint, keeping it for debug purposes (for now)
+// TODO restrict to admin
 const Loot: React.FC<ActionProps> = ({ userAddress }) => {
   const navigate = useNavigate();
   const [isMinting, setIsMinting] = useState(false);

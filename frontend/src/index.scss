@@ -184,6 +184,7 @@ a:hover,
   background-color: var(--darker-shade);
   border-color: rgba(140, 130, 115, 0.13);
   color: var(--light-shade);
+  height: 100%;
 
   .text-muted {
     width: 250px;
@@ -441,6 +442,13 @@ a:hover,
 
 .staking-section {
   background-color: var(--darkest-shade);
-  padding: 22px 20px;
+  padding: 20px;
   border-radius: 5px;
 }
+
+// .scroll-item {
+//   color: var(--lighter-shade);
+//   font-size: 16px;
+//   padding: 20px 0;
+//   text-align: left;
+// }

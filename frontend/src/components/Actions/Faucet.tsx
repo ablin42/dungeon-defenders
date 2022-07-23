@@ -31,6 +31,8 @@ const STATE_INDEX = {
   WITHDRAW: 3,
 };
 
+// TODO handle deposit
+//? should leave it to admin
 const Faucet = ({ userAddress }: ActionProps) => {
   // *HOOKS*
   const { state: claimState, send: sendClaim } = useClaim();
@@ -125,6 +127,7 @@ const Faucet = ({ userAddress }: ActionProps) => {
         <LoadingBtn width="100%" type="primary" />
       ) : (
         <>
+          {/* TODO show only if owner has less than 100 gems */}
           <button onClick={() => sendTx(claim)} className="btn btn-lg btn-primary w-100 ">
             Claim 500 <FontAwesomeIcon className="fa-icon fa-white" icon={faGem} fontSize={15} />
           </button>

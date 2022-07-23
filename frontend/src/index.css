@@ -11890,6 +11890,7 @@ a:hover,
   background-color: var(--darker-shade);
   border-color: rgba(140, 130, 115, 0.13);
   color: var(--light-shade);
+  height: 100%;
 }
 
 .card .text-muted {
@@ -12176,7 +12177,7 @@ a:hover,
 
 .staking-section {
   background-color: var(--darkest-shade);
-  padding: 22px 20px;
+  padding: 20px;
   border-radius: 5px;
 }
 /*# sourceMappingURL=index.css.map */

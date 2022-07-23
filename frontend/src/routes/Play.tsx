@@ -85,7 +85,7 @@ export default function Play() {
 
   useEffect(() => {
     const successHandler = () => {
-      navigate(`/NFT/user/${account}`, {
+      navigate(`/Collection/${account}`, {
         replace: false,
       });
     };
@@ -210,7 +210,7 @@ export default function Play() {
   // TODO loading overall for this component isnt great
   if (!isLoading && (!account || !stakes || (stakes && !stakes.isInitialized)))
     return (
-      <Error title="Game not found, check your collection" error="" url={!account ? '/' : `/NFT/user/${account}`} />
+      <Error title="Game not found, check your collection" error="" url={!account ? '/' : `/Collection/${account}`} />
     );
 
   return (

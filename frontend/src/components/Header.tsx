@@ -9,7 +9,7 @@ import { faToolbox, faGem } from '@fortawesome/free-solid-svg-icons';
 // *INTERNALS*
 import ConnectWallet from './Actions/ConnectWallet';
 import { useGemsBalance, useStakes } from '../hooks';
-import Button from './Button';
+import Button from './Misc/Button';
 
 const Wrapper = styled.div`
   display: flex;
@@ -58,7 +58,7 @@ const Header = () => {
             <div className="btn-group" role="group" aria-label="Basic example">
               <ConnectWallet />
               {account && (
-                <Link to={`/NFT/user/${account}`} className="btn btn-primary w-25" role="button">
+                <Link to={`/Collection/${account}`} className="btn btn-primary w-25" role="button">
                   <FontAwesomeIcon className="fa-icon fa-white" icon={faToolbox} fontSize={20} />
                 </Link>
               )}
