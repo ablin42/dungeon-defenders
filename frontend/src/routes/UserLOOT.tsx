@@ -6,8 +6,8 @@ import useSWR from 'swr';
 // *INTERNALS*
 import { API_ADDRESS } from '../constants';
 import type { NFT } from '../types';
-import LoadWith404 from '../components/LoadWith404';
-import CardWrapper from '../components/CardWrapper';
+import LoadWith404 from '../components/Misc/LoadWith404';
+import CardWrapper from '../components/Card/CardWrapper';
 
 const fetcher = (params: any) => fetch(params).then((res) => res.json());
 
@@ -22,7 +22,7 @@ export default function UserLoot() {
       {userLOOT && userLOOT.length > 0 && userAddress ? (
         <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
           {userLOOT.map((NFT: NFT) => (
-            <CardWrapper key={NFT.name} NFT={NFT} owner={userAddress} isLoot />
+            <CardWrapper key={NFT.name} NFT={NFT} isLoot />
           ))}
         </div>
       ) : (

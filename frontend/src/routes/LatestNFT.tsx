@@ -8,7 +8,7 @@ import { API_ADDRESS } from '../constants';
 import type { NFT } from '../types';
 import Mint from '../components/Actions/Mint';
 import ConnectWallet from '../components/Actions/ConnectWallet';
-import CardWrapper from '../components/CardWrapper';
+import CardWrapper from '../components/Card/CardWrapper';
 
 const fetcher = (params: any) => fetch(params).then((res) => res.json());
 
@@ -23,7 +23,7 @@ export default function LatestNFT() {
           <h2 className="text-start mb-2">Newly Born Defenders</h2>
           <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             {latestNFT.map((NFT: NFT) => (
-              <CardWrapper key={NFT.name} NFT={NFT} owner={NFT.owner || '0x'} />
+              <CardWrapper key={NFT.name} NFT={NFT} />
             ))}
           </div>
         </>

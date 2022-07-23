@@ -8,7 +8,7 @@ import { TransactionStatus } from '@usedapp/core';
 import { NETWORK_EXPLORER, STATUS_TYPES } from './constants';
 
 export const sendTx = async (tx: Function) => {
-  toast.loading(`Tx Pending...`);
+  toast.loading(`Tx Pending...`, { duration: 1000 * 10 });
   tx();
 };
 

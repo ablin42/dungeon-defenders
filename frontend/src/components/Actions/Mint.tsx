@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 // *INTERNALS*
 import { NETWORK_EXPLORER, STATUS_TYPES } from '../../constants';
 import { useMint } from '../../hooks/index';
-import LoadingBtn from '../LoadingBtn';
+import LoadingBtn from '../Misc/LoadingBtn';
 import { sendTx } from '../../utils';
 
 type ActionProps = {

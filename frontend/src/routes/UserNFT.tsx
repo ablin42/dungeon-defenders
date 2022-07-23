@@ -1,5 +1,5 @@
 // *EXTERNALS*
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
 import useSWR from 'swr';
 
@@ -7,8 +7,8 @@ import useSWR from 'swr';
 import { API_ADDRESS } from '../constants';
 import type { NFT } from '../types';
 import UserLoot from './UserLOOT';
-import LoadWith404 from '../components/LoadWith404';
-import CardWrapper from '../components/CardWrapper';
+import LoadWith404 from '../components/Misc/LoadWith404';
+import CardWrapper from '../components/Card/CardWrapper';
 
 const fetcher = (params: any) => fetch(params).then((res) => res.json());
 
@@ -24,7 +24,7 @@ export default function UserNFT() {
         {userNFT && userNFT.length > 0 && userAddress ? (
           <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             {userNFT.map((NFT: NFT) => (
-              <CardWrapper key={NFT.name} NFT={NFT} owner={userAddress} />
+              <CardWrapper key={NFT.name} NFT={NFT} />
             ))}
           </div>
         ) : (

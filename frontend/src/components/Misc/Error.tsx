@@ -28,7 +28,7 @@ const Error = ({
   <>
     <Wrapper>
       <h1>{title}</h1>
-      <StyledErrorCode className="mb-5">{error}</StyledErrorCode>
+      {error && <StyledErrorCode className="mb-5">{error}</StyledErrorCode>}
       {btnText.length > 0 && (
         <Link to={url}>
           <button className="btn btn-primary btn-lg mb-4 w-auto">{btnText}</button>

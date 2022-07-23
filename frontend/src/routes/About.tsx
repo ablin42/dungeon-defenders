@@ -167,7 +167,7 @@ const About = () => {
               </div>
 
               <h1 className="fw-light mb-3 mt-5 text-start text-main">FAQ</h1>
-              <Accordion defaultActiveKey="0" alwaysOpen>
+              <Accordion defaultActiveKey="0" alwaysOpen className="shadow">
                 <Accordion.Item eventKey="0">
                   <Accordion.Header>I can't mint a Defender</Accordion.Header>
                   <Accordion.Body>
@@ -210,7 +210,7 @@ const About = () => {
 
               <h1 className="fw-light mb-3 mt-5 text-main text-start">Contracts</h1>
               <div className="col-12">
-                <table className="table table-dark table-striped text-start">
+                <table className="table table-dark table-striped text-start shadow">
                   <thead>
                     <tr>
                       <th scope="col" style={{ minWidth: '250px' }}>
