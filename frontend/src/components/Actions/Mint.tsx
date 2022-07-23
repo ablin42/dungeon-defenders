@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 // *INTERNALS*
 import { NETWORK_EXPLORER, STATUS_TYPES } from '../../constants';
 import { useMint } from '../../hooks/index';
-import LoadingBtn from '../LoadingBtn';
+import LoadingBtn from '../Misc/LoadingBtn';
 import { sendTx } from '../../utils';
 
 type ActionProps = {
@@ -55,7 +55,7 @@ const Mint: React.FC<ActionProps> = ({ userAddress }) => {
 
   const mint = async () => {
     if (isMinting) return;
-    sendMint(userAddress, ethers.utils.formatBytes32String(name), { value: ethers.utils.parseEther('0.01') });
+    sendMint(userAddress, ethers.utils.formatBytes32String(name));
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,25 +63,22 @@ const Mint: React.FC<ActionProps> = ({ userAddress }) => {
   };
 
   return (
-    <div className="col-8 offset-2 mt-4">
-      <label htmlFor="gemsAmount">{"Your Defender's Name"}</label>
-      <div className="input-group text-start mt-2">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Lord Helmet"
-          aria-label="defender name"
-          onChange={(e) => handleChange(e)}
-          value={name}
-        />
-        {isMinting ? (
-          <LoadingBtn text={'Minting...'} />
-        ) : (
-          <button onClick={() => sendTx(mint)} className="btn btn-lg btn-primary">
-            Mint
-          </button>
-        )}
-      </div>
+    <div className="input-group text-start mt-2">
+      <input
+        type="text"
+        className="form-control"
+        placeholder="Name"
+        aria-label="defender name"
+        onChange={(e) => handleChange(e)}
+        value={name}
+      />
+      {isMinting ? (
+        <LoadingBtn text={'Minting...'} width="175px" />
+      ) : (
+        <button onClick={() => sendTx(mint)} className="btn btn-lg btn-primary">
+          Mint
+        </button>
+      )}
     </div>
   );
 };

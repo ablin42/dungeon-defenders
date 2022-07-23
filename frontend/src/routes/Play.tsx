@@ -4,10 +4,12 @@ import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGem } from '@fortawesome/free-solid-svg-icons';
 
 // *INTERNALS*
-import Error from '../components/Error';
-import LoadingBtn from '../components/LoadingBtn';
+import Error from '../components/Misc/Error';
+import LoadingBtn from '../components/Misc/LoadingBtn';
 import { API_ADDRESS, STATUS_TYPES } from '../constants';
 import { initializeGame } from '../game/Index';
 import { Loot, useDefender, useEmergency, useLoot, useStakes, useUnstake } from '../hooks';
@@ -41,13 +43,14 @@ const triggerRewardAllocation = async (account: string | undefined) => {
   if (res.status !== 200) toast.error('Failed to allocate rewards, emergency withdrawal needed');
 };
 
+// TODO we should probably extract some logic, this is getting messy
 export default function Play() {
   const navigate = useNavigate();
   const { account } = useEthers();
   const { state } = useLocation() as { state: State };
   const stakes = useStakes(account);
   const weaponId = (state && state.weaponId) || (state && state.defenderId);
-  const defender = useDefender(stakes && stakes.tokenId.toNumber()); //?state.defenderId
+  const defender = useDefender(stakes && stakes.tokenId.toNumber());
   const weapon = useLoot(stakes && +stakes.weaponId);
   const { state: unstakeState, send: sendUnstake } = useUnstake();
   const { state: emergencyState, send: sendEmergency } = useEmergency();
@@ -73,7 +76,7 @@ export default function Play() {
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(false);
-    }, 1000 * 1);
+    }, 1250);
   }, []);
 
   useEffect(() => {
@@ -82,11 +85,9 @@ export default function Play() {
 
   useEffect(() => {
     const successHandler = () => {
-      setTimeout(async () => {
-        navigate(`/NFT/user/${account}`, {
-          replace: false,
-        });
-      }, 5000);
+      navigate(`/NFT/user/${account}`, {
+        replace: false,
+      });
     };
     handleTxStatus(STATES, STATUS, handleStateChange, successHandler);
   }, [STATES]);
@@ -132,98 +133,111 @@ export default function Play() {
     initializeGame('game', { onGameOver, defender, weapon: weapon ?? DEFAULT_LOOT });
   }, [init]);
 
-  if (stakes?.isClaimable || expired || isPending[0]) {
+  // TODO extract component
+  if (stakes?.isClaimable || expired) {
     return (
-      <div className="container text-center mb-5">
-        <div className="col-4 offset-4 mt-5">
-          <h1 className="mb-5">Claim your rewards 🎉</h1>
-          <ul className="list-group text-start">
-            <li className="list-group-item">
-              <b>
-                Rewarded Exp -{' '}
-                {(stakes && stakes.rewardedExpAmount.toNumber()) || (
-                  <div className="ms-2 spinner-border spinner-border-sm text-success" role="status">
-                    <span className="sr-only">Loading...</span>
-                  </div>
-                )}
-              </b>
-            </li>
-            <li className="list-group-item">
-              <b>
-                Rewarded Gems -{' '}
-                {(stakes && ethers.utils.formatEther(stakes.rewardedGemsAmount)) || (
-                  <div className="ms-2 spinner-border spinner-border-sm text-success" role="status">
-                    <span className="sr-only">Loading...</span>
-                  </div>
-                )}
-              </b>
-            </li>
-            <li className="list-group-item">
-              <b>
-                Loot Reward -{' '}
-                {(stakes && stakes.wasRewardLoot ? '✅' : '❌') || (
-                  <div className="ms-2 spinner-border spinner-border-sm text-success" role="status">
-                    <span className="sr-only">Loading...</span>
-                  </div>
-                )}
-              </b>
-            </li>
-          </ul>
-          <div className="mt-2">
-            {stakes?.isClaimable &&
-              (isPending[0] ? (
-                <LoadingBtn text={'Claiming...'} type="success" width="100%" />
-              ) : (
-                <button onClick={() => sendTx(unstake)} className="btn btn-lg btn-success w-100 ">
-                  Claim
-                </button>
-              ))}
-            {expired && !stakes.isClaimable && (
-              <div className="mb-2 mt-2">
-                <div className="text-muted mb-2">
-                  An issue might&rsquo;ve occured with your game, use this button to retrieve your stake
-                </div>
-                {isPending[1] ? (
-                  <LoadingBtn text={'Withdrawing...'} type="danger" width="100%" />
+      <div className="container col-4 offset-4 text-center pt-5">
+        <div className="container-decorated col-10 offset-1 p-5">
+          <h1 className="mb-3">Claim your rewards 🎉</h1>
+          <div className="col-10 offset-1">
+            <ul className="list-group text-start shadow-sm">
+              <li className="list-group-item list-reward">
+                <span>Rewarded XP</span>
+                <b>
+                  {stakes && stakes.rewardedExpAmount.toNumber() >= 0 ? (
+                    stakes.rewardedExpAmount.toNumber()
+                  ) : (
+                    <div className="ms-2 spinner-border spinner-border-sm text-success" role="status">
+                      <span className="sr-only">Loading...</span>
+                    </div>
+                  )}
+                </b>
+              </li>
+              <li className="list-group-item list-reward">
+                <span>
+                  Rewarded Gems <FontAwesomeIcon className="fa-icon fa-white" icon={faGem} fontSize={15} />
+                </span>
+                <b>
+                  {(stakes && +ethers.utils.formatEther(stakes.rewardedGemsAmount)) || (
+                    <div className="ms-2 spinner-border spinner-border-sm text-success" role="status">
+                      <span className="sr-only">Loading...</span>
+                    </div>
+                  )}
+                </b>
+              </li>
+              <li className="list-group-item list-reward">
+                <span>Found Loot</span>
+                <b>
+                  {(stakes && stakes.wasRewardLoot ? '✅' : '❌') || (
+                    <div className="ms-2 spinner-border spinner-border-sm text-success" role="status">
+                      <span className="sr-only">Loading...</span>
+                    </div>
+                  )}
+                </b>
+              </li>
+            </ul>
+            <div className="mt-2">
+              {stakes?.isClaimable ? (
+                isPending[0] ? (
+                  <LoadingBtn text={'Claiming...'} type="primary" width="100%" />
                 ) : (
-                  <>
-                    <button onClick={() => sendTx(emergency)} className="btn btn-lg btn-danger w-100 ">
-                      Emergency Withdraw
-                    </button>
-                  </>
-                )}
-              </div>
-            )}
+                  <button onClick={() => sendTx(unstake)} className="btn btn-lg btn-primary w-100 ">
+                    Claim 💰
+                  </button>
+                )
+              ) : null}
+              {expired && !stakes.isClaimable ? (
+                <div className="mb-2 mt-2">
+                  {isPending[1] ? (
+                    <LoadingBtn text={'Withdrawing...'} type="danger" width="100%" />
+                  ) : (
+                    <>
+                      <button onClick={() => sendTx(emergency)} className="btn btn-lg btn-danger w-100 ">
+                        Emergency Withdraw
+                      </button>
+                    </>
+                  )}
+                  <div className="text-muted mt-2">Use this button if your game is stuck</div>
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
       </div>
     );
   }
 
+  // TODO loading overall for this component isnt great
   if (!isLoading && (!account || !stakes || (stakes && !stakes.isInitialized)))
-    return <Error title="Game not found, check your collection" url={!account ? '/' : `/NFT/user/${account}`} />;
+    return (
+      <Error title="Game not found, check your collection" error="" url={!account ? '/' : `/NFT/user/${account}`} />
+    );
 
   return (
-    <>
-      <h2 className="text-center mt-5 mb-5">Defend Some Dungeons</h2>
-      {isAllocatingRewards ? (
-        <div className="text-center">
-          Allocating Rewards
-          <div className="ms-2 spinner-border spinner-border-sm text-success" role="status">
-            <span className="sr-only">Loading...</span>
+    <div className="container smaller-container pt-5 pb-5 ">
+      <div className="container-decorated">
+        <h2 className="text-center mb-3">Find the Treasure 💰</h2>
+        {isAllocatingRewards ? (
+          <div className="text-center">
+            Allocating Rewards
+            <div className="ms-2 spinner-border spinner-border-sm text-success" role="status">
+              <span className="sr-only">Loading...</span>
+            </div>
           </div>
-        </div>
-      ) : null}
-      {isLoading ? (
-        <div className="text-center">
-          <div className="ms-2 spinner-border spinner-border-sm" role="status">
-            <span className="sr-only">Loading...</span>
+        ) : null}
+        {isLoading ? (
+          <div className="text-center">
+            <div className="spinner-border spinner-border-sm" role="status">
+              <span className="sr-only">Loading...</span>
+            </div>
           </div>
-        </div>
-      ) : null}
-      <div className="container col-4">
-        <div id="game"></div>
+        ) : null}
+        <div
+          className="d-flex justify-content-center shadow"
+          id="game"
+          style={{ width: 'fit-content', margin: 'auto' }}
+        ></div>
       </div>
-    </>
+    </div>
   );
 }

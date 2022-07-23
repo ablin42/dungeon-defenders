@@ -1,50 +1,33 @@
 // *EXTERNALS*
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
+import useSWR from 'swr';
 
 // *INTERNALS*
 import { API_ADDRESS } from '../constants';
-import NFTCard from '../components/NFTCard';
 import type { NFT } from '../types';
-import LoadWith404 from '../components/LoadWith404';
+import LoadWith404 from '../components/Misc/LoadWith404';
+import CardWrapper from '../components/Card/CardWrapper';
 
-const getUserLOOT = async (userAddress: string | undefined) => {
-  const res = await fetch(`${API_ADDRESS}/v1/loot/wallet/${userAddress}`);
-  if (res.status === 404) return null;
-  const NFTs = await res.json();
-
-  return NFTs;
-};
+const fetcher = (params: any) => fetch(params).then((res) => res.json());
 
 export default function UserLoot() {
   const params = useParams();
   const { userAddress } = params;
-  const [userLOOT, setUserLOOT] = useState<Array<NFT> | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setIsLoading(true);
-
-    const wrapper = async () => {
-      const result = await getUserLOOT(userAddress);
-      setUserLOOT(result);
-      setIsLoading(false);
-    };
-    wrapper();
-  }, []);
+  const { data: userLOOT, error } = useSWR(`${API_ADDRESS}/v1/loot/wallet/${userAddress}`, fetcher);
 
   return (
-    <div className="container">
-      <h2 className="text-center mt-5 mb-5">Your Awesome Loot</h2>
+    <>
+      <h2 className="mt-5 mb-2">Collection</h2>
       {userLOOT && userLOOT.length > 0 && userAddress ? (
         <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
           {userLOOT.map((NFT: NFT) => (
-            <NFTCard key={NFT.name} NFT={NFT} owner={userAddress} isLoot />
+            <CardWrapper key={NFT.name} NFT={NFT} isLoot />
           ))}
         </div>
       ) : (
-        <LoadWith404 isLoading={isLoading} />
+        <LoadWith404 title="User has no Loot yet" error="" btnText="" isLoading={!userLOOT} />
       )}
-    </div>
+    </>
   );
 }

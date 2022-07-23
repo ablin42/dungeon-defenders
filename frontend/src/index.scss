@@ -1,0 +1,446 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
+
+.container-decorated {
+  padding: 24px 48px;
+  border-radius: 10px;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23204141' fill-opacity='0.1'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+html {
+  --main-dark: #204141;
+  --main: #2d767f;
+  --main-light: #4c9a9a;
+  --light-shade: #f2f2f2;
+  --lighter-shade: #f9f9f9;
+  --lightest-shade: #ffffff;
+  --grey: #232628;
+  --dark-shade: #1c1e1f;
+  --darker-shade: #181a1b;
+  --darkest-shade: #101010;
+}
+
+html[data-theme='dark'] {
+  --main-dark: #204141;
+  --main: #2d767f;
+  --main-light: #4c9a9a;
+  --dark-shade: #f2f2f2;
+  --darker-shade: #f9f9f9;
+  --darkest-shade: #ffffff;
+  --grey: #e3e3e3;
+  --light-shade: #1c1e1f;
+  --lighter-shade: #181a1b;
+  --lightest-shade: #101010;
+}
+
+$theme-colors: (
+  'primary': #2d767f,
+  'secondary': #204141,
+  'info': #4c9a9a,
+  'warning': #facf5a,
+  'danger': #ff5959,
+  'success': #2cb978,
+);
+
+@import '../node_modules/bootstrap/scss/bootstrap';
+
+/* GENERAL */
+body,
+html,
+#root {
+  margin: 0;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
+    'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--light-shade);
+  background-color: var(--darker-shade);
+  height: 100%;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+body::-webkit-scrollbar,
+div::-webkit-scrollbar {
+  background: var(--darkest-shade);
+  width: 10px;
+}
+
+body::-webkit-scrollbar-track,
+div::-webkit-scrollbar-track {
+  background: #090b10;
+}
+
+body::-webkit-scrollbar-thumb,
+div::-webkit-scrollbar-thumb {
+  background: #204141;
+}
+
+/** CHROME */
+input[type='range'] {
+  overflow: hidden;
+  accent-color: var(--main-light);
+}
+
+.outlet {
+  flex: 1 0 auto;
+}
+
+a {
+  text-decoration: none;
+}
+
+a,
+.text-main,
+.fa-icon {
+  color: var(--main);
+}
+
+a:hover,
+.fa-icon:hover {
+  color: var(--main-light);
+}
+
+.fa-white {
+  color: var(--ligther-shade) !important;
+}
+
+/* GENERAL BOOTSTRAP OVERRIDING */
+
+.text-muted {
+  color: var(--light-shade) !important;
+  opacity: 0.8;
+}
+
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1300px;
+  }
+
+  .smaller-container {
+    max-width: 1200px;
+  }
+}
+
+.navbar-brand {
+  color: var(--main) !important;
+}
+
+.bg-dark {
+  background-color: var(--dark-shade) !important;
+}
+
+.btn {
+  width: 175px;
+}
+.btn-info {
+  // not using vars cause we need to keep this white in both mode
+  color: #f2f2f2;
+
+  &:hover {
+    color: white;
+  }
+}
+.small-btn {
+  width: 110px !important;
+}
+
+.list-group-item {
+  color: var(--light-shade) !important;
+  background-color: var(--darkest-shade) !important;
+}
+
+.list-reward {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ACCORDION */
+.accordion {
+  text-align: left;
+
+  .accordion-item {
+    background-color: var(--darker-shade);
+    border: none;
+  }
+
+  .accordion-button {
+    border: none;
+    color: var(--main) !important;
+    font-weight: bold;
+    background-color: var(--darker-shade) !important;
+  }
+}
+
+/* CARD */
+.card {
+  background-color: var(--darker-shade);
+  border-color: rgba(140, 130, 115, 0.13);
+  color: var(--light-shade);
+
+  .text-muted {
+    width: 250px;
+  }
+
+  .card-text {
+    font-size: 14px;
+  }
+
+  .card-badges {
+    margin-left: -0.25em;
+    margin-right: -0.25em;
+  }
+}
+
+/* TABLES */
+.table-dark {
+  --bs-table-bg: var(--darker-shade);
+}
+
+.table > :not(:first-child) {
+  border: none;
+}
+
+.table > :not(caption) > * > * {
+  border-bottom-width: 0px;
+  color: var(--light-shade);
+  background-color: var(--darker-shade);
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+  --bs-table-accent-bg: var(--grey);
+  color: var(--light-shade);
+}
+
+/* TOOLTIP */
+.tooltipSpecial {
+  width: fit-content;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .tooltiptextSpecial {
+    width: 120px;
+    background-color: var(--light-shade);
+    color: var(--main);
+    font-weight: bold;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+    top: 15px;
+    opacity: 0;
+    -webkit-transition: ease-in-out 0.3s;
+    transition: ease-in-out 0.3s;
+  }
+
+  .tooltiptextSpecial::after {
+    content: '';
+    position: absolute;
+    top: 0%;
+    left: 49%;
+    margin-top: -5px;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid var(--light-shade);
+  }
+
+  .tooltip-visible {
+    opacity: 1 !important;
+  }
+}
+
+@-webkit-keyframes tooltipAnim {
+  0% {
+    -webkit-transform: translateY(10px);
+    transform: translateY(10px);
+  }
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes tooltipAnim {
+  0% {
+    -webkit-transform: translateY(10px);
+    transform: translateY(10px);
+  }
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+.tooltipAnim {
+  -webkit-animation: tooltipAnim 0.2s 1 0s ease-in-out;
+  animation: tooltipAnim 0.2s 1 0s ease-in-out;
+}
+
+/* FLIP CARD */
+/* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect */
+.flip-card {
+  width: 100%;
+  padding-bottom: 100%;
+  background-color: transparent;
+  perspective: 1000px; /* Remove this if you don't want the 3D effect */
+}
+/* This container is needed to position the front and back side */
+.flip-card-inner {
+  position: relative;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+/* Do an horizontal flip when you move the mouse over the flip box container */
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+/* Position the front and back side */
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+}
+
+.card-img-top {
+  border-radius: 3px 3px 0 0;
+}
+
+/* THEME SWITCH TOGGLE */
+.toggle-container {
+  position: absolute;
+  top: -0.3rem;
+
+  input[type='checkbox'] {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+  }
+
+  label {
+    cursor: pointer;
+    text-indent: -9999px;
+    margin: 15px;
+    width: 52px;
+    height: 27px;
+    background: var(--darkest-shade);
+    float: left;
+    border-radius: 100px;
+    position: relative;
+  }
+
+  label:after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    background: var(--light-shade);
+    border-radius: 90px;
+    transition: 0.3s;
+  }
+
+  input:checked + label {
+    background: var(--main);
+  }
+
+  input:checked + label:after {
+    left: calc(100% - 5px);
+    transform: translateX(-100%);
+  }
+
+  label:active:after {
+    width: 45px;
+  }
+}
+
+/* PREPARE SECTION */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.25);
+  z-index: 1;
+}
+
+.prepare-modal {
+  background-color: var(--darkest-shade); //#0c0c0c;
+  position: absolute;
+  padding: 20px 40px;
+  top: 49%;
+  left: 50%;
+  width: 75%;
+  height: 80%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  border-radius: 5px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.small-loot-wrapper {
+  background-color: var(--darkest-shade);
+  display: flex;
+  padding: 0;
+  height: 100%;
+  min-height: 100px;
+  margin: 0 5px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+}
+
+.loot-wrapper {
+  background-color: var(--darkest-shade);
+  display: flex;
+  padding: 10px;
+  height: 100%;
+  min-height: 250px;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  &:hover {
+    border-color: #2d767f;
+  }
+}
+
+.modal-loot-wrapper {
+  .float-wrapper {
+    display: none;
+  }
+
+  &:hover {
+    .float-wrapper {
+      display: block;
+    }
+  }
+}
+
+.staking-section {
+  background-color: var(--darkest-shade);
+  padding: 22px 20px;
+  border-radius: 5px;
+}

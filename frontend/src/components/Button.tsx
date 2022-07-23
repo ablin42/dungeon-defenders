@@ -15,7 +15,7 @@ interface BtnProps extends React.ComponentProps<'button'> {
 
 const Button: React.FunctionComponent<BtnProps> = ({ btnType = 'primary', size = 'lg', width, children }) => {
   return (
-    <StyledBtn className={`btn btn-${size} btn-${btnType}`} width={width}>
+    <StyledBtn className={`btn btn-${size} btn-${btnType}`} width={`${width} !important`}>
       {children}
     </StyledBtn>
   );

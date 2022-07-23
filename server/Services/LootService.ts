@@ -93,7 +93,7 @@ export async function renderLoot(tokenId: number): Promise<Buffer> {
     const ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = false;
 
-    ctx.fillStyle = '#181a1b';
+    ctx.fillStyle = '#101010';
     ctx.fillRect(0, 0, 480, 480);
     switch (type) {
         case LootType.Weapon:

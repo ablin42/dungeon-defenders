@@ -3,6 +3,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useEthers } from '@usedapp/core';
 import styled from 'styled-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faToolbox, faGem } from '@fortawesome/free-solid-svg-icons';
 
 // *INTERNALS*
 import ConnectWallet from './Actions/ConnectWallet';
@@ -32,11 +34,18 @@ const Header = () => {
             {account && (
               <>
                 <Wrapper className="me-3">
-                  <b>{+gemsBalance} Gems</b>
+                  <b>
+                    {+gemsBalance} <FontAwesomeIcon className="fa-icon fa-white" icon={faGem} fontSize={15} />
+                  </b>
                 </Wrapper>
                 {stakes?.isInitialized && !stakes.isClaimable && (
                   <Link to={`/Play`} className="me-3">
-                    <button className="btn btn-info">Game in progress</button>
+                    <button className="btn btn-info w-100 align-items-center">
+                      Game in progress
+                      <div className="ms-2 spinner-border spinner-border-sm text-light" role="status">
+                        <span className="sr-only">Loading...</span>
+                      </div>
+                    </button>
                   </Link>
                 )}
                 {stakes?.isClaimable && (
@@ -44,12 +53,16 @@ const Header = () => {
                     <button className="btn btn-info">Claim pending 🎉</button>
                   </Link>
                 )}
-                <Link to={`/NFT/user/${account}`} className="me-3">
-                  <button className="btn btn-success">Your Collection</button>
-                </Link>
               </>
             )}
-            <ConnectWallet />
+            <div className="btn-group" role="group" aria-label="Basic example">
+              <ConnectWallet />
+              {account && (
+                <Link to={`/NFT/user/${account}`} className="btn btn-primary w-25" role="button">
+                  <FontAwesomeIcon className="fa-icon fa-white" icon={faToolbox} fontSize={20} />
+                </Link>
+              )}
+            </div>
             <Link to={`/About`} className="ms-3">
               <Button width="75px" size="sm" btnType="outline-primary">
                 About

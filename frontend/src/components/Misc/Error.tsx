@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-  padding-top: 15vh;
+  padding-top: 10vh;
   text-align: center;
 `;
 
@@ -28,10 +28,12 @@ const Error = ({
   <>
     <Wrapper>
       <h1>{title}</h1>
-      <StyledErrorCode className="mb-5">{error}</StyledErrorCode>
-      <Link to={url}>
-        <button className="btn btn-primary btn-lg mb-4 w-auto">{btnText}</button>
-      </Link>
+      {error && <StyledErrorCode className="mb-5">{error}</StyledErrorCode>}
+      {btnText.length > 0 && (
+        <Link to={url}>
+          <button className="btn btn-primary btn-lg mb-4 w-auto">{btnText}</button>
+        </Link>
+      )}
     </Wrapper>
   </>
 );

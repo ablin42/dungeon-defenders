@@ -3,6 +3,8 @@ import { ethers } from 'ethers';
 import { TransactionStatus } from '@usedapp/core';
 import React, { useEffect, useState } from 'react';
 import { FAUCET_CONTRACT_ADDRESS } from 'dungeon-defenders-contracts';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGem } from '@fortawesome/free-solid-svg-icons';
 
 // *INTERNALS*
 import { STATUS_TYPES, GEMS_TOTAL_SUPPLY } from '../../constants';
@@ -15,7 +17,7 @@ import {
   useApproveGEMS,
   useAllowanceGEMS,
 } from '../../hooks/index';
-import LoadingBtn from '../LoadingBtn';
+import LoadingBtn from '../Misc/LoadingBtn';
 import { sendTx, handleTxStatus } from '../../utils';
 
 interface ActionProps {
@@ -81,9 +83,8 @@ const Faucet = ({ userAddress }: ActionProps) => {
   };
 
   return (
-    <div className="col-8 offset-2 mt-4">
-      <label htmlFor="gemsAmount">Gems Faucet</label>
-      <div className="input-group text-start mt-2 mb-3">
+    <>
+      {/* <div className="input-group text-start mt-2 mb-3">
         <input
           type="number"
           className="form-control"
@@ -97,7 +98,7 @@ const Faucet = ({ userAddress }: ActionProps) => {
         ) : (
           !allowance && (
             <button onClick={() => sendTx(approve)} className="btn btn-lg btn-primary">
-              Approve GEMS
+              Approve <FontAwesomeIcon className="fa-icon fa-white" icon={faGem} fontSize={15} />
             </button>
           )
         )}
@@ -108,7 +109,7 @@ const Faucet = ({ userAddress }: ActionProps) => {
             Deposit
           </button>
         ) : null}
-      </div>
+      </div> */}
       {owner &&
         owner === userAddress &&
         (isPending[STATE_INDEX.WITHDRAW] ? (
@@ -121,14 +122,18 @@ const Faucet = ({ userAddress }: ActionProps) => {
           </button>
         ))}
       {isPending[STATE_INDEX.CLAIM] ? (
-        <LoadingBtn width="100%" type="success" />
+        <LoadingBtn width="100%" type="primary" />
       ) : (
-        <button onClick={() => sendTx(claim)} className="btn btn-lg btn-success w-100 ">
-          Claim 500 GEMS
-        </button>
+        <>
+          <button onClick={() => sendTx(claim)} className="btn btn-lg btn-primary w-100 ">
+            Claim 500 <FontAwesomeIcon className="fa-icon fa-white" icon={faGem} fontSize={15} />
+          </button>
+        </>
       )}
-      <span className="text-muted">{+balance} GEMS Available</span>
-    </div>
+      <span className="text-muted">
+        {+balance} <FontAwesomeIcon className="fa-icon fa-white" icon={faGem} fontSize={15} /> Available
+      </span>
+    </>
   );
 };
 
