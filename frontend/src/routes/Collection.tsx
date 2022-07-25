@@ -40,17 +40,16 @@ export default function Collection() {
   };
 
   return (
-    <div className="container">
+    <div className="container mt-5">
       {userAddress === account && selectedNFT && (
-        // TODO lazy fix, prepare prob shouldnt have a container itself
-        <div style={{ margin: '-12px' }}>
+        <div className="container-decorated bg-dark">
           <Prepare account={account || ''} NFT={selectedNFT} />
         </div>
       )}
 
       <div className="container-decorated mt-5">
         <h2 className="mb-2">Defenders</h2>
-        {userNFT && userNFT.length > 0 && userAddress ? (
+        {userNFT?.length > 0 && userAddress ? (
           <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             {userNFT.map((NFT: NFT) => (
               <CardWrapper

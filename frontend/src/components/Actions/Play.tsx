@@ -46,7 +46,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot, gemsAm
   const { state: stakeState, send: sendStake } = useStake();
   const { state: approveLOOTState, send: sendApproveLOOT } = useApproveLoot();
 
-  const stakes = userAddress && useStakes(userAddress);
+  const stakes = useStakes(userAddress);
   const NFTallowance = useAllowance(userAddress);
   const LOOTAllowance = useAllowanceLoot(userAddress);
   const GEMSallowance = useAllowanceGEMS(userAddress, STAKE_CONTRACT_ADDRESS);
@@ -142,25 +142,23 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot, gemsAm
           Stake &amp; Play
         </button>
       ) : null}
-      {NFTallowance && LOOTAllowance && GEMSallowance && staked && !expired ? (
+      {NFTallowance && LOOTAllowance && GEMSallowance && staked && !expired && !claimable ? (
         <>
           <Link to={`/Play`}>
             <button className="btn btn-lg btn-info w-100">
-              {claimable ? (
-                'Claim pending 🎉'
-              ) : (
-                <>
-                  {'Game in progress '}
-                  <div className="ms-2 spinner-border spinner-border-sm text-light" role="status">
-                    <span className="sr-only">Loading...</span>
-                  </div>
-                </>
-              )}
+              <>
+                {'Game in progress '}
+                <div className="ms-2 spinner-border spinner-border-sm text-light" role="status">
+                  <span className="sr-only">Loading...</span>
+                </div>
+              </>
             </button>
           </Link>
         </>
       ) : null}
-      {NFTallowance && LOOTAllowance && GEMSallowance && staked && expired ? <Claim expired={expired} /> : null}
+      {NFTallowance && LOOTAllowance && GEMSallowance && staked && (expired || claimable) ? (
+        <Claim expired={expired} />
+      ) : null}
     </>
   );
 };

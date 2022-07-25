@@ -30,7 +30,7 @@ export default function Prepare({ account, NFT }: { account: string; NFT: NFT })
   /* HOOKS */
   const owner = useOwnerOf(NFT?.tokenId);
   const slots = useSlots(NFT?.tokenId);
-  const { data: userLOOT, error } = useSWR(`${API_ADDRESS}/v1/loot/wallet/${owner}`, fetcher);
+  const { data: userLOOT } = useSWR(`${API_ADDRESS}/v1/loot/wallet/${owner}`, fetcher);
   /* STATE */
   const [open, setOpen] = useState<number | null>(null);
 
@@ -43,29 +43,28 @@ export default function Prepare({ account, NFT }: { account: string; NFT: NFT })
     <>
       {NFT && <Modal open={open} setOpen={setOpen} targetDefender={NFT?.tokenId} userLOOT={userLOOT} slots={slots} />}
 
-      <div className="container mt-5" style={{ minHeight: '600px' }}>
-        <div className="container-decorated bg-dark">
-          <div className="row">
-            <div className="col-4">{NFT && <CardWrapper NFT={NFT} />}</div>
+      <div className="row">
+        <div className="col-4">{NFT && <CardWrapper NFT={NFT} />}</div>
 
-            <div className="col-8">
-              <div className="row">
-                {LOOT.map((loot, index) => {
-                  return (
-                    <div key={`LOOT#${index}`} className="col-4" onClick={() => setOpen(index)}>
-                      <div className="loot-wrapper shadow-sm">
-                        {findLoot(slots[index]) >= 0 ? (
-                          <CardWrapper NFT={userLOOT[findLoot(slots[index])]} isLoot disabledFlip />
-                        ) : (
-                          <FontAwesomeIcon icon={loot.icon} fontSize={75} color="#232628" />
-                        )}
-                      </div>
+        <div className="col-8">
+          <div className="row h-100">
+            <div className="row" style={{ height: 'fit-content' }}>
+              {LOOT.map((loot, index) => {
+                return (
+                  <div key={`LOOT#${index}`} className="col-4" onClick={() => setOpen(index)}>
+                    <div className="loot-wrapper shadow-sm">
+                      {findLoot(slots[index]) >= 0 ? (
+                        <CardWrapper NFT={userLOOT[findLoot(slots[index])]} isLoot disabledFlip />
+                      ) : (
+                        <FontAwesomeIcon icon={loot.icon} fontSize={75} color="#232628" />
+                      )}
                     </div>
-                  );
-                })}
-
-                <StakeSection account={account} NFT={NFT} slots={slots} />
-              </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="row">
+              <StakeSection account={account} NFT={NFT} slots={slots} />
             </div>
           </div>
         </div>

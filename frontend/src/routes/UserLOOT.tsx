@@ -19,7 +19,7 @@ export default function UserLoot() {
   return (
     <>
       <h2 className="mt-5 mb-2">Loot</h2>
-      {userLOOT && userLOOT.length > 0 && userAddress ? (
+      {userLOOT?.length > 0 && userAddress ? (
         <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
           {userLOOT.map((NFT: NFT) => (
             <CardWrapper key={NFT.name} NFT={NFT} isLoot />

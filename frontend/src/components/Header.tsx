@@ -49,7 +49,7 @@ const Header = () => {
                   </Link>
                 )}
                 {stakes?.isClaimable && (
-                  <Link to={`/Play`} className="me-3">
+                  <Link to={`/Collection/${account}`} className="me-3">
                     <button className="btn btn-info">Claim pending 🎉</button>
                   </Link>
                 )}

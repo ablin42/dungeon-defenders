@@ -52,12 +52,12 @@ export default function Claim({ expired }: { expired: boolean | undefined | 0 | 
         isPending[0] ? (
           <LoadingBtn text={'Claiming...'} type="primary" width="100%" />
         ) : (
-          <button onClick={() => sendTx(unstake)} className="btn btn-lg btn-primary w-100 mt-2">
+          <button onClick={() => sendTx(unstake)} className="btn btn-lg btn-primary w-100">
             Claim 💰
           </button>
         )
       ) : null}
-      {expired && stakes?.isInitialized ? (
+      {expired && stakes?.isInitialized && !stakes.isClaimable ? (
         <>
           {isPending[1] ? (
             <LoadingBtn text={'Withdrawing...'} type="danger" width="100%" />

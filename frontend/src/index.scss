@@ -33,15 +33,14 @@ html[data-theme='dark'] {
   --lightest-shade: #101010;
 }
 
-$theme-colors: (
-  'primary': #2d767f,
-  'secondary': #204141,
-  'info': #4c9a9a,
-  'warning': #facf5a,
-  'danger': #ff5959,
-  'success': #2cb978,
-);
+$primary: #2d767f;
+$secondary: #204141;
+$info: #4c9a9a;
+$warning: #facf5a;
+$danger: #ff5959;
+$success: #2cb978;
 
+// TODO modular import, couldnt get it to work for some reason
 @import '../node_modules/bootstrap/scss/bootstrap';
 
 /* GENERAL */
@@ -461,6 +460,9 @@ a:hover,
   background-color: var(--darkest-shade);
   padding: 20px;
   border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 // .scroll-item {

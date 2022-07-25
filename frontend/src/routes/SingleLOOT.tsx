@@ -1,20 +1,19 @@
 // *EXTERNALS*
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { Buffer } from 'buffer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleLeft } from '@fortawesome/free-solid-svg-icons';
 
 // *INTERNALS*
 import { useTokenURILoot } from '../hooks/index';
 import CardWrapper from '../components/Card/CardWrapper';
+import { extendNFTObject } from '../utils';
 
 export default function SingleLOOT() {
   const params = useParams();
   const { lootId } = params;
-  const URI = useTokenURILoot(lootId || 0);
-  const LOOTObject = URI ? JSON.parse(Buffer.from(URI, 'base64').toString()) : null;
-  if (LOOTObject) LOOTObject.tokenId = lootId;
+  const URI = useTokenURILoot(lootId);
+  const LOOTObject = extendNFTObject(URI, lootId);
 
   return (
     <div className="mt-5">

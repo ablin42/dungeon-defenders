@@ -1,41 +1,32 @@
 // *EXTERNALS*
 import { useEthers } from '@usedapp/core';
 import { useLocation } from 'react-router-dom';
-import { Buffer } from 'buffer';
 import React from 'react';
-// *INTERNALS*
 
+// *INTERNALS*
 import { useStakes, useTokenURI } from '../hooks';
-import { getExpiration } from '../utils';
+import { getExpiration, extendNFTObject } from '../utils';
 import Game from '../components/Game';
 import Prepare from '../components/Play/Prepare';
-
-type State = {
-  owner: string;
-  defenderId: string | 0;
-  weaponId: 0;
-  armorId: 0;
-  bootsId: 0;
-
-  gemsAmount: 0;
-};
+import { StakeState } from '../types';
 
 export default function Play() {
-  const { state } = useLocation() as { state: State };
+  const { state } = useLocation() as { state: StakeState };
   const { account } = useEthers();
   const stakes = useStakes(account);
-  const URI = useTokenURI((stakes && +stakes.tokenId) || 0);
-  const NFTObject = URI ? JSON.parse(Buffer.from(URI, 'base64').toString()) : null;
-  if (NFTObject && stakes?.tokenId) NFTObject.tokenId = +stakes.tokenId;
+  const URI = useTokenURI(stakes && +stakes.tokenId);
+  const NFTObject = extendNFTObject(URI, stakes && +stakes.tokenId);
   const { expired } = getExpiration(stakes);
 
   if (NFTObject && (stakes?.isClaimable || expired)) {
     return (
       <>
-        <h1 className="text-center mt-4" style={{ marginBottom: '-25px' }}>
-          Game Ended
-        </h1>
-        <Prepare account={account || ''} NFT={NFTObject} />
+        <div className="container mt-5">
+          <div className="container-decorated bg-dark">
+            <h1 className="text-center mb-3">Game Ended</h1>
+            <Prepare account={account || ''} NFT={NFTObject} />
+          </div>
+        </div>
       </>
     );
   } else {

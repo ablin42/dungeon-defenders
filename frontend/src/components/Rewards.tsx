@@ -14,7 +14,7 @@ export default function Rewards() {
 
   return (
     <>
-      <h1 className="mb-2 text-center">Claim your rewards 🎉</h1>
+      <h1 className="text-center">Claim your rewards 🎉</h1>
       <ul className="list-group list-reward text-start">
         <li className="list-group-item">
           <span>Rewarded XP</span>

@@ -16,7 +16,7 @@ import Play from './routes/Play';
 import SingleLOOT from './routes/SingleLOOT';
 import About from './routes/About';
 import Admin from './routes/Admin';
-import Prepare from './routes/SingleNFT';
+import SingleNFT from './routes/SingleNFT';
 
 const config = {
   readOnlyChainId: ChainId.Goerli,
@@ -38,7 +38,7 @@ root.render(
           <Route path="/Play" element={<Play />} />
           <Route path="/Admin" element={<Admin />} />
           <Route path="/Collection/:userAddress" element={<Collection />} />
-          <Route path="/NFT/:nftId" element={<Prepare />} />
+          <Route path="/NFT/:nftId" element={<SingleNFT />} />
           <Route path="/LOOT/:lootId" element={<SingleLOOT />} />
 
           <Route path="*" element={<Error />} />

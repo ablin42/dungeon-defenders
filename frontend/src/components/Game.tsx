@@ -8,15 +8,7 @@ import Error from '../components/Misc/Error';
 import { API_ADDRESS } from '../constants';
 import { initializeGame } from '../game/Index';
 import { Loot, useDefender, useLoot, useStakes } from '../hooks';
-
-type State = {
-  owner: string;
-  defenderId: string | 0;
-  weaponId: 0;
-  armorId: 0;
-  bootsId: 0;
-  gemsAmount: 0;
-};
+import { StakeState } from '../types';
 
 const DEFAULT_LOOT: Loot = {
   health: 0,
@@ -36,7 +28,7 @@ const triggerRewardAllocation = async (account: string | undefined) => {
   if (res.status !== 200) toast.error('Failed to allocate rewards, emergency withdrawal needed');
 };
 
-export default function Game({ state }: any) {
+const Game = ({ state }: { state: StakeState }) => {
   const { account } = useEthers();
   const stakes = useStakes(account);
   const weaponId = (state && state.weaponId) || (state && state.defenderId);
@@ -110,4 +102,6 @@ export default function Game({ state }: any) {
       </div>
     </div>
   );
-}
+};
+
+export default Game;
