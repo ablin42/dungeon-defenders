@@ -53,7 +53,12 @@ export default function Collection() {
         {userNFT && userNFT.length > 0 && userAddress ? (
           <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             {userNFT.map((NFT: NFT) => (
-              <CardWrapper key={NFT.name} NFT={NFT} onClick={(e) => handleClick(e, NFT)} />
+              <CardWrapper
+                key={NFT.name}
+                NFT={NFT}
+                onClick={(e) => handleClick(e, NFT)}
+                selected={+NFT.name.substring(10) === selectedNFT?.tokenId}
+              />
             ))}
           </div>
         ) : (

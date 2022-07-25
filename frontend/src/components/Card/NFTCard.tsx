@@ -12,6 +12,7 @@ interface Props {
   renderedImage: string;
   isLoot?: boolean;
   onClick?: (e: any) => void;
+  selected?: boolean;
 }
 
 const BADGE_TYPE = [
@@ -43,7 +44,7 @@ function getTraitText(trait: string, value: string | number) {
   return TRAIT_TEXT[trait as keyof unknown];
 }
 
-const NFTCard = ({ NFT, isLoot, tokenId, renderedImage, onClick }: Props) => {
+const NFTCard = ({ NFT, isLoot, tokenId, renderedImage, onClick, selected }: Props) => {
   const { name, image: nftImage, attributes } = NFT;
 
   const getMetadataDisplay = () => {
@@ -79,7 +80,7 @@ const NFTCard = ({ NFT, isLoot, tokenId, renderedImage, onClick }: Props) => {
 
   return (
     <div className="col">
-      <div className="card shadow">
+      <div className="card shadow" style={{ borderColor: selected ? '#2d767f' : 'rgba(140, 130, 115, 0.13)' }}>
         <div className="flip-card" onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'initial' }}>
           <div className="flip-card-inner">
             <div className="flip-card-front">

@@ -21,7 +21,8 @@ import {
 } from '../../hooks/index';
 import { STATUS_TYPES, GEMS_TOTAL_SUPPLY } from '../../constants';
 import LoadingBtn from '../Misc/LoadingBtn';
-import { sendTx, handleTxStatus } from '../../utils';
+import Claim from '../Claim';
+import { sendTx, handleTxStatus, getExpiration } from '../../utils';
 
 type ActionProps = {
   userAddress: string;
@@ -50,7 +51,6 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot, gemsAm
   const LOOTAllowance = useAllowanceLoot(userAddress);
   const GEMSallowance = useAllowanceGEMS(userAddress, STAKE_CONTRACT_ADDRESS);
   const staked = useIsStaked(userAddress);
-  const stakedId = stakes && +stakes.tokenId;
   const claimable = staked && stakes && stakes.isClaimable;
   // *STATE*
   const [STATES, setSTATES] = useState<Array<TransactionStatus>>([
@@ -61,6 +61,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot, gemsAm
   ]);
   const STATUS = STATES.map((state) => state.status as string);
   const isPending = STATUS.map((status) => status === STATUS_TYPES.PENDING || status === STATUS_TYPES.MINING);
+  const { expired } = getExpiration(stakes);
 
   const handleStateChange = (STATES: Array<TransactionStatus>, index: number) => {
     const newSTATES = [...STATES] as [TransactionStatus];
@@ -141,7 +142,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot, gemsAm
           Stake &amp; Play
         </button>
       ) : null}
-      {NFTallowance && LOOTAllowance && GEMSallowance && staked ? (
+      {NFTallowance && LOOTAllowance && GEMSallowance && staked && !expired ? (
         <>
           <Link to={`/Play`}>
             <button className="btn btn-lg btn-info w-100">
@@ -159,6 +160,7 @@ const Play: React.FC<ActionProps> = ({ userAddress, tokenId, equipedLoot, gemsAm
           </Link>
         </>
       ) : null}
+      {NFTallowance && LOOTAllowance && GEMSallowance && staked && expired ? <Claim expired={expired} /> : null}
     </>
   );
 };

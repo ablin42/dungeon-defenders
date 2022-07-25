@@ -41,3 +41,12 @@ export const handleTxStatus = (
     toast.error(`Tx Error: ${STATES[statusIndex].errorMessage}`);
   }
 };
+
+export const getExpiration = (stakes: any) => {
+  const timestamp = stakes && +stakes.timestamp;
+  const expiration = timestamp && timestamp + 60 * 30;
+  const now = parseInt((Date.now() / 1000).toString());
+  const expired = expiration && expiration < now;
+
+  return { timestamp, expiration, now, expired };
+};

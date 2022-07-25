@@ -2,7 +2,6 @@
 import { useEthers } from '@usedapp/core';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useLocation } from 'react-router-dom';
 
 // *INTERNALS*
 import Error from '../components/Misc/Error';
@@ -16,7 +15,6 @@ type State = {
   weaponId: 0;
   armorId: 0;
   bootsId: 0;
-
   gemsAmount: 0;
 };
 
@@ -38,9 +36,8 @@ const triggerRewardAllocation = async (account: string | undefined) => {
   if (res.status !== 200) toast.error('Failed to allocate rewards, emergency withdrawal needed');
 };
 
-export default function Game() {
+export default function Game({ state }: any) {
   const { account } = useEthers();
-  const { state } = useLocation() as { state: State };
   const stakes = useStakes(account);
   const weaponId = (state && state.weaponId) || (state && state.defenderId);
   const defender = useDefender(stakes && stakes.tokenId.toNumber());

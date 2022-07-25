@@ -16,6 +16,7 @@ export default function SingleNFT() {
   const owner = useOwnerOf(nftId || 0);
   const { account } = useEthers();
   const URI = useTokenURI(nftId || 0);
+  // TODO trasnform into utils ?
   const stakes = account && useStakes(account);
   const NFTObject = URI ? JSON.parse(Buffer.from(URI, 'base64').toString()) : null;
   if (NFTObject) NFTObject.tokenId = nftId;

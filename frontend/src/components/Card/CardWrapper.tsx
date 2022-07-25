@@ -12,13 +12,14 @@ interface Props {
   NFT: NFT;
   isLoot?: boolean;
   isSmall?: boolean;
+  selected?: boolean;
   disabledFlip?: boolean;
   onClick?: (e: any) => void;
 }
 
 const fetcher = (params: any) => fetch(params).then(async (res) => URL.createObjectURL(await res.blob()));
 
-const CardWrapper = ({ NFT, isLoot, isSmall, disabledFlip, onClick }: Props) => {
+const CardWrapper = ({ NFT, isLoot, isSmall, disabledFlip, selected, onClick }: Props) => {
   const { name, tokenId } = NFT;
   const actualTokenId = tokenId || +name.replace(/^\D+/g, ''); // Trick to bypass the issue of tokenId not being set in the NFT object
   const toFetch = isLoot
@@ -30,7 +31,14 @@ const CardWrapper = ({ NFT, isLoot, isSmall, disabledFlip, onClick }: Props) => 
     isSmall ? (
       <SmallNFTCard NFT={NFT} renderedImage={image} disabledFlip={disabledFlip} />
     ) : (
-      <NFTCard NFT={NFT} tokenId={actualTokenId} isLoot={isLoot} renderedImage={image} onClick={onClick} />
+      <NFTCard
+        NFT={NFT}
+        tokenId={actualTokenId}
+        isLoot={isLoot}
+        renderedImage={image}
+        onClick={onClick}
+        selected={selected}
+      />
     )
   ) : (
     <div className="text-center mt-5">
