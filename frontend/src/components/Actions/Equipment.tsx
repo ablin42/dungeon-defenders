@@ -21,7 +21,7 @@ const Equipment: React.FC<ActionProps> = ({ tokenId }) => {
   // *HOOKS*
   const slots = useSlots(tokenId);
   const owner = useOwnerOf(tokenId);
-  const { data: userLOOT, error } = useSWR(`${API_ADDRESS}/v1/loot/wallet/${owner}`, fetcher);
+  const { data: userLOOT } = useSWR(`${API_ADDRESS}/v1/loot/wallet/${owner}`, fetcher);
   // *STATE*
   const [loots, setLoots] = useState(slots ? [slots[1], slots[2], slots[3]] : [0, 0, 0]);
 

@@ -14,3 +14,13 @@ export interface NFT {
   attributes: NFTAttribute[];
   owner?: string;
 }
+
+export interface StakeState {
+  owner: string;
+  defenderId: string | 0;
+  weaponId: 0;
+  armorId: 0;
+  bootsId: 0;
+  gemsAmount: 0;
+  props?: any;
+}
