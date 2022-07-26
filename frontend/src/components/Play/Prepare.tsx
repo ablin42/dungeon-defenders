@@ -47,7 +47,7 @@ export default function Prepare({ account, NFT }: { account: string; NFT: NFT })
         <div className="col-4">{NFT && <CardWrapper NFT={NFT} />}</div>
 
         <div className="col-8">
-          <div className="row h-100">
+          <div className="row h-100 justify-content-center">
             <div className="row" style={{ height: 'fit-content' }}>
               {LOOT.map((loot, index) => {
                 return (
