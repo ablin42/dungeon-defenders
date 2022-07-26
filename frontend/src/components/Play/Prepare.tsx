@@ -63,6 +63,13 @@ export default function Prepare({ account, NFT }: { account: string; NFT: NFT })
                 );
               })}
             </div>
+            {findLoot(slots[0]) === -1 && findLoot(slots[1]) === -1 && findLoot(slots[2]) === -1 && (
+              <div className="row">
+                <div className="col-12">
+                  <div className="alert alert-info w-100">Click on the above cards to equip items</div>
+                </div>
+              </div>
+            )}
             <div className="row">
               <StakeSection account={account} NFT={NFT} slots={slots} />
             </div>

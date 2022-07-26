@@ -14,7 +14,6 @@ type ActionProps = {
   userAddress: string;
 };
 
-// TODO restrict to admin
 const Loot: React.FC<ActionProps> = ({ userAddress }) => {
   const navigate = useNavigate();
   const [isMinting, setIsMinting] = useState(false);

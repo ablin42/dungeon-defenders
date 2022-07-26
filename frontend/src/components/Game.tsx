@@ -69,7 +69,6 @@ const Game = ({ state }: { state: StakeState }) => {
     initializeGame('game', { onGameOver, defender, weapon: weapon ?? DEFAULT_LOOT });
   }, [init]);
 
-  // TODO loading overall for this component isnt great
   if (!isLoading && (!account || !stakes || (stakes && !stakes.isInitialized)))
     return (
       <Error title="Game not found, check your collection" error="" url={!account ? '/' : `/Collection/${account}`} />

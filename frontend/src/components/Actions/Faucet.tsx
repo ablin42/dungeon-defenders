@@ -22,6 +22,7 @@ import { sendTx, handleTxStatus } from '../../utils';
 
 interface ActionProps {
   userAddress: string;
+  isAdmin?: boolean;
 }
 
 const STATE_INDEX = {
@@ -31,9 +32,7 @@ const STATE_INDEX = {
   WITHDRAW: 3,
 };
 
-// TODO handle deposit
-//? should leave it to admin
-const Faucet = ({ userAddress }: ActionProps) => {
+const Faucet = ({ userAddress, isAdmin }: ActionProps) => {
   // *HOOKS*
   const { state: claimState, send: sendClaim } = useClaim();
   const { state: depositState, send: sendDeposit } = useDeposit();
@@ -86,32 +85,35 @@ const Faucet = ({ userAddress }: ActionProps) => {
 
   return (
     <>
-      {/* <div className="input-group text-start mt-2 mb-3">
-        <input
-          type="number"
-          className="form-control"
-          placeholder="500"
-          aria-label="deposit gems"
-          onChange={(e) => handleChange(e)}
-          value={amount}
-        />
-        {isPending[STATE_INDEX.APPROVE] && !allowance ? (
-          <LoadingBtn />
-        ) : (
-          !allowance && (
-            <button onClick={() => sendTx(approve)} className="btn btn-lg btn-primary">
-              Approve <FontAwesomeIcon className="fa-icon fa-white" icon={faGem} fontSize={15} />
+      {isAdmin && (
+        <div className="input-group text-start mt-2 mb-3">
+          <input
+            type="number"
+            className="form-control"
+            placeholder="500"
+            aria-label="deposit gems"
+            onChange={(e) => handleChange(e)}
+            value={amount}
+          />
+          {isPending[STATE_INDEX.APPROVE] && !allowance ? (
+            <LoadingBtn />
+          ) : (
+            !allowance && (
+              <button onClick={() => sendTx(approve)} className="btn btn-lg btn-primary">
+                Approve <FontAwesomeIcon className="fa-icon fa-white" icon={faGem} fontSize={15} />
+              </button>
+            )
+          )}
+          {allowance && isPending[STATE_INDEX.DEPOSIT] ? (
+            <LoadingBtn />
+          ) : allowance ? (
+            <button onClick={() => sendTx(deposit)} className="btn btn-lg btn-primary">
+              Deposit
             </button>
-          )
-        )}
-        {allowance && isPending[STATE_INDEX.DEPOSIT] ? (
-          <LoadingBtn />
-        ) : allowance ? (
-          <button onClick={() => sendTx(deposit)} className="btn btn-lg btn-primary">
-            Deposit
-          </button>
-        ) : null}
-      </div> */}
+          ) : null}
+        </div>
+      )}
+
       {owner &&
         owner === userAddress &&
         (isPending[STATE_INDEX.WITHDRAW] ? (

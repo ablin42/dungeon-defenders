@@ -14,3 +14,5 @@ export const STATUS_TYPES = {
   FAIL: 'Fail',
   EXCEPTION: 'Exception',
 };
+
+export const ADMIN_WHITELIST = ['0x68897d3c09C5019BfA59fc863f9d86d4583861EF'];
