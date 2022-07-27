@@ -651,6 +651,7 @@ a:hover,
 
 .accordion .accordion-item {
   background-color: var(--darker-shade);
+  color: var(--light-shade);
   border: none;
 }
 
