@@ -7,7 +7,7 @@ export class Weapon {
     FLIP_BASE_ROT = 20;
 
     sprite!: Phaser.GameObjects.Image;
-    physicsObj!: any;
+    physicsObj!: Phaser.GameObjects.Arc;
     tween!: Phaser.Tweens.Tween;
     localPos: Vector2;
     player: Player;
@@ -81,6 +81,10 @@ export class Player {
     }
 
     getSprite() { return this.sprite; }
+
+    getPosition() {
+        return new Vector2(this.sprite.x, this.sprite.y)
+    }
 
     static preload(scene: Phaser.Scene) {
         scene.load.spritesheet('player', getPublicAssetUrl('RedKnight.png'), { frameWidth: 16, frameHeight: 28 });

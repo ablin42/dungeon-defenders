@@ -1,5 +1,6 @@
-import { UNIT_SCALE } from './Constants';
+import { UNIT_SCALE, UNIT_SIZE } from './Constants';
 import { ENEMIES } from './GameAssets';
+import { Player } from './Player';
 import { Vector2 } from './utils';
 
 export class Enemy {
@@ -9,11 +10,14 @@ export class Enemy {
     knockbackVelocity: Vector2;
     knockbackForce: number;
     knockbackDeceleration: number;
+    player: Player;
 
+    sightRadius = 6 * UNIT_SIZE;
     health = 3;
     isDead = false;
 
-    constructor() {
+    constructor(player: Player) {
+        this.player = player;
         this.speed = 150;
         this.velocity = new Vector2(0, 0);
         this.knockbackVelocity = new Vector2(0, 0);
@@ -64,9 +68,20 @@ export class Enemy {
         }
     }
 
+    getPosition() {
+        return new Vector2(this.sprite.x, this.sprite.y)
+    }
+
     update(scene: Phaser.Scene) {
         if (this.isDead) {
             return;
+        }
+
+        this.velocity = this.player.getPosition().sub(this.getPosition());
+        if (this.velocity.magnitude() < this.sightRadius) {
+            this.velocity = this.velocity.normalized().mul(this.speed);
+        } else {
+            this.velocity = Vector2.zero;
         }
 
         const trueVelocity = Vector2.add(this.velocity, this.knockbackVelocity);

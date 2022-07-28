@@ -201,7 +201,7 @@ export class GameScene extends Phaser.Scene {
             break;
           case RoomType.ENEMY_ROOM: {
             roomSize = ENEMY_ROOM_SIZE;
-            const idx = this.enemies.push(new Enemy()) - 1;
+            const idx = this.enemies.push(new Enemy(this.player)) - 1;
             this.enemies[idx].create(this, this.gameLayer, pos);
             break;
           }
