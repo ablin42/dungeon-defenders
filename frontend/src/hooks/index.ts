@@ -29,7 +29,7 @@ const GEMSContract = new ethers.Contract(GEMS_CONTRACT_ADDRESS, GEMSContractInte
 const LOOTContract = new ethers.Contract(LOOT_CONTRACT_ADDRESS, LOOTContractInterface);
 const FAUCETContract = new ethers.Contract(FAUCET_CONTRACT_ADDRESS, FAUCETContractInterface);
 
-//! don't forget to update
+// TODO don't forget to update
 const options = { chainId: ChainId.Goerli };
 
 // *NFT HOOKS*
@@ -212,7 +212,7 @@ export function useAllowance(userAddress: string) {
 }
 
 // Get Token URI
-export function useTokenURI(tokenId: string | number) {
+export function useTokenURI(tokenId: string | number | undefined) {
   const { value, error } =
     useCall(
       tokenId !== undefined && {
@@ -233,7 +233,7 @@ export function useTokenURI(tokenId: string | number) {
 }
 
 // Get Owner of tokenId
-export function useOwnerOf(tokenId: string | number) {
+export function useOwnerOf(tokenId: string | number | undefined) {
   const { value, error } =
     useCall(
       tokenId && {
@@ -386,7 +386,7 @@ export function useAllowanceLoot(userAddress: string) {
   return value?.[0];
 }
 // Get Token URI for LOOT
-export function useTokenURILoot(tokenId: string | number) {
+export function useTokenURILoot(tokenId: string | number | undefined) {
   const { value, error } =
     useCall(
       tokenId && {

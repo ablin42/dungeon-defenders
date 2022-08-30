@@ -3,6 +3,7 @@
 import React from 'react';
 import toast from 'react-hot-toast';
 import { TransactionStatus } from '@usedapp/core';
+import { Buffer } from 'buffer';
 
 // *INTERNALS*
 import { NETWORK_EXPLORER, STATUS_TYPES } from './constants';
@@ -40,4 +41,20 @@ export const handleTxStatus = (
 
     toast.error(`Tx Error: ${STATES[statusIndex].errorMessage}`);
   }
+};
+
+export const getExpiration = (stakes: any) => {
+  const timestamp = stakes && +stakes.timestamp;
+  const expiration = timestamp && timestamp + 60 * 30;
+  const now = parseInt((Date.now() / 1000).toString());
+  const expired = expiration && expiration < now;
+
+  return { timestamp, expiration, now, expired };
+};
+
+export const extendNFTObject = (URI: string, tokenId: string | number | undefined) => {
+  const NFTObject = URI ? JSON.parse(Buffer.from(URI, 'base64').toString()) : null;
+  if (NFTObject) NFTObject.tokenId = tokenId;
+
+  return NFTObject;
 };

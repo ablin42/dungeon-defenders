@@ -14,7 +14,7 @@ const fetcher = (params: any) => fetch(params).then((res) => res.json());
 
 export default function LatestNFT() {
   const { account } = useEthers();
-  const { data: latestNFT, error } = useSWR(`${API_ADDRESS}/v1/nft/latest/3`, fetcher);
+  const { data: latestNFT } = useSWR(`${API_ADDRESS}/v1/nft/latest/3`, fetcher);
 
   return (
     <>
