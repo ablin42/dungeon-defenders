@@ -171,8 +171,8 @@ const About = () => {
                 <Accordion.Item eventKey="0">
                   <Accordion.Header>I can't mint a Defender</Accordion.Header>
                   <Accordion.Body>
-                    Make sure you have <b className="text-main">0.01 Ether</b> available, if the error persist it is
-                    most likely because the name you entered is too long/contains invalid characters
+                    Make sure you have <b className="text-main">0.01 Goerli Ether</b> available, if the error persist it
+                    is most likely because the name you entered is too long/contains invalid characters
                   </Accordion.Body>
                 </Accordion.Item>
                 <Accordion.Item eventKey="1">
