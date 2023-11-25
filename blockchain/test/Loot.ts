@@ -1,5 +1,6 @@
 import { expect } from "chai";
-import { ethers } from "hardhat";
+const hre = require("hardhat");
+const { ethers } = hre;
 import { LootFactory } from "../typechain";
 
 // ? Used to test randomness, not a proper test
@@ -16,7 +17,6 @@ describe("Loot", function () {
       // const ARRAY = [0, 0, 0, 0];
       // let name = "LootName";
       // let nameByte32 = ethers.utils.formatBytes32String(name);
-
       // let result = await contract.callStatic._createLoot(nameByte32);
       // ARRAY[+result] = ARRAY[+result] + 1;
       // for (let i = 0; i < 1000; i++) {

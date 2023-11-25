@@ -1,6 +1,8 @@
-import "dotenv/config";
+const hre = require("hardhat");
+const { ethers } = hre;
+require("dotenv").config();
+
 import { Gems } from "../typechain";
-import { ethers } from "hardhat";
 import { Contract } from "ethers";
 import { GEMS_ABI, GEMS_CONTRACT_ADDRESS } from "../index";
 
@@ -18,15 +20,14 @@ async function main() {
   const amountStr = process.argv[3];
   const amount = parseInt(amountStr);
 
-  const gems = new Contract(
-    GEMS_CONTRACT_ADDRESS,
-    GEMS_ABI,
-    signer
-  ) as Gems;
-  
+  const gems = new Contract(GEMS_CONTRACT_ADDRESS, GEMS_ABI, signer) as Gems;
+
   console.log(`Transfering ${amount} gems to address=${receiverAddress}`);
-  const tx = await gems.transfer(receiverAddress, ethers.utils.parseEther(amountStr));
-  await tx.wait()
+  const tx = await gems.transfer(
+    receiverAddress,
+    ethers.utils.parseEther(amountStr)
+  );
+  await tx.wait();
 }
 
 main().catch((error) => {

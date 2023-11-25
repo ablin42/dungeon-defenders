@@ -1,5 +1,6 @@
-import { ethers } from "hardhat";
-import "dotenv/config";
+const hre = require("hardhat");
+const { ethers } = hre;
+require("dotenv").config();
 
 import {
   DEFENDER_ABI,
@@ -19,7 +20,7 @@ import { Contract, Signer } from "ethers";
 import { promises as fs } from "fs";
 import { Gems } from "../typechain";
 
-import { setup } from './setup';
+import { setup } from "./setup";
 
 async function deploy(signer: Signer) {
   // *Deploy Gems*
