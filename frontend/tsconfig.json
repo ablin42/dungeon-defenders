@@ -15,7 +15,6 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    "watch": true
   },
   "include": ["src"]
 }
