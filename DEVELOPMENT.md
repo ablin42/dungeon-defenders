@@ -1,20 +1,29 @@
-
 # Development
 
-## Setup
+## Setup (in this order)
 
-1. Build the smart contract module
+### Build the smart contract module
+
 ```
+blockchain> npm install
+blockchain> fill .env vars
 blockchain> npm run compile
 blockchain> npm run module:build
 ```
-2. Run the frontend
+
+### Run the frontend
+
 ```
-frontend> yarn start
+frontend> npm install
+frontend> npm start
 ```
-3. Run the server
+
+### Run the server
+
 ```
 Development Server // uses local json file as db
+server> npm install
+server> fill .env vars
 server> npm run dev
 
 Production Server // uses production db
