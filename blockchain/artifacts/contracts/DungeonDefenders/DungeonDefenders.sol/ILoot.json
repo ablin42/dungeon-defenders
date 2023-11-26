@@ -1,0 +1,101 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "ILoot",
+  "sourceName": "contracts/DungeonDefenders/DungeonDefenders.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "loot",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "name",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "minLevelRequired",
+              "type": "uint256"
+            },
+            {
+              "internalType": "int8",
+              "name": "health",
+              "type": "int8"
+            },
+            {
+              "internalType": "int8",
+              "name": "speed",
+              "type": "int8"
+            },
+            {
+              "internalType": "int8",
+              "name": "strength",
+              "type": "int8"
+            },
+            {
+              "internalType": "int8",
+              "name": "defense",
+              "type": "int8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "background",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "weapon",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "armor",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "boots",
+              "type": "uint8"
+            }
+          ],
+          "internalType": "struct ILoot.Loot",
+          "name": "loot",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "ownerOf",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

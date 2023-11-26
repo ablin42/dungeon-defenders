@@ -1,5 +1,6 @@
 import { expect } from "chai";
-import { ethers } from "hardhat";
+const hre = require("hardhat");
+const { ethers } = hre;
 
 describe("GEMS", function () {
   it("Should return the total supply", async function () {

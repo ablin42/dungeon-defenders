@@ -132,20 +132,21 @@ contract DungeonDefenders is ERC721, ERC721URIStorage, DefenderUtils {
     /// @notice The following function is an override required by Solidity.
     /// @notice Burn a defender with the given tokenId
     /// @param tokenId ID of the defender to burn
-    function _burn(uint256 tokenId)
-        internal
-        override(ERC721, ERC721URIStorage)
-    {
+    function _burn(
+        uint256 tokenId
+    ) internal override(ERC721, ERC721URIStorage) {
         super._burn(tokenId);
     }
 
     /// @notice The following function is an override required by Solidity.
     /// @param interfaceId ID of the interface we're checking support for
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         view
         virtual
-        override(ERC721, AccessControl)
+        override(AccessControl, ERC721, ERC721URIStorage)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
@@ -155,12 +156,9 @@ contract DungeonDefenders is ERC721, ERC721URIStorage, DefenderUtils {
     /// @notice Returns the tokenURI of a given tokenId
     /// @dev Used to display the tokenId's SVG
     /// @param tokenId ID of the defender to get the tokenURI of
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        override(ERC721, ERC721URIStorage)
-        returns (string memory)
-    {
+    function tokenURI(
+        uint256 tokenId
+    ) public view override(ERC721, ERC721URIStorage) returns (string memory) {
         string[17] memory parts;
 
         parts[

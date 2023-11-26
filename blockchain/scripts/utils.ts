@@ -18,8 +18,8 @@ export async function connectToWallet(
     process.env.MNEMONIC && process.env.MNEMONIC.length > 0
       ? ethers.Wallet.fromMnemonic(process.env.MNEMONIC)
       : process.env.PRIVATE_KEY
-        ? new ethers.Wallet(process.env.PRIVATE_KEY)
-        : null;
+      ? new ethers.Wallet(process.env.PRIVATE_KEY)
+      : null;
 
   // Validate wallet exists
   if (!wallet) {
@@ -29,7 +29,10 @@ export async function connectToWallet(
   // Get signer
   console.log(`Using address ${wallet.address}`);
   console.log(`Using network ${network}`);
-  const provider = new ethers.providers.AlchemyProvider(network, process.env.ALCHEMY_API_KEY);
+  const provider = new ethers.providers.AlchemyProvider(
+    network,
+    process.env.ALCHEMY_API_KEY
+  );
   const signer = wallet.connect(provider);
 
   // Check signer's balance
@@ -37,7 +40,7 @@ export async function connectToWallet(
   const balance = Number(ethers.utils.formatEther(balanceBN));
   console.log(`Wallet balance ${balance}`);
   if (balance < 0.01) {
-    throw new Error("Not enough ether");
+    throw new Error("Not enough goerli ether (0.1)");
   }
 
   return {
